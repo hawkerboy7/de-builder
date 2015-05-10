@@ -9,12 +9,10 @@ class Forever
 
 	constructor: (@server) ->
 
-		restarts = 3
-
 		@path = "#{@server.options.root}/#{@server.options.build}/#{@server.options.server}/#{@server.options.app}"
 
 		@child = new (forever.Monitor) @path,
-			max:			restarts
+			max:			1
 			watch:			false
 			killTree:		true
 			spinSleepTime:	1000
