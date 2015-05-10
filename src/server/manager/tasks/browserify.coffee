@@ -48,7 +48,7 @@ class Browserify
 		fs.exists @entry, (bool) =>
 
 			# Don't build bundle due to lack of entry file
-			return log.warn 'LDE - Browserify', 'Entry file doesn\'t exist', @entry unless bool
+			return log.warn 'LDE - Browserify', 'Entry file doesn\'t exist', @entry.replace "#{@server.options.root}/", '' unless bool
 
 			# Create bundle stream
 			@file = fs.createWriteStream @name

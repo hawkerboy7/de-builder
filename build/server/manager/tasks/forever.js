@@ -27,7 +27,7 @@ Forever = (function() {
     return fs.exists(this.path, (function(_this) {
       return function(bool) {
         if (!bool) {
-          return log.warn('LDE - Forever', 'Entry file doesn\'t exist', _this.path);
+          return log.warn('LDE - Forever', 'Entry file doesn\'t exist', _this.path.replace(_this.server.options.root + "/", ''));
         }
         return _this.child.start();
       };

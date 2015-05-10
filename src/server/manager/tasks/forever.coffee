@@ -28,7 +28,7 @@ class Forever
 		fs.exists @path, (bool) =>
 
 			# Don't build bundle due to lack of entry file
-			return log.warn 'LDE - Forever', 'Entry file doesn\'t exist', @path unless bool
+			return log.warn 'LDE - Forever', 'Entry file doesn\'t exist', @path.replace "#{@server.options.root}/", '' unless bool
 
 			# Start server
 			@child.start()
