@@ -3,11 +3,11 @@
 # --------------------------------------------------
 Explaination = (type) ->
 
-	message = 'Setting up new "'
-	message += 'Server-Client'	if type is 1
-	message += 'Server'			if type is 2
-	message += 'NodeWebkit'		if type is 3
-	message += '" project'
+	message = 'Project type "'
+	message += 'Server-Client'			if type is 1
+	message += 'Server'					if type is 2
+	message += 'Client (NodeWebkit)'	if type is 3
+	message += '" has been set-up!'
 
 
 

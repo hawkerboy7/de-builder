@@ -40,8 +40,9 @@ The main modules used to create this __LDE__:
 - watchify
 
 
-## Default Config
+## Config
 ```coffeescript
+# Default
 config =
 
 	# Source and build directory

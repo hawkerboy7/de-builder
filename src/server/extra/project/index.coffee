@@ -19,11 +19,11 @@ class Project
 		# Check if provided options are valid / allowed
 		return unless Validate @options
 
-		# Notify project type
-		log.info 'LDE - Project', Explaination @options.type
-
 		# Build folders
 		@folders()
+
+		# Notify project type
+		log.info 'LDE - Project', Explaination @options.type
 
 
 	folders: ->
