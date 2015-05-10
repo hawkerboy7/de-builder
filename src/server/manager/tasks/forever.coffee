@@ -1,6 +1,7 @@
 # --------------------------------------------------
 #	Forever ~ Syncs connected browsers with latest files
 # --------------------------------------------------
+fs		= require 'fs'
 log		= require 'de-logger'
 forever	= require 'forever-monitor'
 
@@ -9,12 +10,10 @@ class Forever
 
 	constructor: (@server) ->
 
-		restarts = 3
-
 		@path = "#{@server.options.root}/#{@server.options.build}/#{@server.options.server}/#{@server.options.app}"
 
 		@child = new (forever.Monitor) @path,
-			max:			restarts
+			max:			1
 			watch:			false
 			killTree:		true
 			spinSleepTime:	1000
@@ -25,7 +24,14 @@ class Forever
 
 	start: ->
 
-		@child.start()
+		# Check if file exists before running the bundle
+		fs.exists @path, (bool) =>
+
+			# Don't build bundle due to lack of entry file
+			return log.warn 'LDE - Forever', 'Entry file doesn\'t exist', @path unless bool
+
+			# Start server
+			@child.start()
 
 
 	stop: ->
