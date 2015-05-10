@@ -10,7 +10,10 @@ class Forever
 
 	constructor: (@server) ->
 
-		@path = "#{@server.options.root}/#{@server.options.build}/#{@server.options.server}/#{@server.options.app}"
+		# Don't run forever if it's not required
+		return unless @server.options.forever.enabled
+
+		@path = "#{@server.options.root}/#{@server.options.build}/#{@server.options.server}/#{@server.options.forever.file}"
 
 		@child = new (forever.Monitor) @path,
 			max:			1
@@ -19,10 +22,13 @@ class Forever
 			spinSleepTime:	1000
 
 		@child.on 'exit:code', (code) =>
-			log.warn 'LDE - Forever', "Exit code: #{code}. #{@server.options.build}/#{@server.options.server}/#{@server.options.app}"
+			log.warn 'LDE - Forever', "Exit code: #{code}. #{@server.options.build}/#{@server.options.server}/#{@server.options.forever.file}"
 
 
 	start: ->
+
+		# Don't run forever if it's not required
+		return unless @server.options.forever.enabled
 
 		# Check if file exists before running the bundle
 		fs.exists @path, (bool) =>
@@ -35,6 +41,9 @@ class Forever
 
 
 	stop: ->
+
+		# Don't run forever if it's not required
+		return unless @server.options.forever.enabled
 
 		@child.stop()
 
