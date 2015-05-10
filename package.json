@@ -1,8 +1,8 @@
 {
   "name": "de-builder",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "A Live Development Environment with support for NodeWebkit",
-  "main": "build/server/app.js",
+  "main": "index.js",
   "author": "Dexter Esajas <dexter.esajas@gmail.com>",
   "license": "MIT",
   "dependencies": {
@@ -21,6 +21,11 @@
   "devDependencies": {
     "de-builder": "^0.1.0"
   },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/hawkerboy7/de-builder"
+  },
+  "bugs": "https://github.com/hawkerboy7/de-builder/issues",
   "scripts": {
     "postinstall": "node install.js"
   }
