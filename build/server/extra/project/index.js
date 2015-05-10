@@ -21,8 +21,8 @@ Project = (function() {
     if (!Validate(this.options)) {
       return;
     }
-    log.info('LDE - Project', Explaination(this.options.type));
     this.folders();
+    log.info('LDE - Project', Explaination(this.options.type));
   }
 
   Project.prototype.folders = function() {

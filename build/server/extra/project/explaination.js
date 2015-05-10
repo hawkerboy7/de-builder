@@ -2,7 +2,7 @@ var Explaination;
 
 Explaination = function(type) {
   var message;
-  message = 'Setting up new "';
+  message = 'Project type "';
   if (type === 1) {
     message += 'Server-Client';
   }
@@ -10,9 +10,9 @@ Explaination = function(type) {
     message += 'Server';
   }
   if (type === 3) {
-    message += 'NodeWebkit';
+    message += 'Client (NodeWebkit)';
   }
-  return message += '" project';
+  return message += '" has been set-up!';
 };
 
 module.exports = Explaination;

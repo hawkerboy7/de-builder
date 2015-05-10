@@ -18,6 +18,7 @@ Browserify = (function() {
     this.server = server;
     this.path = this.server.options.root + "/" + this.server.options.build + "/" + this.server.options.client + "/" + this.server.options.browserify.folder;
     this.name = (this.path + "/" + this.server.options.browserify.file).replace('.js', '.bundle.js');
+    this.entry = this.path + "/" + this.server.options.browserify.file;
     options = {
       cache: {},
       packageCache: {},
@@ -25,7 +26,7 @@ Browserify = (function() {
       fullPaths: false,
       detectGlobals: false
     };
-    this.w = watchify(browserify(options)).add(this.path + "/" + this.server.options.browserify.file + "/").transform(jadeify, {
+    this.w = watchify(browserify(options)).add(this.entry).transform(jadeify, {
       runtimePath: require.resolve('jade/runtime')
     }).on('bundle', (function(_this) {
       return function(stream) {
@@ -35,10 +36,17 @@ Browserify = (function() {
   }
 
   Browserify.prototype.compile = function() {
-    this.file = fs.createWriteStream(this.name);
-    log.info("LDE - Browserify", (this.server.symbols.start + " " + this.name).replace(this.server.options.root + "/", ''));
-    this.s = new Date();
-    return this.w.bundle();
+    return fs.exists(this.entry, (function(_this) {
+      return function(bool) {
+        if (!bool) {
+          return log.warn('LDE - Browserify', 'Entry file doesn\'t exist', _this.entry);
+        }
+        _this.file = fs.createWriteStream(_this.name);
+        log.info("LDE - Browserify", (_this.server.symbols.start + " " + _this.name).replace(_this.server.options.root + "/", ''));
+        _this.s = new Date();
+        return _this.w.bundle();
+      };
+    })(this));
   };
 
   Browserify.prototype.write = function(stream) {
