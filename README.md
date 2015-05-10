@@ -1,6 +1,6 @@
 # de-builder
 
-NOTE: Getting started doesn't work completely because you need a client-side build/js/app.js file which isn't made yet, so browserify dies.
+NOTE: You will need a client/js/app.js file to remove the Browserify warning.
 
 ## What is it?
 It is a __Live Development Environment__ (LDE).<br>
@@ -78,6 +78,7 @@ config =
 
 
 ## Planned Features
+- Browser-sync
 - `--start` should also create client folders and entry files
 - Support for more programming languages.
 - Create a setup with `de-base` and `de-nw-base` by providing arguments: `--de-base` and `--de-nw-base`
