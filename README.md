@@ -6,13 +6,13 @@ It is a __Live Development Environment__ (LDE).
 
 
 ## Getting Started
-Create a project folder `mkdir example-project`.
-Then `cd example-project/`.
-There `npm install --save-dev de-builder`.
-Once `de-builder` has been installed a `build.js` file will have been created.
-Now run `node build.js --start`.
-This will setup your project based on the [config](https://github.com/hawkerboy7/de-builder#config) in the `build.js` file.
-Now run `node build.js` and you LDE will run and you can start working on your project.
+- Create a project folder `mkdir example-project`.
+- Then `cd example-project/`.
+- There `npm install --save-dev de-builder`.
+- Once `de-builder` has been installed a `build.js` file will have been created.
+- Now run `node build.js --start`.
+- This will setup your project based on the [config](https://github.com/hawkerboy7/de-builder#config) in the `build.js` file.
+- Now run `node build.js` and your LDE will run and you can start working on your project.
 
 
 ## Support
@@ -81,4 +81,4 @@ __these will be documented soon__
 
 
 ## Note
-`de-builder` is an attempt at building a project like [id-builder](https://github.com/Industrial/id-builder). The difference for now is the supported programming languages (which are less in `de-builder`) and the supported __LDE__'s (which are [going to be] more in `de-builder`). Also `de-builder` provides a `--start` argument that sets up your projected based on you config for you.
+`de-builder` is an attempt at building a project like [id-builder](https://github.com/Industrial/id-builder). The difference for now is the supported programming languages (which are less in `de-builder`) and the supported __LDE__'s (which are [going to be] more in `de-builder`). Also `de-builder` provides a `--start` argument that sets up your project for you based on your config .
