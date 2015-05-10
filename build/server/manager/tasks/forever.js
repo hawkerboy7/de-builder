@@ -1,4 +1,6 @@
-var Forever, forever, log;
+var Forever, forever, fs, log;
+
+fs = require('fs');
 
 log = require('de-logger');
 
@@ -6,12 +8,10 @@ forever = require('forever-monitor');
 
 Forever = (function() {
   function Forever(server) {
-    var restarts;
     this.server = server;
-    restarts = 3;
     this.path = this.server.options.root + "/" + this.server.options.build + "/" + this.server.options.server + "/" + this.server.options.app;
     this.child = new forever.Monitor(this.path, {
-      max: restarts,
+      max: 1,
       watch: false,
       killTree: true,
       spinSleepTime: 1000
@@ -24,7 +24,14 @@ Forever = (function() {
   }
 
   Forever.prototype.start = function() {
-    return this.child.start();
+    return fs.exists(this.path, (function(_this) {
+      return function(bool) {
+        if (!bool) {
+          return log.warn('LDE - Forever', 'Entry file doesn\'t exist', _this.path);
+        }
+        return _this.child.start();
+      };
+    })(this));
   };
 
   Forever.prototype.stop = function() {
