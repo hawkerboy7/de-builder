@@ -19,7 +19,7 @@
     "watchify": "^3.2.1"
   },
   "devDependencies": {
-    "de-builder": "^0.1.5"
+    "de-builder": "^0.1.6"
   },
   "repository": {
     "type": "git",
