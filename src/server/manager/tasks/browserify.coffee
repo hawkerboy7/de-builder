@@ -16,6 +16,7 @@ class Browserify
 
 		@path = "#{@server.options.root}/#{@server.options.build}/#{@server.options.client}/#{@server.options.browserify.folder}"
 		@name = "#{@path}/#{@server.options.browserify.file}".replace '.js', '.bundle.js'
+		@entry = "#{@path}/#{@server.options.browserify.file}"
 
 		options =
 
@@ -32,7 +33,7 @@ class Browserify
 		@w = watchify browserify options
 
 			# Add user entry file
-			.add "#{@path}/#{@server.options.browserify.file}/"
+			.add @entry
 
 			# Allow for .jade files to be added into the bundle
 			.transform jadeify, runtimePath: require.resolve 'jade/runtime'
@@ -43,16 +44,22 @@ class Browserify
 
 	compile: ->
 
-		# Create bundle stream
-		@file = fs.createWriteStream @name
+		# Check if file exists before running the bundle
+		fs.exists @entry, (bool) =>
 
-		# Notify succes
-		log.info "LDE - Browserify", "#{@server.symbols.start} #{@name}".replace "#{@server.options.root}/", ''
+			# Don't build bundle due to lack of entry file
+			return log.warn 'LDE - Browserify', 'Entry file doesn\'t exist', @entry unless bool
 
-		@s = new Date()
+			# Create bundle stream
+			@file = fs.createWriteStream @name
 
-		# Create the bundle
-		@w.bundle()
+			# Notify succes
+			log.info "LDE - Browserify", "#{@server.symbols.start} #{@name}".replace "#{@server.options.root}/", ''
+
+			@s = new Date()
+
+			# Create the bundle
+			@w.bundle()
 
 
 	write: (stream) ->
