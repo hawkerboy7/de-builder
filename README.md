@@ -1,6 +1,5 @@
 # de-builder
 
-NOTE: You will need a client/js/app.js file to remove the Browserify warning.
 
 ## What is it?
 It is a __Live Development Environment__ (LDE).<br>
