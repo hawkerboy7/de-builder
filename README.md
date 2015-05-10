@@ -1,8 +1,11 @@
 # de-builder
 
+NOTE: Getting started doesn't work completely because you need a client-side build/js/app.js file which isn't made yet, so browserify dies.
 
 ## What is it?
-It is a __Live Development Environment__ (LDE).
+It is a __Live Development Environment__ (LDE).<br>
+In this environment you can write .coffee, .less and .jade and your code will be compiled on save.<br>
+The corresponding part of you program will be either reloaded or restarted.
 
 
 ## Getting Started
@@ -40,8 +43,9 @@ The main modules used to create this __LDE__:
 - watchify
 
 
-## Default Config
+## Config
 ```coffeescript
+# Default
 config =
 
 	# Source and build directory
@@ -74,10 +78,10 @@ config =
 
 
 ## Planned Features
+- `--start` should also create client folders and entry files
 - Support for more programming languages.
-- Automatically create a setup with `de-base` and `de-nw-base`
-- and lots of other plans
-__these will be documented soon__
+- Create a setup with `de-base` and `de-nw-base` by providing arguments: `--de-base` and `--de-nw-base`
+- And lots of other plans __these will be documented soon__
 
 
 ## Note
