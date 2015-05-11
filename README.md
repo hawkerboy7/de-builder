@@ -5,7 +5,7 @@
 
 
 ## What is it?
-It is a __Live Development Environment__ (LDE).<br>
+`de-builder` creates a __Live Development Environment__ (LDE).<br>
 In this environment you can write .coffee, .less and .jade and your code will be compiled on save.<br>
 The corresponding part of you program will be either reloaded or restarted.<br>
 This is achieved by using the [modules](https://github.com/hawkerboy7/de-builder#modules).
@@ -97,15 +97,15 @@ config =
 
 
 ## Browser-sync
-Onve `de-builder` is running the browser-sync ui can be found at [localhost:9000](http://localhost:9000).
-The code snippet has been added to the bundle already by `de-builder` so no need to worry!
+Onve `de-builder` is running the `browser-sync` `ui` can be found at [localhost:9000](http://localhost:9000).
+The code snippet has been added to the bundle already by `de-builder` so no need to worry! It will work out of the box!
 
 
 ## Planned Features
-- Add support for LDE __Server__ (type 2)
+- Add support for __LDE__ type 2
 - `--start` should also create client folders and entry files
 - Fixing initial build ready-trigger to be after all initial compiling is finished.
-- Add support for LDE __Client (Node Webkit)__ (type 3)
+- Add support for LDE __LDE__ type 3
 - Create a setup with
 	[de-base](https://github.com/hawkerboy7/de-base)
 	and
