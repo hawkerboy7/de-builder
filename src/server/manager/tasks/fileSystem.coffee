@@ -18,7 +18,7 @@ class FileSystem
 		[filePath,_compile,task,extentions] = parts;
 
 		# Read file
-		fs.readFile filePath, 'utf8', (err,file) =>
+		fs.readFile filePath, (err,file) =>
 
 			# Notify if mkdirp failed
 			return log.error 'LDE - FileSystem', "Unable to readFile #{filePath}\n\n", err if err
@@ -47,6 +47,9 @@ class FileSystem
 				# Check if server or client
 				server = false if -1 is filePath.indexOf "#{@server.options.root}/#{@server.options.src}/#{@server.options.server}"
 
+				# Keep the file a buffer for copy tasks
+				file = file.toString() unless task is 'Copy'
+
 				# Compile task specific file
 				_compile { file: file, server: server, filePath: filePath }, (err,result) =>
 
@@ -57,19 +60,14 @@ class FileSystem
 					if extentions?.src is '.less'
 						newPath = "#{@server.options.root}/#{@server.options.build}/#{@server.options.client}/#{@server.options.less.folder}/#{@server.options.less.file}".replace "#{extentions.src}", "#{extentions.target}"
 
-					# log.info "LDE - #{task}", "Writing ~ " + newPath.replace "#{@server.options.root}/", ''
-					# Notify succes
+					# Notify succes before filewrite to not confuse the user with browserify trigginer to 'early'
 					log.info "LDE - #{task}", "#{@server.symbols.finished} " + newPath.replace "#{@server.options.root}/", ''
 
 					# Write result to newPath file
-					fs.writeFile newPath, result, (err) =>
+					fs.writeFile newPath, result, (err) ->
 
 						# Notify if write file failed
 						return log.error 'LDE - FileSystem', "Unable to write file #{newPath}\n\n", err if err
-
-						# Notify server of this coffee compile
-						# @server.events.emit "#{task}-server"
-						# @server.events.emit "#{task}-client"
 
 
 
