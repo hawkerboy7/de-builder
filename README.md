@@ -1,3 +1,6 @@
+[![Build Status](https://travis-ci.org/hawkerboy7/de-builder.svg?branch=master)](https://travis-ci.org/hawkerboy7/de-builder)&nbsp;&nbsp;[![Join the chat at https://gitter.im/hawkerboy7/de-builder](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/hawkerboy7/de-builder?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
+
 # de-builder
 
 
@@ -20,7 +23,7 @@ This is achieved by using the [modules](https://github.com/hawkerboy7/de-builder
 
 
 ## Support
-The following programming languages are supported:
+The following languages are supported:
 - .coffee
 - .less
 - .jade
