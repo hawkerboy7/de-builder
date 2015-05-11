@@ -30,7 +30,7 @@ The following languages are supported:
 
 The following types of LDE are [going to be] supported:
 - __supported__ Server + Client
-- __not supported yet__ Server
+- __supported__ Server _0.4.0+ is requried_
 - __not supported yet__ Client (Node Webkit)
 - __not supported yet__ Client (Cordova)
 
@@ -102,7 +102,6 @@ The code snippet has been added to the bundle already by `de-builder` so no need
 
 
 ## Planned Features
-- Add support for __LDE__ type 2
 - `--start` should also create client folders and entry files
 - Fixing initial build ready-trigger to be after all initial compiling is finished.
 - Add support for LDE __LDE__ type 3
