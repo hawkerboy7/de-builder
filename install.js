@@ -9,7 +9,7 @@ var path = require('path');
 var config = require('./build/server/manager/config');
 
 // File content
-var file = "require('de-builder')("+JSON.stringify(config, null, '\t');+");";
+var file = "require('de-builder')("+JSON.stringify(config, null, '\t')+");";
 
 // File name
 var name = "build.js";
