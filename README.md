@@ -80,9 +80,10 @@ config =
 
 ## Planned Features
 - Browser-sync
+- Add support for Server only (type 2)
 - `--start` should also create client folders and entry files
-- Support for more programming languages.
 - Create a setup with `de-base` and `de-nw-base` by providing arguments: `--de-base` and `--de-nw-base`
+- Support for more programming languages (.litcoffee?, stylus?, sass?, livescript?, ES6?)
 - And lots of other plans __these will be documented soon__
 
 

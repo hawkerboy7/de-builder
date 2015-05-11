@@ -12,7 +12,7 @@ require('de-builder')({
 		"folder": "js"
 	},
 	"forever": {
-		"enabled": true,
+		"enabled": false,
 		"file": "app.js"
 	},
 	"type": 1
