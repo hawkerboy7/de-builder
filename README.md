@@ -93,6 +93,7 @@ config =
 - Browser-sync
 - Add support for LDE __Server__ (type 2)
 - `--start` should also create client folders and entry files
+- Fixing initial build ready-trigger to be after all initial compiling is finished.
 - Add support for LDE __Client (Node Webkit)__ (type 3)
 - Create a setup with
 	[de-base](https://github.com/hawkerboy7/de-base)
