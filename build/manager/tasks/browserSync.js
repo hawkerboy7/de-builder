@@ -13,7 +13,7 @@
 
   browserSync = require('browser-sync');
 
-  version = require('../../../../node_modules/browser-sync/package.json').version;
+  version = require('../../../node_modules/browser-sync/package.json').version;
 
   BrowserSync = (function() {
     function BrowserSync(server) {

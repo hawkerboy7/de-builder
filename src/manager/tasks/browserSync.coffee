@@ -7,7 +7,7 @@ http		= require 'http'
 path		= require 'path'
 mkdirp		= require 'mkdirp'
 browserSync	= require 'browser-sync'
-{ version }	= require '../../../../node_modules/browser-sync/package.json'
+{ version }	= require '../../../node_modules/browser-sync/package.json'
 
 
 
