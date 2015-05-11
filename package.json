@@ -1,6 +1,6 @@
 {
   "name": "de-builder",
-  "version": "0.2.0",
+  "version": "0.2.0-1",
   "description": "A Live Development Environment with support for NodeWebkit",
   "main": "build/server/app.js",
   "author": "Dexter Esajas <dexter.esajas@gmail.com>",
@@ -19,7 +19,7 @@
     "watchify": "^3.2.1"
   },
   "devDependencies": {
-    "de-builder": "^0.2.0"
+    "de-builder": "^0.2.0-1"
   },
   "repository": {
     "type": "git",

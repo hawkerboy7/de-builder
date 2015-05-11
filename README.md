@@ -91,13 +91,15 @@ config =
 
 ## Planned Features
 - Browser-sync
-- Add support for Server only (type 2)
+- Add support for LDE __Server__ (type 2)
 - `--start` should also create client folders and entry files
+- Add support for LDE __Client (Node Webkit)__ (type 3)
 - Create a setup with
 	[de-base](https://github.com/hawkerboy7/de-base)
 	and
 	[de-nw-base](https://github.com/hawkerboy7/de-nw-base)
 	by providing arguments: `--de-base` and `--de-nw-base`
+- Add testing support with [Mocha](https://github.com/mochajs/mocha)
 - Support for more programming languages (.litcoffee?, stylus?, sass?, livescript?, ES6?)
 - And lots of other plans __these will be documented soon__
 
