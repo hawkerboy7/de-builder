@@ -1,5 +1,5 @@
 # --------------------------------------------------
-#	App ~ Sets title, clears console and starts Manager
+#	App ~ Sets title, clears console and starts the Manager
 # --------------------------------------------------
 Manager	= require './manager'
 

@@ -1,5 +1,5 @@
 # --------------------------------------------------
-#	Manager ~ Controls the data flow of all tasks
+#	Manager ~ Check for --arguments or starts the Tasks
 # --------------------------------------------------
 log			= require 'de-logger'
 path		= require 'path'

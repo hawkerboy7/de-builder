@@ -1,6 +1,5 @@
 # --------------------------------------------------
-#	Tasks ~ Bundles all different types of tasks
-#			TODO: Turn al tasks this into a streams ?
+#	Tasks ~ Loads all tasks and makes them avaiable trough @server
 # --------------------------------------------------
 { EventEmitter }	= require 'events'
 

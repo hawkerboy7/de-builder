@@ -1,8 +1,6 @@
 # --------------------------------------------------
 #	Merge ~ Merges two objects
 # --------------------------------------------------
-
-### TO DO: Write this in C++ to improve speed ? ###
 merge = (obj1, obj2) ->
 
 	for p of obj2

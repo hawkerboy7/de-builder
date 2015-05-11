@@ -1,5 +1,5 @@
 # --------------------------------------------------
-#	BrowserSync ~ Syncs connected browsers with latest files
+#	BrowserSync ~ Syncs connected browsers with eachother and with the compiled files
 # --------------------------------------------------
 fs			= require 'fs'
 log			= require 'de-logger'

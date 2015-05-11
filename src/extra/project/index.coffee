@@ -1,6 +1,5 @@
 # --------------------------------------------------
-#	Project ~ Build a new default project from
-#				scratch based on provided options
+#	Project ~ Build a new default project structure based on provided options
 # --------------------------------------------------
 fs		= require 'fs'
 log		= require 'de-logger'
