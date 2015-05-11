@@ -58,6 +58,15 @@ FileSystem = (function() {
               if (err) {
                 return log.error('LDE - FileSystem', "Unable to write file " + newPath + "\n\n", err);
               }
+              if (server) {
+                return;
+              }
+              if ((extentions != null ? extentions.src : void 0) === '.less') {
+                _this.server.browserSync.reload(newPath);
+              }
+              if (filePath.indexOf('.jade') !== -1) {
+                return _this.server.browserSync.reload(newPath);
+              }
             });
           });
         });

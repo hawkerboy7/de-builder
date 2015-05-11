@@ -79,6 +79,9 @@ class Browserify
 			# Notify Browserify results
 			log.info "LDE - Browserify", "#{@server.symbols.finished} #{time} s"
 
+			# Reload browser sync iwht a new less file
+			@server.browserSync.reload @name
+
 
 
 module.exports = Browserify

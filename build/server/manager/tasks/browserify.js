@@ -59,7 +59,8 @@ Browserify = (function() {
       return function() {
         var time;
         time = (new Date().getTime() - _this.s.getTime()) / 1000;
-        return log.info("LDE - Browserify", _this.server.symbols.finished + " " + time + " s");
+        log.info("LDE - Browserify", _this.server.symbols.finished + " " + time + " s");
+        return _this.server.browserSync.reload(_this.name);
       };
     })(this));
   };

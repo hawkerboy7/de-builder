@@ -40,6 +40,15 @@ class BrowserSync
 			@code()
 
 
+	reload: (path) ->
+
+		# Notify start
+		log.info 'LDE - BrowserSync', "Reload", path.replace "#{@server.options.root}/", ''
+
+		# Reload based on file path
+		@bs.reload path
+
+
 	code: ->
 
 		# Notify start
@@ -55,7 +64,7 @@ class BrowserSync
 			log.info 'LDE - BrowserSync', "BrowserSync ready - localhost:#{@config.ui.port}"
 
 			# Add Browser-sync to the bundle
-			@server.browserify.w.add @filePath
+			@server.browserify.w.add @filePath if @server.options.browserSync.enabled
 
 			# Shows Browserify the browser sync file has been made
 			@.ready = true

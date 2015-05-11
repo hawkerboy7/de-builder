@@ -26,10 +26,15 @@ config =
 		enabled: true
 		file: 'app.js'
 
+	# Start browser-sync and add's it to the browserify bundle
+	browserSync:
+		enabled: true
+
 	# LDE environments
 	# 1 Server+Client
 	# 2 Server
 	# 3 Client (Node Webkit)
+	# 4 Client (Cordova)
 	type:	1
 
 
