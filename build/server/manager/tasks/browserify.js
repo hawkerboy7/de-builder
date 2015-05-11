@@ -23,8 +23,7 @@ Browserify = (function() {
       cache: {},
       packageCache: {},
       debug: true,
-      fullPaths: false,
-      detectGlobals: false
+      fullPaths: false
     };
     this.w = watchify(browserify(options)).add(this.entry).transform(jadeify, {
       runtimePath: require.resolve('jade/runtime')

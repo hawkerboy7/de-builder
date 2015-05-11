@@ -39,7 +39,7 @@ class Watch
 					@server.ready = true
 					@browserify()
 					@forever()
-				,100)
+				,200)
 
 		# Watch browserify build
 		chokidar

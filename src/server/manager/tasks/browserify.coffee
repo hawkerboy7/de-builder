@@ -26,9 +26,8 @@ class Browserify
 
 			# Browserify
 			debug:			true
-			# noparse:		true # USE THIS FOR nw-de-base
+			# noparse:		true # USE THIS FOR nw-de-base?
 			fullPaths:		false
-			detectGlobals:	false
 
 		@w = watchify browserify options
 

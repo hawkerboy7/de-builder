@@ -42,7 +42,7 @@ Watch = (function() {
           _this.server.ready = true;
           _this.browserify();
           return _this.forever();
-        }, 100);
+        }, 200);
       };
     })(this));
     chokidar.watch(this.build, {
