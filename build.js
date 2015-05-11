@@ -12,8 +12,8 @@ require('de-builder')({
 		"folder": "js"
 	},
 	"forever": {
-		"enabled": false,
+		"enabled": true,
 		"file": "app.js"
 	},
 	"type": 1
-}
+});
