@@ -38,14 +38,16 @@ Tasks = (function() {
       options: this.options
     };
     this.server.copy = new Copy(this.server);
-    this.server.less = new Less(this.server);
     this.server.clean = new Clean(this.server);
     this.server.watch = new Watch(this.server);
     this.server.coffee = new Coffee(this.server);
     this.server.forever = new Forever(this.server);
-    this.server.browserify = new Browserify(this.server);
     this.server.fileSystem = new FileSystem(this.server);
-    this.server.browserSync = new BrowserSync(this.server);
+    if (this.server.options.type !== 2) {
+      this.server.less = new Less(this.server);
+      this.server.browserify = new Browserify(this.server);
+      this.server.browserSync = new BrowserSync(this.server);
+    }
     return this.server.clean.start((function(_this) {
       return function() {
         return _this.server.watch.start();

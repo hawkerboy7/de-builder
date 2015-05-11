@@ -10,11 +10,16 @@ Clean = (function() {
   }
 
   Clean.prototype.start = function(next) {
+    this.buildFolder = this.server.options.root + "/" + this.server.options.build + "/";
     this.serverFolder = this.server.options.root + "/" + this.server.options.build + "/" + this.server.options.server;
     this.clientFolder = this.server.options.root + "/" + this.server.options.build + "/" + this.server.options.client;
     if (this.server.options.type === 1) {
       this.remove(this.serverFolder);
       this.remove(this.clientFolder);
+      log.info('LDE - Clean', this.server.symbols.finished);
+    }
+    if (this.server.options.type === 2) {
+      this.remove(this.buildFolder);
       log.info('LDE - Clean', this.server.symbols.finished);
     }
     return next();

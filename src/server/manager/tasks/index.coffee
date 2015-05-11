@@ -37,14 +37,16 @@ class Tasks
 			options:		@options
 
 		@server.copy		= new Copy			@server
-		@server.less		= new Less			@server
 		@server.clean		= new Clean			@server
 		@server.watch		= new Watch			@server
 		@server.coffee		= new Coffee		@server
 		@server.forever		= new Forever		@server
-		@server.browserify	= new Browserify	@server
 		@server.fileSystem	= new FileSystem	@server
-		@server.browserSync	= new BrowserSync	@server
+
+		if @server.options.type isnt 2
+			@server.less		= new Less			@server
+			@server.browserify	= new Browserify	@server
+			@server.browserSync	= new BrowserSync	@server
 
 		# Clean build folder
 		@server.clean.start =>

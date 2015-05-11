@@ -12,6 +12,7 @@ class Clean
 
 	start: (next) ->
 
+		@buildFolder = "#{@server.options.root}/#{@server.options.build}/"
 		@serverFolder = "#{@server.options.root}/#{@server.options.build}/#{@server.options.server}"
 		@clientFolder = "#{@server.options.root}/#{@server.options.build}/#{@server.options.client}"
 
@@ -19,6 +20,13 @@ class Clean
 
 			@remove @serverFolder
 			@remove @clientFolder
+
+			log.info 'LDE - Clean', @server.symbols.finished
+
+
+		if @server.options.type is 2
+
+			@remove @buildFolder
 
 			log.info 'LDE - Clean', @server.symbols.finished
 

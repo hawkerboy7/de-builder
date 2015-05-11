@@ -22,11 +22,13 @@ class Watch
 		@build	= "#{@server.options.root}/#{@server.options.build}/#{@server.options.client}/#{@server.options.browserify.folder}"
 		@build2	= "#{@server.options.root}/#{@server.options.build}/#{@server.options.server}"
 
-		# Choose the type of watch
-		@typeOne() if @server.options.type is 1
+		@buildTypeTwo = "#{@server.options.root}/#{@server.options.build}/"
+
+		# Start wachter
+		@watcher()
 
 
-	typeOne: ->
+	watcher: ->
 
 		# Watch source
 		chokidar
@@ -37,22 +39,24 @@ class Watch
 			.on 'ready', =>
 				setTimeout(=>
 					@server.ready = true
-					@browserify()
+					@browserify() if @server.options.type is 1
 					@forever()
 				,200)
 
-		# Watch browserify build
-		chokidar
-			.watch @build, ignored: [ /[\/\\]\./, "#{@build}/#{@server.options.browserify.file}".replace '.js', '.bundle.js' ]
-			.on 'add', (filePath)		=> @browserify()
-			.on 'change', (filePath)	=> @browserify()
-			.on 'unlink', (filePath)	=> @browserify()
-
 		# Watch forever build
 		chokidar
-			.watch @build2	, ignored: /[\/\\]\./
+			.watch @build2 , ignored: /[\/\\]\./
 			.on 'change', (filePath)	=> @forever()
 			.on 'unlink', (filePath)	=> @forever()
+
+		if @server.options.type is 1
+
+			# Watch browserify build
+			chokidar
+				.watch @build, ignored: [ /[\/\\]\./, "#{@build}/#{@server.options.browserify.file}".replace '.js', '.bundle.js' ]
+				.on 'add', (filePath)		=> @browserify()
+				.on 'change', (filePath)	=> @browserify()
+				.on 'unlink', (filePath)	=> @browserify()
 
 
 	check: (filePath) ->
@@ -93,7 +97,7 @@ class Watch
 	forever: ->
 
 		# Don't start unless src watch is ready (and also 'probably' fully compiled)
-		return console.log 'block' unless @server.ready
+		return unless @server.ready
 
 		# Notify
 		log.debug 'LDE - Watch', "Forever triggered"
