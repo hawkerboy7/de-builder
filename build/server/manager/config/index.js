@@ -17,6 +17,9 @@ config = {
     enabled: true,
     file: 'app.js'
   },
+  browserSync: {
+    enabled: true
+  },
   type: 1
 };
 

@@ -47,7 +47,7 @@ class FileSystem
 				# Check if server or client
 				server = false if -1 is filePath.indexOf "#{@server.options.root}/#{@server.options.src}/#{@server.options.server}"
 
-				# Keep the file a buffer for copy tasks
+				# Keep the file a buffer for copy tasks (to prevent breaking binary files)
 				file = file.toString() unless task is 'Copy'
 
 				# Compile task specific file
@@ -61,13 +61,22 @@ class FileSystem
 						newPath = "#{@server.options.root}/#{@server.options.build}/#{@server.options.client}/#{@server.options.less.folder}/#{@server.options.less.file}".replace "#{extentions.src}", "#{extentions.target}"
 
 					# Notify succes before filewrite to not confuse the user with browserify trigginer to 'early'
-					log.info "LDE - #{task}", "#{@server.symbols.finished} " + newPath.replace "#{@server.options.root}/", ''
+					log.info "LDE - #{task}", newPath.replace "#{@server.options.root}/", ''
 
 					# Write result to newPath file
-					fs.writeFile newPath, result, (err) ->
+					fs.writeFile newPath, result, (err) =>
 
 						# Notify if write file failed
 						return log.error 'LDE - FileSystem', "Unable to write file #{newPath}\n\n", err if err
+
+						# Only trigger reloads with cliebnt files
+						return if server
+
+						# Reload browser sync with a new less file
+						@server.browserSync.reload newPath if extentions?.src is '.less'
+
+						# Reload bundle based on a new .jade file
+						@server.browserSync.reload newPath if filePath.indexOf('.jade') isnt -1
 
 
 

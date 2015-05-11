@@ -1,6 +1,6 @@
 {
   "name": "de-builder",
-  "version": "0.2.2-1",
+  "version": "0.3.0",
   "description": "A Live Development Environment with support for NodeWebkit and PhoneGap (Cordova)",
   "main": "build/server/app.js",
   "author": "Dexter Esajas <dexter.esajas@gmail.com>",
