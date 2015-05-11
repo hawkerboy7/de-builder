@@ -53,7 +53,7 @@ FileSystem = (function() {
             if ((extentions != null ? extentions.src : void 0) === '.less') {
               newPath = (_this.server.options.root + "/" + _this.server.options.build + "/" + _this.server.options.client + "/" + _this.server.options.less.folder + "/" + _this.server.options.less.file).replace("" + extentions.src, "" + extentions.target);
             }
-            log.info("LDE - " + task, (_this.server.symbols.finished + " ") + newPath.replace(_this.server.options.root + "/", ''));
+            log.info("LDE - " + task, newPath.replace(_this.server.options.root + "/", ''));
             return fs.writeFile(newPath, result, function(err) {
               if (err) {
                 return log.error('LDE - FileSystem', "Unable to write file " + newPath + "\n\n", err);

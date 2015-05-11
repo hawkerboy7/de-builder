@@ -49,26 +49,26 @@ Watch = (function() {
       ignored: [/[\/\\]\./, (this.build + "/" + this.server.options.browserify.file).replace('.js', '.bundle.js')]
     }).on('add', (function(_this) {
       return function(filePath) {
-        return _this.browserify(filePath);
+        return _this.browserify();
       };
     })(this)).on('change', (function(_this) {
       return function(filePath) {
-        return _this.browserify(filePath);
+        return _this.browserify();
       };
     })(this)).on('unlink', (function(_this) {
       return function(filePath) {
-        return _this.browserify(filePath);
+        return _this.browserify();
       };
     })(this));
     return chokidar.watch(this.build2, {
       ignored: /[\/\\]\./
     }).on('change', (function(_this) {
       return function(filePath) {
-        return _this.forever(filePath);
+        return _this.forever();
       };
     })(this)).on('unlink', (function(_this) {
       return function(filePath) {
-        return _this.forever(filePath);
+        return _this.forever();
       };
     })(this));
   };
@@ -87,11 +87,14 @@ Watch = (function() {
   };
 
   Watch.prototype.remove = function(filePath) {
-    return console.log('remove file in the build folder: ', filePath);
+    return console.log('Remove file in the build folder?: ', filePath);
   };
 
-  Watch.prototype.browserify = function(filePath) {
+  Watch.prototype.browserify = function() {
     if (!this.server.ready) {
+      return;
+    }
+    if (!this.server.browserSync.ready) {
       return;
     }
     log.debug('LDE - Watch', "Browserify triggered");

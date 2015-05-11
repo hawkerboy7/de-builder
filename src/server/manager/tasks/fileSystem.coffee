@@ -61,7 +61,7 @@ class FileSystem
 						newPath = "#{@server.options.root}/#{@server.options.build}/#{@server.options.client}/#{@server.options.less.folder}/#{@server.options.less.file}".replace "#{extentions.src}", "#{extentions.target}"
 
 					# Notify succes before filewrite to not confuse the user with browserify trigginer to 'early'
-					log.info "LDE - #{task}", "#{@server.symbols.finished} " + newPath.replace "#{@server.options.root}/", ''
+					log.info "LDE - #{task}", newPath.replace "#{@server.options.root}/", ''
 
 					# Write result to newPath file
 					fs.writeFile newPath, result, (err) ->

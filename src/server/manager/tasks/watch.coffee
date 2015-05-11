@@ -44,15 +44,15 @@ class Watch
 		# Watch browserify build
 		chokidar
 			.watch @build, ignored: [ /[\/\\]\./, "#{@build}/#{@server.options.browserify.file}".replace '.js', '.bundle.js' ]
-			.on 'add', (filePath)		=> @browserify filePath
-			.on 'change', (filePath)	=> @browserify filePath
-			.on 'unlink', (filePath)	=> @browserify filePath
+			.on 'add', (filePath)		=> @browserify()
+			.on 'change', (filePath)	=> @browserify()
+			.on 'unlink', (filePath)	=> @browserify()
 
 		# Watch forever build
 		chokidar
 			.watch @build2	, ignored: /[\/\\]\./
-			.on 'change', (filePath)	=> @forever filePath
-			.on 'unlink', (filePath)	=> @forever filePath
+			.on 'change', (filePath)	=> @forever()
+			.on 'unlink', (filePath)	=> @forever()
 
 
 	check: (filePath) ->
@@ -73,13 +73,15 @@ class Watch
 
 	remove: (filePath) ->
 
-		console.log 'remove file in the build folder: ', filePath
+		console.log 'Remove file in the build folder?: ', filePath
 
 
-	browserify: (filePath) ->
+	browserify: ->
 
 		# Don't start unless src watch is ready (and also 'probably' fully compiled)
 		return unless @server.ready
+
+		return unless @server.browserSync.ready
 
 		# Notify
 		log.debug 'LDE - Watch', "Browserify triggered"
