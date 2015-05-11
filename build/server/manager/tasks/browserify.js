@@ -39,7 +39,7 @@ Browserify = (function() {
     return fs.exists(this.entry, (function(_this) {
       return function(bool) {
         if (!bool) {
-          return log.warn('LDE - Browserify', 'Entry file doesn\'t exist', _this.entry);
+          return log.warn('LDE - Browserify', 'Entry file doesn\'t exist', _this.entry.replace(_this.server.options.root + "/", ''));
         }
         _this.file = fs.createWriteStream(_this.name);
         log.info("LDE - Browserify", (_this.server.symbols.start + " " + _this.name).replace(_this.server.options.root + "/", ''));

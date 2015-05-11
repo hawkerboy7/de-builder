@@ -13,7 +13,10 @@ config = {
     file: 'app.js',
     folder: 'js'
   },
-  app: 'app.js',
+  forever: {
+    enabled: true,
+    file: 'app.js'
+  },
   type: 1
 };
 

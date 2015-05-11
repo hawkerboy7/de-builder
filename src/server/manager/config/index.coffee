@@ -22,7 +22,9 @@ config =
 		folder:	'js'
 
 	# Server path/file to be started by forever
-	app: 'app.js'
+	forever:
+		enabled: true
+		file: 'app.js'
 
 	# LDE environments
 	# 1 Server+Client
