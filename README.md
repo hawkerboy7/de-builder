@@ -97,8 +97,9 @@ config =
 
 
 ## Browser-sync
-Onve `de-builder` is running the `browser-sync` `ui` can be found at [localhost:9000](http://localhost:9000).
-The code snippet has been added to the bundle already by `de-builder` so no need to worry! It will work out of the box!
+Once `de-builder` is running the `browser-sync` `ui` can be found at [localhost:9000](http://localhost:9000).
+The code snippet has been added to the bundle already by `de-builder`!<br>
+`de-builder` works out of the box =D
 
 
 ## Planned Features
