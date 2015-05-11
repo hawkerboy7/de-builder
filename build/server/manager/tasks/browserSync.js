@@ -48,7 +48,7 @@ BrowserSync = (function() {
 
   BrowserSync.prototype.code = function() {
     log.info('LDE - BrowserSync', "BrowserSync Started");
-    return this.download("http://127.0.0.1:" + this.config.port + "/browser-sync/browser-sync-client." + version + ".js", (function(_this) {
+    return this.download("http://localhost:" + this.config.port + "/browser-sync/browser-sync-client." + version + ".js", (function(_this) {
       return function(err) {
         if (err) {
           return log.error('LDE - BrowserSync', "Unable to get browser-sync .js file", err);
