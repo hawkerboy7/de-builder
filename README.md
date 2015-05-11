@@ -33,23 +33,23 @@ The following types of LDE are [going to be] supported:
 
 ## LDE's
 When should I use which LDE?
-_Server + Client_ (type 1) : If you are making a program /server with a website interface or just a regular websites.
-_Server_ (type 2) : If you are making a program /server without a website as a interface.
-_Client_ (type 3) : If you are making a program /server for which you only need the client-side part (like NodeWebkit)
-_Client_ (type 4) : If you are building an app for your phone with (Phonegap - Cordova)
+_Type 1_ __Server + Client__: If you are making a program / server with a website interface.
+_Type 2_ __Server__: If you are making a program / server without a website as a interface.
+_Type 3_ __Client__: If you are making a program / server using the client-side part (like NodeWebkit)
+_Type 4_ __Client__: If you are building an app for your phone with (Phonegap - Cordova)
 
 
 ## Modules
 The main modules used to create this __LDE__:
-- browser-sync
-- browserify
-- chokidar
-- coffee-script
-- de-logger
-- forever-monitor
-- jadeify
-- less
-- watchify
+- [Browser-sync](https://github.com/BrowserSync/browser-sync)
+- [Browserify](https://github.com/substack/node-browserify)
+- [Chokidar](https://github.com/paulmillr/chokidar)
+- [Coffee-script](https://github.com/jashkenas/coffeescript)
+- [De-logger](https://github.com/hawkerboy7/de-logger)
+- [Forever-monitor](https://github.com/foreverjs/forever-monitor)
+- [Jadeify](https://github.com/domenic/jadeify)
+- [Less](https://github.com/less/less.js)
+- [Watchify](https://github.com/substack/watchify)
 
 
 ## Config
