@@ -32,10 +32,10 @@ The following types of LDE are [going to be] supported:
 
 
 ## LDE's
-When should I use which LDE?
-_Type 1_ __Server + Client__: If you are making a program / server with a website interface.
-_Type 2_ __Server__: If you are making a program / server without a website as a interface.
-_Type 3_ __Client__: If you are making a program / server using the client-side part (like NodeWebkit)
+When should I use which LDE?<br>
+_Type 1_ __Server + Client__: If you are making a program / server with a website interface.<br>
+_Type 2_ __Server__: If you are making a program / server without a website as a interface.<br>
+_Type 3_ __Client__: If you are making a program / server using the client-side part (like NodeWebkit)<br>
 _Type 4_ __Client__: If you are building an app for your phone with (Phonegap - Cordova)
 
 
