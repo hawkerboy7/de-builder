@@ -15,6 +15,11 @@ class Forever
 
 		@path = "#{@server.options.root}/#{@server.options.build}/#{@server.options.server}/#{@server.options.forever.file}"
 
+		@create()
+
+
+	create: ->
+
 		@child = new (forever.Monitor) @path,
 			max:			1
 			watch:			false
@@ -30,11 +35,17 @@ class Forever
 		# Don't run forever if it's not required
 		return unless @server.options.forever.enabled
 
+		# Stop previous running proccess
+		@stop() if @started is true
+
 		# Check if file exists before running the bundle
 		fs.exists @path, (bool) =>
 
 			# Don't build bundle due to lack of entry file
 			return log.warn 'LDE - Forever', 'Entry file doesn\'t exist', @path.replace "#{@server.options.root}/", '' unless bool
+
+			# Show server
+			@started = true
 
 			# Start server
 			@child.start()
@@ -45,7 +56,14 @@ class Forever
 		# Don't run forever if it's not required
 		return unless @server.options.forever.enabled
 
+		# Stop child
 		@child.stop()
+
+		# Create new child
+		@create()
+
+		# Ready for new start
+		@started = false
 
 
 
