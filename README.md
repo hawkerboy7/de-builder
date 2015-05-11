@@ -103,8 +103,8 @@ The code snippet has been added to the bundle already by `de-builder` so no need
 
 ## Planned Features
 - `--start` should also create client folders and entry files
-- Fixing initial build ready-trigger to be after all initial compiling is finished.
-- Add support for LDE __LDE__ type 3
+- Add support for __LDE__ type 3
+- Fixing initial build ready-trigger. This should be after all initial compiling is finished.
 - Create a setup with
 	[de-base](https://github.com/hawkerboy7/de-base)
 	and
