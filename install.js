@@ -6,7 +6,7 @@
 var fs = require('fs');
 var log = require('de-logger');
 var path = require('path');
-var config = require('./build/server/manager/config');
+var config = require('./build/manager/config');
 
 // File content
 var file = "require('de-builder')("+JSON.stringify(config, null, '\t')+");";
