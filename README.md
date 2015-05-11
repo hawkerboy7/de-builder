@@ -83,6 +83,10 @@ config =
 		enabled: true
 		file: 'app.js'
 
+	# Start browser-sync and add's it to the browserify bundle
+	browserSync:
+		enabled: true
+
 	# LDE environments
 	# 1 Server + Client
 	# 2 Server
@@ -93,7 +97,6 @@ config =
 
 
 ## Planned Features
-- Browser-sync
 - Add support for LDE __Server__ (type 2)
 - `--start` should also create client folders and entry files
 - Fixing initial build ready-trigger to be after all initial compiling is finished.
