@@ -55,7 +55,7 @@ class BrowserSync
 		log.info 'LDE - BrowserSync', "BrowserSync Started"
 
 		# Download file
-		@download "http://127.0.0.1:#{@config.port}/browser-sync/browser-sync-client.#{version}.js", (err) =>
+		@download "http://localhost:#{@config.port}/browser-sync/browser-sync-client.#{version}.js", (err) =>
 
 			# Notify start
 			return log.error 'LDE - BrowserSync', "Unable to get browser-sync .js file", err if err
