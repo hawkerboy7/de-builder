@@ -20,6 +20,7 @@ class Watch
 		# Source file to watch
 		@src	= "#{@server.options.root}/#{@server.options.src}"
 		@build	= "#{@server.options.root}/#{@server.options.build}/#{@server.options.client}/#{@server.options.browserify.folder}"
+		@build2	= "#{@server.options.root}/#{@server.options.build}/#{@server.options.server}"
 
 		# Choose the type of watch
 		@typeOne() if @server.options.type is 1
@@ -40,12 +41,18 @@ class Watch
 					@forever()
 				,100)
 
-		# Watch build
+		# Watch browserify build
 		chokidar
 			.watch @build, ignored: [ /[\/\\]\./, "#{@build}/#{@server.options.browserify.file}".replace '.js', '.bundle.js' ]
 			.on 'add', (filePath)		=> @browserify filePath
 			.on 'change', (filePath)	=> @browserify filePath
 			.on 'unlink', (filePath)	=> @browserify filePath
+
+		# Watch forever build
+		chokidar
+			.watch @build2	, ignored: /[\/\\]\./
+			.on 'change', (filePath)	=> @forever filePath
+			.on 'unlink', (filePath)	=> @forever filePath
 
 
 	check: (filePath) ->
@@ -74,14 +81,23 @@ class Watch
 		# Don't start unless src watch is ready (and also 'probably' fully compiled)
 		return unless @server.ready
 
+		# Notify
+		log.debug 'LDE - Watch', "Browserify triggered"
+
 		# Compile browserify
 		@server.browserify.compile()
 
 
 	forever: ->
 
-		@server.forever.start()
+		# Don't start unless src watch is ready (and also 'probably' fully compiled)
+		return console.log 'block' unless @server.ready
 
+		# Notify
+		log.debug 'LDE - Watch', "Forever triggered"
+
+		# Start server with forever
+		@server.forever.start()
 
 
 
