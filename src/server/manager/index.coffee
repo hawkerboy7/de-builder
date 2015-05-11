@@ -36,16 +36,9 @@ class Manager
 		return new Project @options if start
 
 		# Asumes folders have been made (add a check for this OR the Project functionaly tweaked a little)
-		@load()
 
-
-	load: ->
-
-		# Import all tasks
+		# Start tasks
 		@tasks = new Tasks @options
-
-		# Start tasks based on the options
-		# @tasks.start()
 
 
 

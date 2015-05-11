@@ -12,8 +12,9 @@ The corresponding part of you program will be either reloaded or restarted.
 - Then `cd example-project/`.
 - There `npm install --save-dev de-builder`.
 - Once `de-builder` has been installed a `build.js` file will have been created.
+- You can adjust the config in the `build.js` file according to your specifications.
 - Now run `node build.js --start`.
-- This will setup your project based on the [config](https://github.com/hawkerboy7/de-builder#config) in the `build.js` file.
+- This will setup your project based on the [config](https://github.com/hawkerboy7/de-builder#config).
 - Now run `node build.js` and your LDE will run and you can start working on your project.
 
 
@@ -23,23 +24,32 @@ The following programming languages are supported:
 - .less
 - .jade
 
-The following types of LDE are (going to be) supported:
+The following types of LDE are [going to be] supported:
 - Server + Client
 - Server
 - Client (Node Webkit)
+- Client (Cordova)
+
+
+## LDE's
+When should I use which LDE?
+_Type 1_ __Server + Client__: If you are making a program / server with a website interface.
+_Type 2_ __Server__: If you are making a program / server without a website as a interface.
+_Type 3_ __Client__: If you are making a program / server using the client-side part (like NodeWebkit)
+_Type 4_ __Client__: If you are building an app for your phone with (Phonegap - Cordova)
 
 
 ## Modules
 The main modules used to create this __LDE__:
-- browser-sync
-- browserify
-- chokidar
-- coffee-script
-- de-logger
-- forever-monitor
-- jadeify
-- less
-- watchify
+- [Browser-sync](https://github.com/BrowserSync/browser-sync)
+- [Browserify](https://github.com/substack/node-browserify)
+- [Chokidar](https://github.com/paulmillr/chokidar)
+- [Coffee-script](https://github.com/jashkenas/coffeescript)
+- [De-logger](https://github.com/hawkerboy7/de-logger)
+- [Forever-monitor](https://github.com/foreverjs/forever-monitor)
+- [Jadeify](https://github.com/domenic/jadeify)
+- [Less](https://github.com/less/less.js)
+- [Watchify](https://github.com/substack/watchify)
 
 
 ## Config
@@ -74,6 +84,7 @@ config =
 	# 1 Server + Client
 	# 2 Server
 	# 3 Client (Node Webkit)
+	# 4 Client (Cordova)
 	type:	1
 ```
 

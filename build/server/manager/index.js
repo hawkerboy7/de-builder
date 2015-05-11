@@ -28,12 +28,8 @@ Manager = (function() {
     if (start) {
       return new Project(this.options);
     }
-    this.load();
+    this.tasks = new Tasks(this.options);
   }
-
-  Manager.prototype.load = function() {
-    return this.tasks = new Tasks(this.options);
-  };
 
   return Manager;
 
