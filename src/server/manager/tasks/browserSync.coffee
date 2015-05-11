@@ -55,7 +55,7 @@ class BrowserSync
 			log.info 'LDE - BrowserSync', "BrowserSync ready - localhost:#{@config.ui.port}"
 
 			# Add Browser-sync to the bundle
-			# @server.browserify.w.add @filePath
+			@server.browserify.w.add @filePath
 
 			# Shows Browserify the browser sync file has been made
 			@.ready = true

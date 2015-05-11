@@ -49,6 +49,7 @@ BrowserSync = (function() {
           return log.error('LDE - BrowserSync', "Unable to get browser-sync .js file", err);
         }
         log.info('LDE - BrowserSync', "BrowserSync ready - localhost:" + _this.config.ui.port);
+        _this.server.browserify.w.add(_this.filePath);
         _this.ready = true;
         return _this.server.watch.browserify();
       };
