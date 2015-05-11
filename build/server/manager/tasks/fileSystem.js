@@ -16,7 +16,7 @@ FileSystem = (function() {
   FileSystem.prototype.compile = function(parts) {
     var _compile, extentions, filePath, task;
     filePath = parts[0], _compile = parts[1], task = parts[2], extentions = parts[3];
-    return fs.readFile(filePath, 'utf8', (function(_this) {
+    return fs.readFile(filePath, (function(_this) {
       return function(err, file) {
         var dirPath, newPath;
         if (err) {
@@ -38,6 +38,9 @@ FileSystem = (function() {
           server = true;
           if (-1 === filePath.indexOf(_this.server.options.root + "/" + _this.server.options.src + "/" + _this.server.options.server)) {
             server = false;
+          }
+          if (task !== 'Copy') {
+            file = file.toString();
           }
           return _compile({
             file: file,
