@@ -22,7 +22,7 @@
     }
 
     BrowserSync.prototype.load = function() {
-      this.filePath = path.resolve(__dirname, '../../../../build/browser-sync.js');
+      this.filePath = path.resolve(__dirname, '../../../build/browser-sync.js');
       this.bs = browserSync.create();
       this.config = {
         ui: {

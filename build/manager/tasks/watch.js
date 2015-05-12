@@ -44,7 +44,7 @@
               _this.browserify();
             }
             return _this.forever();
-          }, 200);
+          }, 250);
         };
       })(this));
       chokidar.watch(this.build2, {

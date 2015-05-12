@@ -20,7 +20,7 @@ class BrowserSync
 
 	load: ->
 
-		@filePath = path.resolve __dirname, '../../../../build/browser-sync.js'
+		@filePath = path.resolve __dirname, '../../../build/browser-sync.js'
 
 		@bs = browserSync.create()
 
