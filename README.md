@@ -43,6 +43,11 @@ _Type 3_ __Client__: If you are making a program / server only using the client-
 _Type 4_ __Client__: If you are building an app for your phone with (Phonegap - Cordova)
 
 
+## Browser-sync
+Once `de-builder` is running the `browser-sync` `ui` can be found at [localhost:9000](http://localhost:9000).
+The required `browser-sync` code-snippet has been added to the bundle already by `de-builder` so `browser-sync` will work out of the box =D!
+
+
 ## Modules
 The main modules used to create this __LDE__:
 - [Browser-sync](https://github.com/BrowserSync/browser-sync)
@@ -94,12 +99,6 @@ config =
 	# 4 Client (Cordova)
 	type:	1
 ```
-
-
-## Browser-sync
-Once `de-builder` is running the `browser-sync` `ui` can be found at [localhost:9000](http://localhost:9000).
-The code snippet has been added to the bundle already by `de-builder`!<br>
-`de-builder` works out of the box =D
 
 
 ## Planned Features
