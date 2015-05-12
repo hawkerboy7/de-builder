@@ -37,11 +37,13 @@ class Watch
 			.on 'change', (filePath) => @check filePath
 			.on 'unlink', (filePath) => @remove filePath
 			.on 'ready', =>
+
+				# This proccess will become event driven (so after all compiling is done) instead of a time delay
 				setTimeout(=>
 					@server.ready = true
 					@browserify() if @server.options.type is 1
 					@forever()
-				,200)
+				,250)
 
 		# Watch forever build
 		chokidar
