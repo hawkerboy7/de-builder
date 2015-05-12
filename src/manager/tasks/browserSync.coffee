@@ -52,7 +52,7 @@ class BrowserSync
 	code: ->
 
 		# Notify start
-		log.info 'LDE - BrowserSync', "BrowserSync Started"
+		log.info 'LDE - BrowserSync', "BrowserSync server started"
 
 		# Download file
 		@download "http://localhost:#{@config.port}/browser-sync/browser-sync-client.#{version}.js", (err) =>
@@ -61,7 +61,7 @@ class BrowserSync
 			return log.error 'LDE - BrowserSync', "Unable to get browser-sync .js file", err if err
 
 			# Notify ready
-			log.info 'LDE - BrowserSync', "BrowserSync ready - localhost:#{@config.ui.port}"
+			log.info 'LDE - BrowserSync', "Ready at localhost:#{@config.ui.port}"
 
 			# Add Browser-sync to the bundle
 			@server.browserify.w.add @filePath if @server.options.browserSync.enabled

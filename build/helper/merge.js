@@ -1,6 +1,3 @@
-
-/* TO DO: Write this in C++ to improve speed ? */
-
 (function() {
   var merge;
 
