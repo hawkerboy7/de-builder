@@ -43,6 +43,68 @@ _Type 3_ __Client__: If you are making a program / server only using the client-
 _Type 4_ __Client__: If you are building an app for your phone with (Phonegap - Cordova)
 
 
+## Structure
+Ok so how should I strucutre my project?
+You can use the strucutre described below but you are free to choose, however make sure you provide the correct entry folder and file in the build.js folder if you choose a custom structure. You can also check [de-base](https://github.com/hawkerboy7/de-base) as an example project or even better use it since it is made to be a base for a project.
+
+
+#### Server + Client (LDE type 1)
+```
+src/
+	client/
+		fonts/
+			font-file.ttf
+			font-file2.ttf
+		images/
+			favicon.ico
+			users/
+				user1.png
+				user2.png
+		js/
+			pages/
+				page-1.coffee
+				page-2.coffee
+			navigation.coffee
+			app.coffee
+		styles/
+			pages/
+				page-1.less
+				page-2.less
+			app.less
+		templates/
+			pages/
+				page-1.jade
+				page-2.jade
+			header.jade
+			navigation.jade
+			footer.jade
+			index.jade
+
+	server/
+		express/
+			views/
+				index.coffee
+			index.coffee
+		server/
+			mongodb.coffee
+			index.coffee
+		app.coffee
+```
+
+#### Server (LDE type 2)
+```
+src/
+	features/
+		feature-1.coffee
+		feature-2.coffee
+		index.coffee
+	server/
+		mongodb.coffee
+		index.coffee
+	app.coffee
+```
+
+
 ## Browser-sync
 Once `de-builder` is running the `browser-sync` `ui` can be found at [localhost:9000](http://localhost:9000).
 The required `browser-sync` code-snippet has been added to the bundle already by `de-builder` so `browser-sync` will work out of the box =D!
@@ -102,7 +164,7 @@ config =
 
 
 ## Planned Features
-- `--start` should also create client folders and entry files
+- `--start` should create all required entry folders and files.
 - Add support for __LDE__ type 3
 - Fixing initial build ready-trigger. This should be after all initial compiling is finished.
 - Add support for __LDE__ type 4
@@ -112,7 +174,7 @@ config =
 	[de-nw-base](https://github.com/hawkerboy7/de-nw-base)
 	by providing arguments: `--de-base` and `--de-nw-base`
 - Add testing support with [Mocha](https://github.com/mochajs/mocha)
-- Support for more programming languages (.litcoffee?, stylus?, sass?, livescript?, ES6?)
+- Support for more programming languages (.scss?, .litcoffee?, .styl?, ES6?, .ls?)
 - And lots of other plans __these will be documented soon__
 
 
