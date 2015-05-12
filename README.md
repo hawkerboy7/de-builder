@@ -164,7 +164,7 @@ config =
 
 
 ## Planned Features
-- `--start` should create all required entry folders and files.
+- `--start` should also create all required entry files.
 - Add support for __LDE__ type 3
 - Fixing initial build ready-trigger. This should be after all initial compiling is finished.
 - Add support for __LDE__ type 4
@@ -179,6 +179,10 @@ config =
 
 
 ## Note
-`de-builder` is an attempt at building a project like [id-builder](https://github.com/Industrial/id-builder).
-The difference for now is the supported programming languages (which are less in `de-builder`) and the supported __LDE__'s (which are [going to be] more in `de-builder`).
-Also `de-builder` provides a `--start` argument that sets up your project for you based on your config .
+`de-builder` is an attempt at building a project like [id-builder](https://github.com/Industrial/id-builder). They have to following differences:
+- The supported programming languages (which are less in `de-builder`).
+- The supported __LDE__'s (which are more in `de-builder`).
+- `de-builder` provides the possibility to pass on arguments which can setup your project for you.
+	* `--start` creates all entry files so you know where to start.
+	* `--de-base` installs [de-base](https://github.com/hawkerboy7/de-base) for you.
+	* `--de-nw-base` installs [de-nw-base](https://github.com/hawkerboy7/de-nw-base) for you.
