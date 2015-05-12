@@ -1,5 +1,5 @@
 # --------------------------------------------------
-#	Coffee ~ Compiles all .coffee files
+#	FileSystem ~ Reads and Write files and triggers browser-sync reload
 # --------------------------------------------------
 fs		= require 'fs'
 log		= require 'de-logger'

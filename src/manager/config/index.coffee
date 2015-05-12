@@ -1,5 +1,5 @@
 # --------------------------------------------------
-#	Config ~ Provides default configuration
+#	Config ~ Default configuration
 # --------------------------------------------------
 config =
 

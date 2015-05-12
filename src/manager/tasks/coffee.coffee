@@ -1,5 +1,5 @@
 # --------------------------------------------------
-#	Coffee ~ Compiles all .coffee files
+#	Coffee ~ Turn .coffee into .js
 # --------------------------------------------------
 coffee = require 'coffee-script'
 

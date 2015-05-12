@@ -1,6 +1,5 @@
 # --------------------------------------------------
-#	Validate ~ Checks if provided options are
-#				valid / allowed
+#	Validate ~ Checks if provided options are valid / allowed
 # --------------------------------------------------
 log	= require 'de-logger'
 

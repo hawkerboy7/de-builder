@@ -1,5 +1,5 @@
 # --------------------------------------------------
-#	Forever ~ Syncs connected browsers with latest files
+#	Forever ~ Starts your server
 # --------------------------------------------------
 fs		= require 'fs'
 log		= require 'de-logger'

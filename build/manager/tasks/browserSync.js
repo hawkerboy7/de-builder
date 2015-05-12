@@ -48,13 +48,13 @@
     };
 
     BrowserSync.prototype.code = function() {
-      log.info('LDE - BrowserSync', "BrowserSync Started");
+      log.info('LDE - BrowserSync', "BrowserSync server started");
       return this.download("http://localhost:" + this.config.port + "/browser-sync/browser-sync-client." + version + ".js", (function(_this) {
         return function(err) {
           if (err) {
             return log.error('LDE - BrowserSync', "Unable to get browser-sync .js file", err);
           }
-          log.info('LDE - BrowserSync', "BrowserSync ready - localhost:" + _this.config.ui.port);
+          log.info('LDE - BrowserSync', "Ready at localhost:" + _this.config.ui.port);
           if (_this.server.options.browserSync.enabled) {
             _this.server.browserify.w.add(_this.filePath);
           }

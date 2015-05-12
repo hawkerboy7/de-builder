@@ -1,5 +1,5 @@
 # --------------------------------------------------
-#	Copy ~ Copy all file that won't compile
+#	Copy ~ Copy all file that don't need to compile
 # --------------------------------------------------
 class Copy
 

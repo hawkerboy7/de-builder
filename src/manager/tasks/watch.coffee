@@ -1,5 +1,5 @@
 # --------------------------------------------------
-#	Watch ~ Watched all relevant LDE files
+#	Watch ~ Watches all relevant LDE files
 # --------------------------------------------------
 log			= require 'de-logger'
 path		= require 'path'
