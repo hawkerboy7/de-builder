@@ -105,6 +105,7 @@ config =
 - `--start` should also create client folders and entry files
 - Add support for __LDE__ type 3
 - Fixing initial build ready-trigger. This should be after all initial compiling is finished.
+- Add support for __LDE__ type 4
 - Create a setup with
 	[de-base](https://github.com/hawkerboy7/de-base)
 	and
