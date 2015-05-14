@@ -17,9 +17,8 @@ This is achieved by using the [modules](https://github.com/hawkerboy7/de-builder
 - There `npm install --save-dev de-builder`.
 - Once `de-builder` has been installed a `build.js` file will have been created.
 - You can adjust the config in the `build.js` file according to your specifications.
-- Now run `node build.js --start`.
-- This will setup your project based on the [config](https://github.com/hawkerboy7/de-builder#config).
-- Now run `node build.js` and your LDE will run and you can start working on your project.
+- (Optional `node build.js --start`) This will setup your project folder and files based on the [config](https://github.com/hawkerboy7/de-builder#config).
+- Now run `node build.js` and your __LDE__ will run and you can start working on your project.
 
 
 ## Support
@@ -32,7 +31,7 @@ The following types of LDE are [going to be] supported:
 - __supported__ Server + Client
 - __supported__ Server _0.4.0+ is requried_
 - __not supported yet__ Client (Node Webkit)
-- __not supported yet__ Client (Cordova)
+- __not supported yet__ ??? (Cordova)
 
 
 ## LDE's
@@ -40,7 +39,7 @@ Which LDE should I use?<br>
 _Type 1_ __Server + Client__: If you are making a program / server with a website interface.<br>
 _Type 2_ __Server__: If you are making a program / server without a website as an interface.<br>
 _Type 3_ __Client__: If you are making a program / server only using the client-side part (like NodeWebkit)<br>
-_Type 4_ __Client__: If you are building an app for your phone with (Phonegap - Cordova)
+_Type 4_ __???__: If you are building an app for your phone with (Phonegap - Cordova)
 
 
 ## Structure
