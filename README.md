@@ -17,7 +17,7 @@ This is achieved by using the [modules](https://github.com/hawkerboy7/de-builder
 - There `npm install --save-dev de-builder`.
 - Once `de-builder` has been installed a `build.js` file will have been created.
 - You can adjust the config in the `build.js` file according to your specifications.
-- (Optional `node build.js --start`) A setup of your project files and folder based on the [config](https://github.com/hawkerboy7/de-builder#config).
+- (Optional: `node build.js --start`) A setup of your project files and folder based on the [config](https://github.com/hawkerboy7/de-builder#config).
 - Now run `node build.js` and your __LDE__ will run and you can start working on your project.
 
 
@@ -162,18 +162,20 @@ config =
 ```
 
 
-## Planned Features
-- `--start` should also create all required entry files.
+## Planned Features / Known bugs
+- Client-side .jade doesn't trigger browserify.
+- `--start` should also create all required entry files and folders.
+- Forever doesn't shutdown a child properly if a compile error's out, so killall sometimes needs to be used.
 - Add support for __LDE__ type 3
-- Fixing initial build ready-trigger. This should be after all initial compiling is finished.
+- Fixing initial-build ready-trigger. This should be after all initial compiling is finished now it's based on a timeout.
 - Add support for __LDE__ type 4
+- Add testing support with [Mocha](https://github.com/mochajs/mocha)
+- Support for more programming languages (.scss?, .litcoffee?, .styl?, ES6?, .ls?)
 - Create a setup with
 	[de-base](https://github.com/hawkerboy7/de-base)
 	and
 	[de-nw-base](https://github.com/hawkerboy7/de-nw-base)
 	by providing arguments: `--de-base` and `--de-nw-base`
-- Add testing support with [Mocha](https://github.com/mochajs/mocha)
-- Support for more programming languages (.scss?, .litcoffee?, .styl?, ES6?, .ls?)
 - And lots of other plans __these will be documented soon__
 
 
@@ -182,6 +184,6 @@ config =
 - The supported programming languages (which are less in `de-builder`).
 - The supported __LDE__'s (which are more in `de-builder`).
 - `de-builder` provides the possibility to pass on arguments which can setup your project for you.
-	* `--start` creates all entry files so you know where to start.
+	* `--start` creates all entry files and folders so you know where to start.
 	* `--de-base` installs [de-base](https://github.com/hawkerboy7/de-base) for you.
 	* `--de-nw-base` installs [de-nw-base](https://github.com/hawkerboy7/de-nw-base) for you.
