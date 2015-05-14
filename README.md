@@ -17,7 +17,7 @@ This is achieved by using the [modules](https://github.com/hawkerboy7/de-builder
 - There `npm install --save-dev de-builder`.
 - Once `de-builder` has been installed a `build.js` file will have been created.
 - You can adjust the config in the `build.js` file according to your specifications.
-- (Optional `node build.js --start`) A setup of your project files and folder based on the [config](https://github.com/hawkerboy7/de-builder#config).
+- (Optional: `node build.js --start`) A setup of your project files and folder based on the [config](https://github.com/hawkerboy7/de-builder#config).
 - Now run `node build.js` and your __LDE__ will run and you can start working on your project.
 
 
