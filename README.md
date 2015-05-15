@@ -60,6 +60,14 @@ src/
 				user1.png
 				user2.png
 		js/
+			templates/
+				pages/
+					page-1.jade
+					page-2.jade
+				header.jade
+				navigation.jade
+				footer.jade
+				index.jade
 			pages/
 				page-1.coffee
 				page-2.coffee
@@ -70,14 +78,6 @@ src/
 				page-1.less
 				page-2.less
 			app.less
-		templates/
-			pages/
-				page-1.jade
-				page-2.jade
-			header.jade
-			navigation.jade
-			footer.jade
-			index.jade
 
 	server/
 		express/
@@ -163,7 +163,6 @@ config =
 
 
 ## Planned Features / Known bugs
-- Client-side .jade doesn't trigger browserify.
 - `--start` should also create all required entry files and folders.
 - Forever doesn't shutdown a child properly if a compile error's out, so killall sometimes needs to be used.
 - Add support for __LDE__ type 3
