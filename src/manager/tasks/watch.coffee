@@ -41,7 +41,7 @@ class Watch
 				# This proccess will become event driven (so after all compiling is done) instead of a time delay
 				setTimeout(=>
 					@server.ready = true
-					@browserify() if @server.options.type is 1
+					@browserify() if @server.options.type is 1 or @server.options.type is 3
 					@forever()
 				,250)
 
@@ -51,7 +51,7 @@ class Watch
 			.on 'change', (filePath)	=> @forever()
 			.on 'unlink', (filePath)	=> @forever()
 
-		if @server.options.type is 1
+		if @server.options.type is 1 or @server.options.type is 3
 
 			# Watch browserify build
 			chokidar
@@ -79,7 +79,7 @@ class Watch
 
 	remove: (filePath) ->
 
-		console.log 'Remove file in the build folder?: ', filePath
+		console.log 'Remove file', filePath
 
 
 	browserify: ->

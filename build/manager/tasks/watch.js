@@ -40,7 +40,7 @@
         return function() {
           return setTimeout(function() {
             _this.server.ready = true;
-            if (_this.server.options.type === 1) {
+            if (_this.server.options.type === 1 || _this.server.options.type === 3) {
               _this.browserify();
             }
             return _this.forever();
@@ -58,7 +58,7 @@
           return _this.forever();
         };
       })(this));
-      if (this.server.options.type === 1) {
+      if (this.server.options.type === 1 || this.server.options.type === 3) {
         return chokidar.watch(this.build, {
           ignored: [/[\/\\]\./, (this.build + "/" + this.server.options.browserify.file).replace('.js', '.bundle.js')]
         }).on('add', (function(_this) {
@@ -91,7 +91,7 @@
     };
 
     Watch.prototype.remove = function(filePath) {
-      return console.log('Remove file in the build folder?: ', filePath);
+      return console.log('Remove file', filePath);
     };
 
     Watch.prototype.browserify = function() {
