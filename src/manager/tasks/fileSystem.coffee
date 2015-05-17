@@ -89,9 +89,6 @@ class FileSystem
 						# Reload browser sync with a new less file
 						@server.browserSync.reload newPath if extentions?.src is '.less'
 
-						# Reload bundle based on a new .jade file
-						@server.browserSync.reload newPath if filePath.indexOf('.jade') isnt -1
-
 
 
 module.exports = FileSystem

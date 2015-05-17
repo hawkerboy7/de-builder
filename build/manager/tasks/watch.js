@@ -38,6 +38,9 @@
         };
       })(this)).on('ready', (function(_this) {
         return function() {
+          if (_this.server.options.type === 3) {
+            _this.watcher2();
+          }
           return setTimeout(function() {
             _this.server.ready = true;
             if (_this.server.options.type === 1 || _this.server.options.type === 3) {
@@ -67,7 +70,7 @@
         })(this));
       }
       if (this.server.options.type === 1 || this.server.options.type === 2) {
-        chokidar.watch(this.foreverRestart, {
+        return chokidar.watch(this.foreverRestart, {
           ignored: /[\/\\]\./
         }).on('change', (function(_this) {
           return function(filePath) {
@@ -79,6 +82,9 @@
           };
         })(this));
       }
+    };
+
+    Watch.prototype.watcher2 = function() {
       if (this.server.options.type === 3) {
         return chokidar.watch(this.browserifyServer, {
           ignored: [/[\/\\]\./, (this.browserifyServer + "/" + this.server.options.browserify.file).replace('.js', '.bundle.js')]
