@@ -24,7 +24,7 @@ class Clean
 			log.info 'LDE - Clean', @server.symbols.finished
 
 
-		if @server.options.type is 2
+		if @server.options.type is 2 or @server.options.type is 3
 
 			@remove @buildFolder
 
