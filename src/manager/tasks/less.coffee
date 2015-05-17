@@ -21,6 +21,9 @@ class Less
 		# Path to less files
 		path = "#{Server.options.root}/#{Server.options.src}/#{Server.options.client}/#{Server.options.less.folder}"
 
+		if Server.options.type is 3
+			path = "#{Server.options.root}/#{Server.options.src}/#{Server.options.less.folder}"
+
 		# Less entry file
 		entry = "#{path}/#{Server.options.less.file}"
 
