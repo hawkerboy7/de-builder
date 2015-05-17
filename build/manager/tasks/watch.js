@@ -15,9 +15,9 @@
     Watch.prototype.start = function() {
       log.info('LDE - Watch', "~ Night gathers, and now my watch begins ~");
       this.src = this.server.options.root + "/" + this.server.options.src;
-      this.build = this.server.options.root + "/" + this.server.options.build + "/" + this.server.options.client + "/" + this.server.options.browserify.folder;
-      this.build2 = this.server.options.root + "/" + this.server.options.build + "/" + this.server.options.server;
-      this.buildTypeTwo = this.server.options.root + "/" + this.server.options.build + "/";
+      this.foreverRestart = this.server.options.root + "/" + this.server.options.build + "/" + this.server.options.server;
+      this.browserifyRebuild = this.server.options.root + "/" + this.server.options.build + "/" + this.server.options.client + "/" + this.server.options.browserify.folder;
+      this.browserifyServer = this.server.options.root + "/" + this.server.options.build + "/" + this.server.options.browserify.folder;
       return this.watcher();
     };
 
@@ -40,27 +40,48 @@
         return function() {
           return setTimeout(function() {
             _this.server.ready = true;
-            if (_this.server.options.type === 1) {
+            if (_this.server.options.type === 1 || _this.server.options.type === 3) {
               _this.browserify();
             }
-            return _this.forever();
+            if (_this.server.options.type === 1 || _this.server.options.type === 2) {
+              return _this.forever();
+            }
           }, 250);
         };
       })(this));
-      chokidar.watch(this.build2, {
-        ignored: /[\/\\]\./
-      }).on('change', (function(_this) {
-        return function(filePath) {
-          return _this.forever();
-        };
-      })(this)).on('unlink', (function(_this) {
-        return function(filePath) {
-          return _this.forever();
-        };
-      })(this));
       if (this.server.options.type === 1) {
-        return chokidar.watch(this.build, {
-          ignored: [/[\/\\]\./, (this.build + "/" + this.server.options.browserify.file).replace('.js', '.bundle.js')]
+        chokidar.watch(this.browserifyRebuild, {
+          ignored: [/[\/\\]\./, (this.browserifyRebuild + "/" + this.server.options.browserify.file).replace('.js', '.bundle.js')]
+        }).on('add', (function(_this) {
+          return function(filePath) {
+            return _this.browserify();
+          };
+        })(this)).on('change', (function(_this) {
+          return function(filePath) {
+            return _this.browserify();
+          };
+        })(this)).on('unlink', (function(_this) {
+          return function(filePath) {
+            return _this.browserify();
+          };
+        })(this));
+      }
+      if (this.server.options.type === 1 || this.server.options.type === 2) {
+        chokidar.watch(this.foreverRestart, {
+          ignored: /[\/\\]\./
+        }).on('change', (function(_this) {
+          return function(filePath) {
+            return _this.forever();
+          };
+        })(this)).on('unlink', (function(_this) {
+          return function(filePath) {
+            return _this.forever();
+          };
+        })(this));
+      }
+      if (this.server.options.type === 3) {
+        return chokidar.watch(this.browserifyServer, {
+          ignored: [/[\/\\]\./, (this.browserifyServer + "/" + this.server.options.browserify.file).replace('.js', '.bundle.js')]
         }).on('add', (function(_this) {
           return function(filePath) {
             return _this.browserify();
@@ -91,7 +112,7 @@
     };
 
     Watch.prototype.remove = function(filePath) {
-      return console.log('Remove file in the build folder?: ', filePath);
+      return console.log('Remove file', filePath);
     };
 
     Watch.prototype.browserify = function() {

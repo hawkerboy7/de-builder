@@ -17,6 +17,9 @@
       var entry, file, filePath, path;
       file = arg.file, filePath = arg.filePath;
       path = Server.options.root + "/" + Server.options.src + "/" + Server.options.client + "/" + Server.options.less.folder;
+      if (Server.options.type === 3) {
+        path = Server.options.root + "/" + Server.options.src + "/" + Server.options.less.folder;
+      }
       entry = path + "/" + Server.options.less.file;
       if (filePath === entry) {
         Server.files.less = file;

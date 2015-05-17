@@ -1,5 +1,5 @@
 (function() {
-  var BrowserSync, browserSync, fs, http, log, mkdirp, path, version;
+  var BrowserSync, browserSync, bsExists, bsPath, fs, http, log, mkdirp, path, version;
 
   fs = require('fs');
 
@@ -13,7 +13,21 @@
 
   browserSync = require('browser-sync');
 
-  version = require('../../../node_modules/browser-sync/package.json').version;
+  version = null;
+
+  bsExists = null;
+
+  bsPath = path.resolve(__dirname, '../../../node_modules/browser-sync');
+
+  fs.exists(bsPath, function(exists) {
+    var ref;
+    bsExists = exists;
+    if (bsExists) {
+      return ref = require('../../../node_modules/browser-sync/package.json'), version = ref.version, ref;
+    } else {
+      return log.warn('browser-sync not found');
+    }
+  });
 
   BrowserSync = (function() {
     function BrowserSync(server) {
@@ -56,6 +70,10 @@
           }
           log.info('LDE - BrowserSync', "Ready at localhost:" + _this.config.ui.port);
           if (_this.server.options.browserSync.enabled) {
+            _this.server.browserify.w.require('./node_modules/de-builder/node_modules/browser-sync/node_modules/socket.io/node_modules/socket.io-client', {
+              expose: 'socket.io-client'
+            });
+            _this.server.browserify.w.add(path.resolve(__dirname, '../../helper/socket.io-client'));
             _this.server.browserify.w.add(_this.filePath);
           }
           _this.ready = true;

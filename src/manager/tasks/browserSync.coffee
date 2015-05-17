@@ -7,7 +7,23 @@ http		= require 'http'
 path		= require 'path'
 mkdirp		= require 'mkdirp'
 browserSync	= require 'browser-sync'
-{ version }	= require '../../../node_modules/browser-sync/package.json'
+
+# Set version
+version		= null
+bsExists	= null
+
+# Get path to browser-sync
+bsPath = path.resolve __dirname, '../../../node_modules/browser-sync'
+
+# Check if path exists
+fs.exists bsPath, (exists) ->
+
+	bsExists = exists
+
+	if bsExists
+		{ version }	= require '../../../node_modules/browser-sync/package.json'
+	else
+		log.warn 'browser-sync not found'
 
 
 
@@ -63,8 +79,16 @@ class BrowserSync
 			# Notify ready
 			log.info 'LDE - BrowserSync', "Ready at localhost:#{@config.ui.port}"
 
-			# Add Browser-sync to the bundle
-			@server.browserify.w.add @filePath if @server.options.browserSync.enabled
+			if @server.options.browserSync.enabled
+
+				# Make socket.io-client require'able
+				@server.browserify.w.require './node_modules/de-builder/node_modules/browser-sync/node_modules/socket.io/node_modules/socket.io-client', expose: 'socket.io-client'
+
+				# Add socket.io-client trough a file
+				@server.browserify.w.add path.resolve __dirname, '../../helper/socket.io-client'
+
+				# Add Browser-sync to the bundle
+				@server.browserify.w.add @filePath
 
 			# Shows Browserify the browser sync file has been made
 			@.ready = true

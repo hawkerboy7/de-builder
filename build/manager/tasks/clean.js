@@ -19,7 +19,7 @@
         this.remove(this.clientFolder);
         log.info('LDE - Clean', this.server.symbols.finished);
       }
-      if (this.server.options.type === 2) {
+      if (this.server.options.type === 2 || this.server.options.type === 3) {
         this.remove(this.buildFolder);
         log.info('LDE - Clean', this.server.symbols.finished);
       }

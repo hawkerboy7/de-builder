@@ -18,11 +18,11 @@ class Watch
 		log.info 'LDE - Watch', "~ Night gathers, and now my watch begins ~"
 
 		# Source file to watch
-		@src	= "#{@server.options.root}/#{@server.options.src}"
-		@build	= "#{@server.options.root}/#{@server.options.build}/#{@server.options.client}/#{@server.options.browserify.folder}"
-		@build2	= "#{@server.options.root}/#{@server.options.build}/#{@server.options.server}"
+		@src				= "#{@server.options.root}/#{@server.options.src}"
 
-		@buildTypeTwo = "#{@server.options.root}/#{@server.options.build}/"
+		@foreverRestart		= "#{@server.options.root}/#{@server.options.build}/#{@server.options.server}"
+		@browserifyRebuild	= "#{@server.options.root}/#{@server.options.build}/#{@server.options.client}/#{@server.options.browserify.folder}"
+		@browserifyServer	= "#{@server.options.root}/#{@server.options.build}/#{@server.options.browserify.folder}"
 
 		# Start wachter
 		@watcher()
@@ -41,21 +41,29 @@ class Watch
 				# This proccess will become event driven (so after all compiling is done) instead of a time delay
 				setTimeout(=>
 					@server.ready = true
-					@browserify() if @server.options.type is 1
-					@forever()
+					@browserify()	if @server.options.type is 1 or @server.options.type is 3
+					@forever()		if @server.options.type is 1 or @server.options.type is 2
 				,250)
 
-		# Watch forever build
-		chokidar
-			.watch @build2 , ignored: /[\/\\]\./
-			.on 'change', (filePath)	=> @forever()
-			.on 'unlink', (filePath)	=> @forever()
-
+		# Watch for the Browserify task
 		if @server.options.type is 1
-
-			# Watch browserify build
 			chokidar
-				.watch @build, ignored: [ /[\/\\]\./, "#{@build}/#{@server.options.browserify.file}".replace '.js', '.bundle.js' ]
+				.watch @browserifyRebuild, ignored: [ /[\/\\]\./, "#{@browserifyRebuild}/#{@server.options.browserify.file}".replace '.js', '.bundle.js' ]
+				.on 'add', (filePath)		=> @browserify()
+				.on 'change', (filePath)	=> @browserify()
+				.on 'unlink', (filePath)	=> @browserify()
+
+		# Watch for the Forever task
+		if @server.options.type is 1 or @server.options.type is 2
+			chokidar
+				.watch @foreverRestart , ignored: /[\/\\]\./
+				.on 'change', (filePath)	=> @forever()
+				.on 'unlink', (filePath)	=> @forever()
+
+		# Watch for the Browserify task
+		if @server.options.type is 3
+			chokidar
+				.watch @browserifyServer, ignored: [ /[\/\\]\./, "#{@browserifyServer}/#{@server.options.browserify.file}".replace '.js', '.bundle.js' ]
 				.on 'add', (filePath)		=> @browserify()
 				.on 'change', (filePath)	=> @browserify()
 				.on 'unlink', (filePath)	=> @browserify()
@@ -79,7 +87,7 @@ class Watch
 
 	remove: (filePath) ->
 
-		console.log 'Remove file in the build folder?: ', filePath
+		console.log 'Remove file', filePath
 
 
 	browserify: ->

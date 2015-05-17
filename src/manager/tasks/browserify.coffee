@@ -15,6 +15,11 @@ class Browserify
 	constructor: (@server) ->
 
 		@path = "#{@server.options.root}/#{@server.options.build}/#{@server.options.client}/#{@server.options.browserify.folder}"
+
+		# Set path for type 3
+		if @server.options.type is 3
+			@path = "#{@server.options.root}/#{@server.options.build}/#{@server.options.browserify.folder}"
+
 		@name = "#{@path}/#{@server.options.browserify.file}".replace '.js', '.bundle.js'
 		@entry = "#{@path}/#{@server.options.browserify.file}"
 
@@ -24,10 +29,21 @@ class Browserify
 			cache:			{}
 			packageCache:	{}
 
-			# Browserify
+			# Show origin of the error in the console
 			debug:			true
-			# noparse:		true # USE THIS FOR nw-de-base?
+
+			# Don't show paths to files in the app.bundle.js
 			fullPaths:		false
+
+		# Node-webkit support
+		if @server.options.type is 3
+
+			# Don't use the debug yet due to the # error in node-webkit
+			options.debug =		false
+
+			# Stop browserify from usinig it's own modules
+			options.builtins =	false
+
 
 		@w = watchify browserify options
 
