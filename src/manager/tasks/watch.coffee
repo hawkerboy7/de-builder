@@ -38,6 +38,9 @@ class Watch
 			.on 'unlink', (filePath) => @remove filePath
 			.on 'ready', =>
 
+				# Start watching the build after CLEAN is finished
+				@watcher2()		if @server.options.type is 3
+
 				# This proccess will become event driven (so after all compiling is done) instead of a time delay
 				setTimeout(=>
 					@server.ready = true
@@ -59,6 +62,9 @@ class Watch
 				.watch @foreverRestart , ignored: /[\/\\]\./
 				.on 'change', (filePath)	=> @forever()
 				.on 'unlink', (filePath)	=> @forever()
+
+
+	watcher2: ->
 
 		# Watch for the Browserify task
 		if @server.options.type is 3
