@@ -39,13 +39,17 @@ class Tasks
 		@server.clean		= new Clean			@server
 		@server.watch		= new Watch			@server
 		@server.coffee		= new Coffee		@server
-		@server.forever		= new Forever		@server
 		@server.fileSystem	= new FileSystem	@server
 
+		# Don't add less, browserify, browser-sync if type is 2 (server only)
 		if @server.options.type isnt 2
 			@server.less		= new Less			@server
 			@server.browserify	= new Browserify	@server
 			@server.browserSync	= new BrowserSync	@server
+
+		# Don't add forever if type is 3 (node-webkit)
+		if @server.options.type isnt 3
+			@server.forever		= new Forever		@server
 
 		# Clean build folder
 		@server.clean.start =>
