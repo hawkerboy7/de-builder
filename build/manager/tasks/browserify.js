@@ -26,6 +26,10 @@
         debug: true,
         fullPaths: false
       };
+      if (this.server.options.type === 3) {
+        options.debug = false;
+        options.builtins = false;
+      }
       this.w = watchify(browserify(options)).add(this.entry).transform(jadeify, {
         runtimePath: require.resolve('jade/runtime')
       }).on('bundle', (function(_this) {

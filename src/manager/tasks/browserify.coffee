@@ -24,10 +24,21 @@ class Browserify
 			cache:			{}
 			packageCache:	{}
 
-			# Browserify
+			# Show origin of the error in the console
 			debug:			true
-			# noparse:		true # USE THIS FOR nw-de-base?
+
+			# Don't show paths to files in the app.bundle.js
 			fullPaths:		false
+
+		# Node-webkit support
+		if @server.options.type is 3
+
+			# Don't use the debug yet due to the # error in node-webkit
+			options.debug =		false
+
+			# Stop browserify from usinig it's own modules
+			options.builtins =	false
+
 
 		@w = watchify browserify options
 
