@@ -15,6 +15,11 @@ class Browserify
 	constructor: (@server) ->
 
 		@path = "#{@server.options.root}/#{@server.options.build}/#{@server.options.client}/#{@server.options.browserify.folder}"
+
+		# Set path for type 3
+		if @server.options.type is 3
+			@path = "#{@server.options.root}/#{@server.options.build}/#{@server.options.browserify.folder}"
+
 		@name = "#{@path}/#{@server.options.browserify.file}".replace '.js', '.bundle.js'
 		@entry = "#{@path}/#{@server.options.browserify.file}"
 

@@ -18,6 +18,9 @@
       var options;
       this.server = server;
       this.path = this.server.options.root + "/" + this.server.options.build + "/" + this.server.options.client + "/" + this.server.options.browserify.folder;
+      if (this.server.options.type === 3) {
+        this.path = this.server.options.root + "/" + this.server.options.build + "/" + this.server.options.browserify.folder;
+      }
       this.name = (this.path + "/" + this.server.options.browserify.file).replace('.js', '.bundle.js');
       this.entry = this.path + "/" + this.server.options.browserify.file;
       options = {
