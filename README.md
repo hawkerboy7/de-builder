@@ -182,7 +182,7 @@ config =
 `de-builder` is an attempt at building a project like [id-builder](https://github.com/Industrial/id-builder). They have to following differences:
 - The supported programming languages (which are less in `de-builder`).
 - The supported __LDE__'s (which are more in `de-builder`).
-- The start-up speed. Not measures accuratly but easiliy noticable.
+- The start-up speed. Not measured accuratly but easiliy noticable.
 - `de-builder` provides the possibility to pass on arguments which can setup your project for you.
 	* `--start` creates all entry files and folders so you know where to start.
 	* `--de-base` installs [de-base](https://github.com/hawkerboy7/de-base) for you.
