@@ -30,6 +30,9 @@
           dirPath = path.dirname(newPath);
           if ((extentions != null ? extentions.src : void 0) === '.less') {
             dirPath = _this.server.options.root + "/" + _this.server.options.build + "/" + _this.server.options.client + "/" + _this.server.options.less.folder;
+            if (_this.server.options.type === 3) {
+              dirPath = _this.server.options.root + "/" + _this.server.options.build + "/" + _this.server.options.less.folder;
+            }
           }
           return mkdirp(dirPath, function(err) {
             var server;
@@ -48,11 +51,16 @@
               server: server,
               filePath: filePath
             }, function(err, result) {
+              var sub;
               if (err) {
                 return log.error("LDE - _Compile " + task, "Unable to compile " + filePath + "\n\n", err);
               }
               if ((extentions != null ? extentions.src : void 0) === '.less') {
-                newPath = (_this.server.options.root + "/" + _this.server.options.build + "/" + _this.server.options.client + "/" + _this.server.options.less.folder + "/" + _this.server.options.less.file).replace("" + extentions.src, "" + extentions.target);
+                sub = _this.server.options.root + "/" + _this.server.options.build + "/" + _this.server.options.client;
+                if (_this.server.options.type === 3) {
+                  sub = _this.server.options.root + "/" + _this.server.options.build;
+                }
+                newPath = (sub + "/" + _this.server.options.less.folder + "/" + _this.server.options.less.file).replace("" + extentions.src, "" + extentions.target);
               }
               log.info("LDE - " + task, newPath.replace(_this.server.options.root + "/", ''));
               return fs.writeFile(newPath, result, function(err) {

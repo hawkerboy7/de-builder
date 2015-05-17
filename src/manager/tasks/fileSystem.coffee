@@ -33,7 +33,13 @@ class FileSystem
 			dirPath = path.dirname newPath
 
 			# Don't create folder if using less
-			dirPath = "#{@server.options.root}/#{@server.options.build}/#{@server.options.client}/#{@server.options.less.folder}" if extentions?.src is '.less'
+			if extentions?.src is '.less'
+
+				# Less folder
+				dirPath = "#{@server.options.root}/#{@server.options.build}/#{@server.options.client}/#{@server.options.less.folder}"
+
+				# Less folder type 3
+				dirPath = "#{@server.options.root}/#{@server.options.build}/#{@server.options.less.folder}" if @server.options.type is 3
 
 			# Make new filePath folders if the filePath doesn't exist
 			mkdirp dirPath, (err) =>
@@ -58,7 +64,15 @@ class FileSystem
 
 					# Set less path
 					if extentions?.src is '.less'
-						newPath = "#{@server.options.root}/#{@server.options.build}/#{@server.options.client}/#{@server.options.less.folder}/#{@server.options.less.file}".replace "#{extentions.src}", "#{extentions.target}"
+
+						# Type 1
+						sub = "#{@server.options.root}/#{@server.options.build}/#{@server.options.client}"
+
+						# Type 3
+						if @server.options.type is 3
+							sub = "#{@server.options.root}/#{@server.options.build}"
+
+						newPath = "#{sub}/#{@server.options.less.folder}/#{@server.options.less.file}".replace "#{extentions.src}", "#{extentions.target}"
 
 					# Notify succes before filewrite to not confuse the user with browserify trigginer to 'early'
 					log.info "LDE - #{task}", newPath.replace "#{@server.options.root}/", ''
