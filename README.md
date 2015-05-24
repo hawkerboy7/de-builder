@@ -52,10 +52,10 @@ Without the `src/` folders shown in type 2 and 3
 ```
 src/
 	client/
-		__Client (LDE type 3)__
+		Client (LDE type 3)
 
 	server/
-		__Server (LDE type 2)__
+		Server (LDE type 2)
 ```
 
 #### Server (LDE type 2)
@@ -107,7 +107,7 @@ src/
 
 ## Browser-sync
 Once `de-builder` is running the `browser-sync` `ui` can be found at [localhost:9000](http://localhost:9000).
-The required `browser-sync` code-snippet has been added to the bundle already by `de-builder` so `browser-sync` will work out of the box =D!
+The required `browser-sync` code-snippet has been added to the bundle already by `de-builder` so `browser-sync` will work out of the box on all your pages and devices =D!
 
 
 ## Modules
@@ -163,13 +163,10 @@ config =
 ```
 
 
-## Planned Features / Known bugs
-- `--start` should also create all required entry files and folders.
-- Forever doesn't shutdown a child properly if a compile error's out, so killall sometimes needs to be used.
-- Fixing initial-build ready-trigger. This should be after all initial compiling is finished now it's based on a timeout.
+## Planned Support / Features
 - Add support for __LDE__ type 4
 - Add testing support with [Mocha](https://github.com/mochajs/mocha)
-- Support for more programming languages (.scss?, .litcoffee?, .styl?, ES6?, .ls?)
+- Support for more languages (.scss?, .litcoffee?, .styl?, ES6?, .ls?)
 - Create a setup with
 	[de-base](https://github.com/hawkerboy7/de-base)
 	and
@@ -179,11 +176,11 @@ config =
 
 
 ## Note
-`de-builder` is an attempt at building a project like [id-builder](https://github.com/Industrial/id-builder). They have to following differences:
-- The supported programming languages (which are less in `de-builder`).
-- The supported __LDE__'s (which are more in `de-builder`).
-- The start-up speed. Not measured accuratly but easiliy noticable.
+`de-builder` is an attempt at building a project like [id-builder](https://github.com/Industrial/id-builder). They have the following differences:
+- For now `de-builder` supports 3 languages, `id-builder` supports 6.
+- `de-builder` suppors 3 __LDE__'s `id-builder` supports 1.
+- The start-up of `de-builder` is faster. This is not measured accuratly but easiliy noticable.
 - `de-builder` provides the possibility to pass on arguments which can setup your project for you.
-	* `--start` creates all entry files and folders so you know where to start.
-	* `--de-base` installs [de-base](https://github.com/hawkerboy7/de-base) for you.
-	* `--de-nw-base` installs [de-nw-base](https://github.com/hawkerboy7/de-nw-base) for you.
+	* __partially supported__`--start` creates all entry files and folders so you know where to start.
+	* __not supported yet__`--de-base` installs [de-base](https://github.com/hawkerboy7/de-base) for you.
+	* __not supported yet__`--de-nw-base` installs [de-nw-base](https://github.com/hawkerboy7/de-nw-base) for you.
