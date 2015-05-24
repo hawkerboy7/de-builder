@@ -107,7 +107,7 @@ src/
 
 ## Browser-sync
 Once `de-builder` is running the `browser-sync` `ui` can be found at [localhost:9000](http://localhost:9000).
-The required `browser-sync` code-snippet has been added to the bundle already by `de-builder` so `browser-sync` will work out of the box =D!
+The required `browser-sync` code-snippet has been added to the bundle already by `de-builder` so `browser-sync` will work out of the box on all your pages and devices =D!
 
 
 ## Modules
@@ -163,7 +163,7 @@ config =
 ```
 
 
-## Planned Features / Known bugs
+## Planned Support/Features
 - Add support for __LDE__ type 4
 - Add testing support with [Mocha](https://github.com/mochajs/mocha)
 - Support for more languages (.scss?, .litcoffee?, .styl?, ES6?, .ls?)
@@ -181,6 +181,6 @@ config =
 - `de-builder` suppors 3 __LDE__'s `id-builder` supports 1.
 - The start-up of `de-builder` is faster. This is not measured accuratly but easiliy noticable.
 - `de-builder` provides the possibility to pass on arguments which can setup your project for you.
-	* __almost fully supported__`--start` creates all entry files and folders so you know where to start.
+	* __partially supported__`--start` creates all entry files and folders so you know where to start.
 	* __not supported yet__`--de-base` installs [de-base](https://github.com/hawkerboy7/de-base) for you.
 	* __not supported yet__`--de-nw-base` installs [de-nw-base](https://github.com/hawkerboy7/de-nw-base) for you.
