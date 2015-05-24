@@ -163,7 +163,7 @@ config =
 ```
 
 
-## Planned Support/Features
+## Planned Support / Features
 - Add support for __LDE__ type 4
 - Add testing support with [Mocha](https://github.com/mochajs/mocha)
 - Support for more languages (.scss?, .litcoffee?, .styl?, ES6?, .ls?)
