@@ -5,11 +5,13 @@
 	<a target="_blank" href="https://www.npmjs.com/package/de-builder">
 		<img src="https://img.shields.io/npm/v/de-builder.svg">
 	</a>
+	<a target="_blank" href="https://david-dm.org/hawkerboy7/de-builder">
+		<img src="https://img.shields.io/david/hawkerboy7/de-builder.svg">
+	</a>
+	<img src="https://img.shields.io/npm/dm/de-builder.svg">
 	<a target="_blank" href="https://gitter.im/hawkerboy7/de-builder">
 		<img src="https://img.shields.io/badge/Gitter-JOIN%20CHAT%20→-1dce73.svg">
 	</a>
-	<img src="https://img.shields.io/npm/dm/de-builder.svg">
-	<img src="https://img.shields.io/npm/l/de-builder.svg">
 </p>
 
 
