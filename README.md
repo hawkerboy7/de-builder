@@ -1,4 +1,16 @@
-[![Build Status](https://travis-ci.org/hawkerboy7/de-builder.svg?branch=master)](https://travis-ci.org/hawkerboy7/de-builder)&nbsp;&nbsp;[![Join the chat at https://gitter.im/hawkerboy7/de-builder](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/hawkerboy7/de-builder?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+<p align="center">
+	<a target="_blank" href="https://travis-ci.org/hawkerboy7/de-builder">
+		<img src="https://img.shields.io/travis/hawkerboy7/de-builder.svg">
+	</a>
+	<a target="_blank" href="https://www.npmjs.com/package/de-builder">
+		<img src="https://img.shields.io/npm/v/de-builder.svg">
+	</a>
+	<a target="_blank" href="https://gitter.im/hawkerboy7/de-builder">
+		<img src="https://img.shields.io/badge/Gitter-JOIN%20CHAT%20→-1dce73.svg">
+	</a>
+	<img src="https://img.shields.io/npm/dm/de-builder.svg">
+	<img src="https://img.shields.io/npm/l/de-builder.svg">
+</p>
 
 
 # de-builder
@@ -179,6 +191,7 @@ config =
 `de-builder` is an attempt at building a project like [id-builder](https://github.com/Industrial/id-builder). They have the following differences:
 - For now `de-builder` supports 3 languages, `id-builder` supports 6.
 - `de-builder` suppors 3 __LDE__'s `id-builder` supports 1.
+- `Browserify` works out of the box in `de-builder`. No need to add any code snippets.
 - The start-up of `de-builder` is faster. This is not measured accuratly but easiliy noticable.
 - `de-builder` provides the possibility to pass on arguments which can setup your project for you.
 	* __partially supported__`--start` creates all entry files and folders so you know where to start.
