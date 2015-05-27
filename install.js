@@ -24,7 +24,7 @@ fs.exists(location, function(exists) {
 
 	// Create build.js file
 	fs.writeFile(location, file, function (err) {
-		if (!err) return;
+		if (!err) { return; }
 		log.warn('LDE - Project', 'Couldn\'t create build.js file');
 		log.error('LDE - Project', err);
 	});
