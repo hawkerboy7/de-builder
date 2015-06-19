@@ -13,7 +13,10 @@ class Forever
 		# Don't run forever if it's not required
 		return unless @server.options.forever.enabled
 
-		@path = "#{@server.options.root}/#{@server.options.build}/#{@server.options.server}/#{@server.options.forever.file}"
+		sub = '/'
+		sub = "/#{@server.options.server}/" if @server.options.type isnt 2
+
+		@path = "#{@server.options.root}/#{@server.options.build}#{sub}#{@server.options.forever.file}"
 
 		@create()
 
