@@ -17,12 +17,16 @@ class Watch
 		# Notify start of the watch
 		log.info 'LDE - Watch', "~ Night gathers, and now my watch begins ~"
 
-		# Source file to watch
-		@src				= "#{@server.options.root}/#{@server.options.src}"
+		sub = ""
 
-		@foreverRestart		= "#{@server.options.root}/#{@server.options.build}/#{@server.options.server}"
-		@browserifyRebuild	= "#{@server.options.root}/#{@server.options.build}/#{@server.options.client}/#{@server.options.browserify.folder}"
-		@browserifyServer	= "#{@server.options.root}/#{@server.options.build}/#{@server.options.browserify.folder}"
+		sub = "#{@server.options.server}/" if @server.options.type isnt 2
+
+		# Source file to watch
+		@src				= "#{@server.options.root}/#{@server.options.src}/"
+
+		@foreverRestart		= "#{@server.options.root}/#{@server.options.build}/#{sub}"
+		@browserifyRebuild	= "#{@server.options.root}/#{@server.options.build}/#{@server.options.client}/#{@server.options.browserify.folder}/"
+		@browserifyServer	= "#{@server.options.root}/#{@server.options.build}/#{@server.options.browserify.folder}/"
 
 		# Start wachter
 		@watcher()

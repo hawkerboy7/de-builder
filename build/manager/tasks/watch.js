@@ -13,11 +13,16 @@
     }
 
     Watch.prototype.start = function() {
+      var sub;
       log.info('LDE - Watch', "~ Night gathers, and now my watch begins ~");
-      this.src = this.server.options.root + "/" + this.server.options.src;
-      this.foreverRestart = this.server.options.root + "/" + this.server.options.build + "/" + this.server.options.server;
-      this.browserifyRebuild = this.server.options.root + "/" + this.server.options.build + "/" + this.server.options.client + "/" + this.server.options.browserify.folder;
-      this.browserifyServer = this.server.options.root + "/" + this.server.options.build + "/" + this.server.options.browserify.folder;
+      sub = "";
+      if (this.server.options.type !== 2) {
+        sub = this.server.options.server + "/";
+      }
+      this.src = this.server.options.root + "/" + this.server.options.src + "/";
+      this.foreverRestart = this.server.options.root + "/" + this.server.options.build + "/" + sub;
+      this.browserifyRebuild = this.server.options.root + "/" + this.server.options.build + "/" + this.server.options.client + "/" + this.server.options.browserify.folder + "/";
+      this.browserifyServer = this.server.options.root + "/" + this.server.options.build + "/" + this.server.options.browserify.folder + "/";
       return this.watcher();
     };
 
