@@ -9,11 +9,16 @@
 
   Forever = (function() {
     function Forever(server) {
+      var sub;
       this.server = server;
       if (!this.server.options.forever.enabled) {
         return;
       }
-      this.path = this.server.options.root + "/" + this.server.options.build + "/" + this.server.options.server + "/" + this.server.options.forever.file;
+      sub = '/';
+      if (this.server.options.type !== 2) {
+        sub = "/" + this.server.options.server + "/";
+      }
+      this.path = this.server.options.root + "/" + this.server.options.build + sub + this.server.options.forever.file;
       this.create();
     }
 

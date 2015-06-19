@@ -1,6 +1,6 @@
 {
   "name": "de-builder",
-  "version": "0.5.5",
+  "version": "0.5.6",
   "description": "A Live Development Environment with support for NodeWebkit and PhoneGap (Cordova)",
   "main": "build/app.js",
   "author": "Dexter Esajas <dexter.esajas@gmail.com>",
@@ -19,7 +19,7 @@
     "watchify": "^3.2.1"
   },
   "devDependencies": {
-    "de-builder": "^0.5.5"
+    "de-builder": "^0.5.6"
   },
   "repository": {
     "type": "git",
