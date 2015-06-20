@@ -19,14 +19,14 @@ class Watch
 
 		sub = ""
 
-		sub = "#{@server.options.server}/" if @server.options.type isnt 2
+		sub = "/#{@server.options.server}" if @server.options.type isnt 2
 
 		# Source file to watch
-		@src				= "#{@server.options.root}/#{@server.options.src}/"
+		@src				= "#{@server.options.root}/#{@server.options.src}"
 
-		@foreverRestart		= "#{@server.options.root}/#{@server.options.build}/#{sub}"
-		@browserifyRebuild	= "#{@server.options.root}/#{@server.options.build}/#{@server.options.client}/#{@server.options.browserify.folder}/"
-		@browserifyServer	= "#{@server.options.root}/#{@server.options.build}/#{@server.options.browserify.folder}/"
+		@foreverRestart		= "#{@server.options.root}/#{@server.options.build}#{sub}"
+		@browserifyRebuild	= "#{@server.options.root}/#{@server.options.build}/#{@server.options.client}/#{@server.options.browserify.folder}"
+		@browserifyServer	= "#{@server.options.root}/#{@server.options.build}/#{@server.options.browserify.folder}"
 
 		# Start wachter
 		@watcher()
@@ -56,16 +56,16 @@ class Watch
 		if @server.options.type is 1
 			chokidar
 				.watch @browserifyRebuild, ignored: [ /[\/\\]\./, "#{@browserifyRebuild}/#{@server.options.browserify.file}".replace '.js', '.bundle.js' ]
-				.on 'add', (filePath)		=> @browserify()
-				.on 'change', (filePath)	=> @browserify()
-				.on 'unlink', (filePath)	=> @browserify()
+				.on 'add',		=> @browserify()
+				.on 'change',	=> @browserify()
+				.on 'unlink',	=> @browserify()
 
 		# Watch for the Forever task
 		if @server.options.type is 1 or @server.options.type is 2
 			chokidar
 				.watch @foreverRestart , ignored: /[\/\\]\./
-				.on 'change', (filePath)	=> @forever()
-				.on 'unlink', (filePath)	=> @forever()
+				.on 'change',	=> @forever()
+				.on 'unlink',	=> @forever()
 
 
 	watcher2: ->
@@ -74,9 +74,9 @@ class Watch
 		if @server.options.type is 3
 			chokidar
 				.watch @browserifyServer, ignored: [ /[\/\\]\./, "#{@browserifyServer}/#{@server.options.browserify.file}".replace '.js', '.bundle.js' ]
-				.on 'add', (filePath)		=> @browserify()
-				.on 'change', (filePath)	=> @browserify()
-				.on 'unlink', (filePath)	=> @browserify()
+				.on 'add',		=> @browserify()
+				.on 'change',	=> @browserify()
+				.on 'unlink',	=> @browserify()
 
 
 	check: (filePath) ->

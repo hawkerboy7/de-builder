@@ -17,12 +17,12 @@
       log.info('LDE - Watch', "~ Night gathers, and now my watch begins ~");
       sub = "";
       if (this.server.options.type !== 2) {
-        sub = this.server.options.server + "/";
+        sub = "/" + this.server.options.server;
       }
-      this.src = this.server.options.root + "/" + this.server.options.src + "/";
-      this.foreverRestart = this.server.options.root + "/" + this.server.options.build + "/" + sub;
-      this.browserifyRebuild = this.server.options.root + "/" + this.server.options.build + "/" + this.server.options.client + "/" + this.server.options.browserify.folder + "/";
-      this.browserifyServer = this.server.options.root + "/" + this.server.options.build + "/" + this.server.options.browserify.folder + "/";
+      this.src = this.server.options.root + "/" + this.server.options.src;
+      this.foreverRestart = this.server.options.root + "/" + this.server.options.build + sub;
+      this.browserifyRebuild = this.server.options.root + "/" + this.server.options.build + "/" + this.server.options.client + "/" + this.server.options.browserify.folder;
+      this.browserifyServer = this.server.options.root + "/" + this.server.options.build + "/" + this.server.options.browserify.folder;
       return this.watcher();
     };
 
@@ -61,15 +61,15 @@
         chokidar.watch(this.browserifyRebuild, {
           ignored: [/[\/\\]\./, (this.browserifyRebuild + "/" + this.server.options.browserify.file).replace('.js', '.bundle.js')]
         }).on('add', (function(_this) {
-          return function(filePath) {
+          return function() {
             return _this.browserify();
           };
         })(this)).on('change', (function(_this) {
-          return function(filePath) {
+          return function() {
             return _this.browserify();
           };
         })(this)).on('unlink', (function(_this) {
-          return function(filePath) {
+          return function() {
             return _this.browserify();
           };
         })(this));
