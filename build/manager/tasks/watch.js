@@ -78,11 +78,11 @@
         return chokidar.watch(this.foreverRestart, {
           ignored: /[\/\\]\./
         }).on('change', (function(_this) {
-          return function(filePath) {
+          return function() {
             return _this.forever();
           };
         })(this)).on('unlink', (function(_this) {
-          return function(filePath) {
+          return function() {
             return _this.forever();
           };
         })(this));
@@ -94,15 +94,15 @@
         return chokidar.watch(this.browserifyServer, {
           ignored: [/[\/\\]\./, (this.browserifyServer + "/" + this.server.options.browserify.file).replace('.js', '.bundle.js')]
         }).on('add', (function(_this) {
-          return function(filePath) {
+          return function() {
             return _this.browserify();
           };
         })(this)).on('change', (function(_this) {
-          return function(filePath) {
+          return function() {
             return _this.browserify();
           };
         })(this)).on('unlink', (function(_this) {
-          return function(filePath) {
+          return function() {
             return _this.browserify();
           };
         })(this));
