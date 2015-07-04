@@ -70,7 +70,7 @@
           }
           log.info('LDE - BrowserSync', "Ready at localhost:" + _this.config.ui.port);
           if (_this.server.options.browserSync.enabled) {
-            _this.server.browserify.w.require('./node_modules/de-builder/node_modules/browser-sync/node_modules/socket.io/node_modules/socket.io-client', {
+            _this.server.browserify.w.require('socket.io-client', {
               expose: 'socket.io-client'
             });
             _this.server.browserify.w.add(path.resolve(__dirname, '../../helper/socket.io-client'));

@@ -82,7 +82,7 @@ class BrowserSync
 			if @server.options.browserSync.enabled
 
 				# Make socket.io-client require'able
-				@server.browserify.w.require './node_modules/de-builder/node_modules/browser-sync/node_modules/socket.io/node_modules/socket.io-client', expose: 'socket.io-client'
+				@server.browserify.w.require 'socket.io-client', expose: 'socket.io-client'
 
 				# Add socket.io-client trough a file
 				@server.browserify.w.add path.resolve __dirname, '../../helper/socket.io-client'
