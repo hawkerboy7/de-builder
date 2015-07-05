@@ -47,7 +47,7 @@ class BrowserSync
 			logLevel: 'silent'
 			logFileChanges: false
 
-		@bs.init @config, (err, bs) =>
+		@bs.init @config, (err) =>
 
 			# Notify error
 			return log.error 'LDE - BrowserSync', 'Couldn\'t start BrowserSync \n\n', err if err
@@ -99,7 +99,7 @@ class BrowserSync
 
 	download: (url, cb) ->
 
-		mkdirp path.dirname(@filePath), (err) =>
+		mkdirp path.dirname(@filePath), =>
 
 			# Store in a file
 			@file = fs.createWriteStream @filePath
