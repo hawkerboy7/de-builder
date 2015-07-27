@@ -47,7 +47,7 @@
         logFileChanges: false
       };
       return this.bs.init(this.config, (function(_this) {
-        return function(err, bs) {
+        return function(err) {
           if (err) {
             return log.error('LDE - BrowserSync', 'Couldn\'t start BrowserSync \n\n', err);
           }
@@ -84,7 +84,7 @@
 
     BrowserSync.prototype.download = function(url, cb) {
       return mkdirp(path.dirname(this.filePath), (function(_this) {
-        return function(err) {
+        return function() {
           _this.file = fs.createWriteStream(_this.filePath);
           return http.get(url, function(response) {
             return response.pipe(_this.file).on('error', function(err) {
