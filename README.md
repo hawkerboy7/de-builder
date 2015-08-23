@@ -22,7 +22,7 @@
 
 ## What is it?
 `de-builder` creates a __Live Development Environment__ (LDE).<br>
-In this environment you can write `.coffee`, `.less` and `.jade` and your code will be compiled on save.<br>
+In this environment you can write `.coffee`,`.js`, `.less`, `.css` and `.jade` and your code will be compiled on save.<br>
 The corresponding part of you program will be either reloaded or restarted.<br>
 This is achieved by using the [modules](https://github.com/hawkerboy7/de-builder#modules).
 
@@ -40,7 +40,9 @@ This is achieved by using the [modules](https://github.com/hawkerboy7/de-builder
 ## Support
 The following languages are supported:
 - .coffee
+- .js
 - .less
+- .css
 - .jade
 
 The following types of LDE are [going to be] supported:
@@ -182,13 +184,12 @@ config =
 ## Planned Support / Features
 - Add support for __LDE__ type 4
 - Add testing support with [Mocha](https://github.com/mochajs/mocha)
-- Support for more languages (.scss?, .litcoffee?, .styl?, ES6?, .ls?)
+- Add support for .scss
 - Create a setup with
 	[de-base](https://github.com/hawkerboy7/de-base)
 	and
 	[de-nw-base](https://github.com/hawkerboy7/de-nw-base)
 	by providing arguments: `--de-base` and `--de-nw-base`
-- And lots of other plans __these will be documented soon__
 
 
 ## Note
