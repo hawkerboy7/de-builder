@@ -27,11 +27,11 @@
     };
 
     Clean.prototype.remove = function(dirPath) {
-      var e, filePath, files, i;
+      var e, error, filePath, files, i;
       try {
         files = fs.readdirSync(dirPath);
-      } catch (_error) {
-        e = _error;
+      } catch (error) {
+        e = error;
         return;
       }
       if (files.length > 0) {
