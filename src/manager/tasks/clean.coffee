@@ -36,13 +36,14 @@ class Clean
 
 	remove: (dirPath) ->
 
-		try
-			files = fs.readdirSync dirPath
-		catch e
-			return
+		files = fs.readdirSync dirPath
 
 		if files.length > 0
 			for i of files
+
+				# Own property guard
+				return if not files.hasOwnProperty i
+
 				filePath = dirPath + '/' + files[i]
 
 				if fs.statSync(filePath).isFile()

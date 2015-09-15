@@ -27,15 +27,13 @@
     };
 
     Clean.prototype.remove = function(dirPath) {
-      var e, error, filePath, files, i;
-      try {
-        files = fs.readdirSync(dirPath);
-      } catch (error) {
-        e = error;
-        return;
-      }
+      var filePath, files, i;
+      files = fs.readdirSync(dirPath);
       if (files.length > 0) {
         for (i in files) {
+          if (!files.hasOwnProperty(i)) {
+            return;
+          }
           filePath = dirPath + '/' + files[i];
           if (fs.statSync(filePath).isFile()) {
             fs.unlinkSync(filePath);
