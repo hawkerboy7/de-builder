@@ -76,6 +76,7 @@ src/
 		Server (LDE type 2)
 ```
 
+
 #### Server (LDE type 2)
 ```
 src/
@@ -178,7 +179,27 @@ config =
 	# 3 Client (node-webkit)
 	# 4 Client (Cordova)
 	type:	1
+
+	# Show de-builder events
+	debug: false
 ```
+
+
+## Known Error's
+
+#### Filewatchers
+There is a limit to how may files can be watched at the same time.
+So if you are running `dropbox`, a gui for `git` and `de-builder` it's possible you run out of file watchers.
+You can get the error: `Fatal error: watch ENOSPC`
+
+Use the follwoing line to increase the allowed filewatchers on your system:
+```
+echo fs.inotify.max_user_watches=524288 | sudo tee -a /etc/sysctl.conf && sudo sysctl -
+```
+source: http://stackoverflow.com/questions/16748737/grunt-watch-error-waiting-fatal-error-watch-enospc
+
+#### Port in use
+After a coffeescript file fails `de-builder` get's shutdown but your program started by `de-builder` doesn't always close aswell. Therefor if you run `node build.js` again you may see the error: ` Error: listen EADDRINUSE`.
 
 
 ## Planned Support / Features
@@ -190,15 +211,3 @@ config =
 	and
 	[de-nw-base](https://github.com/hawkerboy7/de-nw-base)
 	by providing arguments: `--de-base` and `--de-nw-base`
-
-
-## Note
-`de-builder` is an attempt at building a project like [id-builder](https://github.com/Industrial/id-builder). They have the following differences:
-- For now `de-builder` supports 3 languages, `id-builder` supports 6.
-- `de-builder` suppors 3 __LDE__'s `id-builder` supports 1.
-- `Browserify` works out of the box in `de-builder`. No need to add any code snippets.
-- The start-up of `de-builder` is faster. This is not measured accuratly but easiliy noticable.
-- `de-builder` provides the possibility to pass on arguments which can setup your project for you.
-	* __partially supported__`--start` creates all entry files and folders so you know where to start.
-	* __not supported yet__`--de-base` installs [de-base](https://github.com/hawkerboy7/de-base) for you.
-	* __not supported yet__`--de-nw-base` installs [de-nw-base](https://github.com/hawkerboy7/de-nw-base) for you.

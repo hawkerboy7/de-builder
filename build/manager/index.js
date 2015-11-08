@@ -15,18 +15,16 @@
 
   Manager = (function() {
     function Manager(options, start) {
-      log.set({
-        debug: {
-          display: false
-        }
-      });
-      if (!start) {
-        log.clear();
-      }
-      log.info('LDE', 'Live Development Environment started');
       this.options = Validate(config, options);
       this.options.root = path.resolve('./');
-      if (start) {
+      log.set({
+        debug: {
+          display: !!this.options.debug
+        }
+      });
+      log.clear();
+      log.info('LDE', 'Live Development Environment started');
+      if (start === '--start' || start === 'start') {
         return new Project(this.options);
       }
       this.tasks = new Tasks(this.options);

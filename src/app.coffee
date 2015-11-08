@@ -10,4 +10,4 @@ process.title = "de-builder"
 module.exports = (options) ->
 
 	# Start the Manager with options and process argument
-	new Manager options, process.argv[2] is '--start'
+	new Manager options, process.argv[2]

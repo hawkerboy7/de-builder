@@ -21,7 +21,8 @@
     browserSync: {
       enabled: true
     },
-    type: 1
+    type: 1,
+    debug: false
   };
 
   module.exports = config;

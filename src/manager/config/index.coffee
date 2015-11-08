@@ -37,6 +37,9 @@ config =
 	# 4 Client (Cordova)
 	type:	1
 
+	# Show de-builder events
+	debug: false
+
 
 
 module.exports = config
