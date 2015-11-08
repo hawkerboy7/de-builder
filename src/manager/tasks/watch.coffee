@@ -1,9 +1,9 @@
 # --------------------------------------------------
 #   Watch ~ Watches all relevant LDE files
 # --------------------------------------------------
-log         = require 'de-logger'
-path        = require 'path'
-chokidar    = require 'chokidar'
+log      = require 'de-logger'
+path     = require 'path'
+chokidar = require 'chokidar'
 
 
 
@@ -56,16 +56,16 @@ class Watch
 		if @server.options.type is 1
 			chokidar
 				.watch @browserifyRebuild, ignored: [ /[\/\\]\./, "#{@browserifyRebuild}/#{@server.options.browserify.file}".replace '.js', '.bundle.js' ]
-				.on 'add',      => @browserify()
-				.on 'change',   => @browserify()
-				.on 'unlink',   => @browserify()
+				.on 'add',    => @browserify()
+				.on 'change', => @browserify()
+				.on 'unlink', => @browserify()
 
 		# Watch for the Forever task
 		if @server.options.type is 1 or @server.options.type is 2
 			chokidar
 				.watch @foreverRestart , ignored: /[\/\\]\./
-				.on 'change',   => @forever()
-				.on 'unlink',   => @forever()
+				.on 'change', => @forever()
+				.on 'unlink', => @forever()
 
 
 	watcher2: ->
@@ -74,9 +74,9 @@ class Watch
 		if @server.options.type is 3
 			chokidar
 				.watch @browserifyServer, ignored: [ /[\/\\]\./, "#{@browserifyServer}/#{@server.options.browserify.file}".replace '.js', '.bundle.js' ]
-				.on 'add',      => @browserify()
-				.on 'change',   => @browserify()
-				.on 'unlink',   => @browserify()
+				.on 'add',    => @browserify()
+				.on 'change', => @browserify()
+				.on 'unlink', => @browserify()
 
 
 	check: (filePath) ->
@@ -88,8 +88,8 @@ class Watch
 		log.debug 'LDE - Watch', "Add/Change: " + filePath.replace "#{@server.options.root}/", ''
 
 		# Compile specific extentions
-		return @server.less.compile filePath    if extention is '.less'
-		return @server.coffee.compile filePath  if extention is '.coffee'
+		return @server.less.compile filePath   if extention is '.less'
+		return @server.coffee.compile filePath if extention is '.coffee'
 
 		# Copy files in case no extention is recognized
 		@server.copy.compile filePath

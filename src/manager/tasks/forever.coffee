@@ -1,9 +1,9 @@
 # --------------------------------------------------
-#	Forever ~ Starts your server
+#   Forever ~ Starts your server
 # --------------------------------------------------
-fs		= require 'fs'
-log		= require 'de-logger'
-forever	= require 'forever-monitor'
+fs      = require 'fs'
+log     = require 'de-logger'
+forever = require 'forever-monitor'
 
 
 class Forever
@@ -24,9 +24,9 @@ class Forever
 	create: ->
 
 		@child = new (forever.Monitor) @path,
-			max:			1
-			watch:			false
-			killTree:		true
+			max:      1
+			watch:    false
+			killTree: true
 
 		@child.on 'exit:code', (code) =>
 

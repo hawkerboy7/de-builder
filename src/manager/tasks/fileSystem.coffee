@@ -1,10 +1,10 @@
 # --------------------------------------------------
-#	FileSystem ~ Reads and Write files and triggers browser-sync reload
+#   FileSystem ~ Reads and Write files and triggers browser-sync reload
 # --------------------------------------------------
-fs		= require 'fs'
-log		= require 'de-logger'
-path	= require 'path'
-mkdirp	= require 'mkdirp'
+fs      = require 'fs'
+log     = require 'de-logger'
+path    = require 'path'
+mkdirp  = require 'mkdirp'
 
 
 

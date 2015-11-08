@@ -1,8 +1,8 @@
 # --------------------------------------------------
-#	Less ~ Turn .less into .css
+#   Less ~ Turn .less into .css
 # --------------------------------------------------
-fs		= require 'fs'
-less	= require 'less'
+fs   = require 'fs'
+less = require 'less'
 
 # Define global
 Server = null

@@ -1,8 +1,8 @@
 # --------------------------------------------------
 #	Clean ~ Clean the build directory
 # --------------------------------------------------
-fs	= require 'fs'
-log	= require 'de-logger'
+fs  = require 'fs'
+log = require 'de-logger'
 
 
 
