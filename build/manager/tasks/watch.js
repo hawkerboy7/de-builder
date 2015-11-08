@@ -21,8 +21,8 @@
       }
       this.src = this.server.options.root + "/" + this.server.options.src;
       this.foreverRestart = this.server.options.root + "/" + this.server.options.build + sub;
-      this.browserifyRebuild = this.server.options.root + "/" + this.server.options.build + "/" + this.server.options.client + "/" + this.server.options.browserify.folder;
       this.browserifyServer = this.server.options.root + "/" + this.server.options.build + "/" + this.server.options.browserify.folder;
+      this.browserifyRebuild = this.server.options.root + "/" + this.server.options.build + "/" + this.server.options.client + "/" + this.server.options.browserify.folder;
       return this.watcher();
     };
 

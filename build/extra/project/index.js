@@ -11,9 +11,6 @@
 
   Explaination = require('./explaination');
 
-
-  /* TO DO: Add the possibility to build the de-base project! */
-
   Project = (function() {
     var folderError;
 

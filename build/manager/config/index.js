@@ -15,8 +15,8 @@
       folder: 'js'
     },
     forever: {
-      enabled: true,
-      file: 'app.js'
+      file: 'app.js',
+      enabled: true
     },
     browserSync: {
       enabled: true

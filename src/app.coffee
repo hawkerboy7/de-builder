@@ -1,7 +1,7 @@
 # --------------------------------------------------
 #	App ~ Sets title, clears console and starts the Manager
 # --------------------------------------------------
-Manager	= require './manager'
+Manager = require './manager'
 
 # Provide a name for the process
 process.title = "de-builder"

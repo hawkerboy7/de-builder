@@ -1,7 +1,7 @@
 # --------------------------------------------------
 #	Validate ~ Checks if provided options are valid / allowed
 # --------------------------------------------------
-log	= require 'de-logger'
+log = require 'de-logger'
 
 
 

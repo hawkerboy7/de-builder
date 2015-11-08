@@ -1,15 +1,15 @@
 # --------------------------------------------------
 #	Manager ~ Check for --arguments or starts the Tasks
 # --------------------------------------------------
-log			= require 'de-logger'
-path		= require 'path'
+log      = require 'de-logger'
+path     = require 'path'
 
-config		= require './config'
+config   = require './config'
 
 # My Modules
-Tasks		= require './tasks'
-Project		= require '../extra/project'
-Validate	= require './config/validate'
+Tasks    = require './tasks'
+Project  = require '../extra/project'
+Validate = require './config/validate'
 
 
 
@@ -32,7 +32,7 @@ class Manager
 		# Notify start of project
 		log.info 'LDE', 'Live Development Environment started'
 
-		# Build default project based on config and options
+		# Build / check default project folders based on options
 		new Project @options
 
 		# Start tasks
