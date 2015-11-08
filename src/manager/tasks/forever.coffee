@@ -19,6 +19,7 @@ class Forever
 		@path = "#{@server.options.root}/#{@server.options.build}#{sub}#{@server.options.forever.file}"
 
 		@create()
+		@listener()
 
 
 	create: ->
@@ -51,6 +52,25 @@ class Forever
 
 			# Start server
 			@child.start()
+
+
+	listener: ->
+
+		process.on 'exit', ->
+
+			log.info 'LDE - System', 'Shutting down due to exit'
+
+			@child.kill() if @child
+
+			process.exit()
+
+
+		process.on 'uncaughtException', (e) ->
+
+			log.warn 'LDE - System', 'UncaughtException', e
+
+
+
 
 
 
