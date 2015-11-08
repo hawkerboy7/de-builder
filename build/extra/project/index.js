@@ -78,7 +78,7 @@
     };
 
     folderError = function(err) {
-      return log.error('LDE - Project', 'Unable to create folder', err);
+      return log.debug('LDE - Project', 'Unable to create folder', err);
     };
 
     return Project;

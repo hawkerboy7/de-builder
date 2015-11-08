@@ -54,7 +54,7 @@ class Project
 
 
 	folderError = (err) ->
-		log.error 'LDE - Project', 'Unable to create folder', err
+		log.debug 'LDE - Project', 'Unable to create folder', err
 
 
 
