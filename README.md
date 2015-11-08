@@ -33,7 +33,6 @@ This is achieved by using the [modules](https://github.com/hawkerboy7/de-builder
 - There `npm install --save-dev de-builder`.
 - Once `de-builder` has been installed a `build.js` file will have been created.
 - You can adjust the config in the `build.js` file according to your specifications.
-- (Optional: `node build.js --start`) A setup of your project files and folder based on the [config](https://github.com/hawkerboy7/de-builder#config).
 - Now run `node build.js` and your __LDE__ will run and you can start working on your project.
 
 
@@ -188,11 +187,11 @@ config =
 ```
 
 
-## Known Error's
+## Common errors
 
 #### Filewatchers
 There is a limit to how may files can be watched at the same time.
-So if you are running `dropbox`, a gui for `git` and `de-builder` it's possible you run out of file watchers.
+So if you are running `dropbox`, a gui for `git`, `sublime text` and `de-builder` it's easily possible to run out of file watchers.
 You can get the error: `Fatal error: watch ENOSPC`
 
 Use the follwoing line to increase the allowed filewatchers on your system:
@@ -202,7 +201,8 @@ echo fs.inotify.max_user_watches=524288 | sudo tee -a /etc/sysctl.conf && sudo s
 source: http://stackoverflow.com/questions/16748737/grunt-watch-error-waiting-fatal-error-watch-enospc
 
 #### Port in use
-After a coffeescript file fails `de-builder` get's shutdown but your program started by `de-builder` doesn't always close aswell. Therefor if you run `node build.js` again you may see the error: ` Error: listen EADDRINUSE`.
+Pay attention to which port you are using and if another process issn't already running it.
+If you run `node build.js` you may see the error: ` Error: listen EADDRINUSE`. Check if your port is unique. If so your current application might still be running. Check with `top` or `htop` in the ternimal and terminate it.
 
 
 ## Planned Support / Features
