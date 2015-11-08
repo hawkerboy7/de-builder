@@ -13,7 +13,10 @@ class Coffee
 
 		# Compile js file from coffee
 		# - If file is a "server" file a bare compile is made
-		next null, coffee.compile file, bare: server
+		try
+			next null, coffee.compile file, bare: server
+		catch e
+			next e
 
 
 	compile: (filePath) ->
