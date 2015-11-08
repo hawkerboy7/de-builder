@@ -123,7 +123,7 @@
     };
 
     Watch.prototype.remove = function(filePath) {
-      return console.log('Remove file', filePath);
+      return log.debug('LDE - Watch', 'File in build should be removed: ', filePath);
     };
 
     Watch.prototype.browserify = function() {

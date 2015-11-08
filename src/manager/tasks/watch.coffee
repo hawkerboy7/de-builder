@@ -97,7 +97,7 @@ class Watch
 
 	remove: (filePath) ->
 
-		console.log 'Remove file', filePath
+		log.debug 'LDE - Watch', 'File in build should be removed: ', filePath
 
 
 	browserify: ->
