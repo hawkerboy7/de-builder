@@ -26,7 +26,7 @@
       options = {
         cache: {},
         packageCache: {},
-        debug: true,
+        debug: this.server.options.browserify.debug,
         fullPaths: false
       };
       if (this.server.options.type === 3) {

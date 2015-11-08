@@ -12,6 +12,7 @@
     },
     browserify: {
       file: 'app.js',
+      debug: true,
       folder: 'js'
     },
     forever: {

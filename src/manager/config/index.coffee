@@ -19,6 +19,7 @@ config =
 	# Browserify directory and entry file
 	browserify:
 		file:   'app.js'
+		debug:  true
 		folder: 'js'
 
 	# Server path/file to be started by forever

@@ -164,6 +164,9 @@ config =
 		file:	'app.js'
 		folder:	'js'
 
+		# show or hide source maps that allow you to debug your files separately.
+		debug:	true
+
 	# Server path/file to be started by forever
 	forever:
 		enabled: true
