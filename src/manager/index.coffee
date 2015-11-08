@@ -15,16 +15,16 @@ Validate	= require './config/validate'
 
 class Manager
 
-	constructor: (options, start) ->
+	constructor: (options) ->
+
+		# Show / hide debug
+		log.set debug: display: !!options?.debug
 
 		# Set LDE options
 		@options = Validate config, options
 
 		# Set root folder
 		@options.root = path.resolve './'
-
-		# Show / hide debug
-		log.set debug: display: !!@options.debug
 
 		# Clear screen
 		log.clear()
@@ -33,9 +33,7 @@ class Manager
 		log.info 'LDE', 'Live Development Environment started'
 
 		# Build default project based on config and options
-		return new Project @options if start is '--start' or start is 'start'
-
-		# Asumes folders have been made (add a check for this OR the Project functionaly tweaked a little)
+		new Project @options
 
 		# Start tasks
 		@tasks = new Tasks @options

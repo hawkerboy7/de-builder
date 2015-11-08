@@ -6,7 +6,7 @@
   process.title = "de-builder";
 
   module.exports = function(options) {
-    return new Manager(options, process.argv[2]);
+    return new Manager(options);
   };
 
 }).call(this);
