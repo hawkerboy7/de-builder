@@ -20,6 +20,7 @@
       }
       this.path = this.server.options.root + "/" + this.server.options.build + sub + this.server.options.forever.file;
       this.create();
+      this.listener();
     }
 
     Forever.prototype.create = function() {
@@ -53,6 +54,19 @@
           return _this.child.start();
         };
       })(this));
+    };
+
+    Forever.prototype.listener = function() {
+      process.on('exit', function() {
+        log.info('LDE - System', 'Shutting down due to exit');
+        if (this.child) {
+          this.child.kill();
+        }
+        return process.exit();
+      });
+      return process.on('uncaughtException', function(e) {
+        return log.warn('LDE - System', 'UncaughtException', e);
+      });
     };
 
     return Forever;

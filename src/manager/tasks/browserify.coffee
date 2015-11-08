@@ -1,12 +1,12 @@
 # --------------------------------------------------
-#	Browserify ~ Bundles all client .js and .jade files
+#   Browserify ~ Bundles all client .js and .jade files
 # --------------------------------------------------
-fs			= require 'fs'
-path		= require 'path'
-log			= require 'de-logger'
-jadeify		= require 'jadeify'
-watchify	= require 'watchify'
-browserify	= require 'browserify'
+fs          = require 'fs'
+path        = require 'path'
+log         = require 'de-logger'
+jadeify     = require 'jadeify'
+watchify    = require 'watchify'
+browserify  = require 'browserify'
 
 
 
@@ -26,23 +26,23 @@ class Browserify
 		options =
 
 			# Watchify
-			cache:			{}
-			packageCache:	{}
+			cache:        {}
+			packageCache: {}
 
 			# Show origin of the error in the console
-			debug:			true
+			debug:        @server.options.browserify.debug
 
 			# Don't show paths to files in the app.bundle.js
-			fullPaths:		false
+			fullPaths:    false
 
 		# Node-webkit support
 		if @server.options.type is 3
 
 			# Don't use the debug yet due to the # error in node-webkit
-			options.debug =		false
+			options.debug =    false
 
 			# Stop browserify from usinig it's own modules
-			options.builtins =	false
+			options.builtins = false
 
 
 		@w = watchify browserify options

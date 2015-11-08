@@ -14,21 +14,17 @@
   Validate = require('./config/validate');
 
   Manager = (function() {
-    function Manager(options, start) {
+    function Manager(options) {
       log.set({
         debug: {
-          display: false
+          display: !!(options != null ? options.debug : void 0)
         }
       });
-      if (!start) {
-        log.clear();
-      }
-      log.info('LDE', 'Live Development Environment started');
       this.options = Validate(config, options);
       this.options.root = path.resolve('./');
-      if (start) {
-        return new Project(this.options);
-      }
+      log.clear();
+      log.info('LDE', 'Live Development Environment started');
+      new Project(this.options);
       this.tasks = new Tasks(this.options);
     }
 

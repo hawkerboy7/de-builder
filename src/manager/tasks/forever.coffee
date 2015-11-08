@@ -1,9 +1,9 @@
 # --------------------------------------------------
-#	Forever ~ Starts your server
+#   Forever ~ Starts your server
 # --------------------------------------------------
-fs		= require 'fs'
-log		= require 'de-logger'
-forever	= require 'forever-monitor'
+fs      = require 'fs'
+log     = require 'de-logger'
+forever = require 'forever-monitor'
 
 
 class Forever
@@ -19,14 +19,15 @@ class Forever
 		@path = "#{@server.options.root}/#{@server.options.build}#{sub}#{@server.options.forever.file}"
 
 		@create()
+		@listener()
 
 
 	create: ->
 
 		@child = new (forever.Monitor) @path,
-			max:			1
-			watch:			false
-			killTree:		true
+			max:      1
+			watch:    false
+			killTree: true
 
 		@child.on 'exit:code', (code) =>
 
@@ -51,6 +52,25 @@ class Forever
 
 			# Start server
 			@child.start()
+
+
+	listener: ->
+
+		process.on 'exit', ->
+
+			log.info 'LDE - System', 'Shutting down due to exit'
+
+			@child.kill() if @child
+
+			process.exit()
+
+
+		process.on 'uncaughtException', (e) ->
+
+			log.warn 'LDE - System', 'UncaughtException', e
+
+
+
 
 
 

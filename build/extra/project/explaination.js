@@ -13,7 +13,7 @@
     if (type === 3) {
       message += 'Client (NodeWebkit)';
     }
-    return message += '" has been set-up!';
+    return message += '" has been checked!';
   };
 
   module.exports = Explaination;

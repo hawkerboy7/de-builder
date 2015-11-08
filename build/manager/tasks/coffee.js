@@ -9,11 +9,16 @@
     }
 
     Coffee.prototype._compile = function(arg, next) {
-      var file, server;
+      var e, error, file, server;
       file = arg.file, server = arg.server;
-      return next(null, coffee.compile(file, {
-        bare: server
-      }));
+      try {
+        return next(null, coffee.compile(file, {
+          bare: server
+        }));
+      } catch (error) {
+        e = error;
+        return next(e);
+      }
     };
 
     Coffee.prototype.compile = function(filePath) {

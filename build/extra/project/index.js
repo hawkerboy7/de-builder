@@ -11,9 +11,6 @@
 
   Explaination = require('./explaination');
 
-
-  /* TO DO: Add the possibility to build the de-base project! */
-
   Project = (function() {
     var folderError;
 
@@ -81,7 +78,7 @@
     };
 
     folderError = function(err) {
-      return log.error('LDE - Project', 'Unable to create folder', err);
+      return log.debug('LDE - Project', 'Unable to create folder', err);
     };
 
     return Project;

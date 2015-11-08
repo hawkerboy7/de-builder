@@ -12,16 +12,18 @@
     },
     browserify: {
       file: 'app.js',
+      debug: true,
       folder: 'js'
     },
     forever: {
-      enabled: true,
-      file: 'app.js'
+      file: 'app.js',
+      enabled: true
     },
     browserSync: {
       enabled: true
     },
-    type: 1
+    type: 1,
+    debug: false
   };
 
   module.exports = config;

@@ -1,9 +1,9 @@
 # --------------------------------------------------
-#	Watch ~ Watches all relevant LDE files
+#   Watch ~ Watches all relevant LDE files
 # --------------------------------------------------
-log			= require 'de-logger'
-path		= require 'path'
-chokidar	= require 'chokidar'
+log      = require 'de-logger'
+path     = require 'path'
+chokidar = require 'chokidar'
 
 
 
@@ -22,11 +22,11 @@ class Watch
 		sub = "/#{@server.options.server}" if @server.options.type isnt 2
 
 		# Source file to watch
-		@src				= "#{@server.options.root}/#{@server.options.src}"
+		@src               = "#{@server.options.root}/#{@server.options.src}"
 
-		@foreverRestart		= "#{@server.options.root}/#{@server.options.build}#{sub}"
-		@browserifyRebuild	= "#{@server.options.root}/#{@server.options.build}/#{@server.options.client}/#{@server.options.browserify.folder}"
-		@browserifyServer	= "#{@server.options.root}/#{@server.options.build}/#{@server.options.browserify.folder}"
+		@foreverRestart    = "#{@server.options.root}/#{@server.options.build}#{sub}"
+		@browserifyServer  = "#{@server.options.root}/#{@server.options.build}/#{@server.options.browserify.folder}"
+		@browserifyRebuild = "#{@server.options.root}/#{@server.options.build}/#{@server.options.client}/#{@server.options.browserify.folder}"
 
 		# Start wachter
 		@watcher()
@@ -43,29 +43,29 @@ class Watch
 			.on 'ready', =>
 
 				# Start watching the build after CLEAN is finished
-				@watcher2()		if @server.options.type is 3
+				@watcher2()     if @server.options.type is 3
 
 				# This proccess will become event driven (so after all compiling is done) instead of a time delay
 				setTimeout(=>
 					@server.ready = true
-					@browserify()	if @server.options.type is 1 or @server.options.type is 3
-					@forever()		if @server.options.type is 1 or @server.options.type is 2
+					@browserify()   if @server.options.type is 1 or @server.options.type is 3
+					@forever()      if @server.options.type is 1 or @server.options.type is 2
 				,250)
 
 		# Watch for the Browserify task
 		if @server.options.type is 1
 			chokidar
 				.watch @browserifyRebuild, ignored: [ /[\/\\]\./, "#{@browserifyRebuild}/#{@server.options.browserify.file}".replace '.js', '.bundle.js' ]
-				.on 'add',		=> @browserify()
-				.on 'change',	=> @browserify()
-				.on 'unlink',	=> @browserify()
+				.on 'add',    => @browserify()
+				.on 'change', => @browserify()
+				.on 'unlink', => @browserify()
 
 		# Watch for the Forever task
 		if @server.options.type is 1 or @server.options.type is 2
 			chokidar
 				.watch @foreverRestart , ignored: /[\/\\]\./
-				.on 'change',	=> @forever()
-				.on 'unlink',	=> @forever()
+				.on 'change', => @forever()
+				.on 'unlink', => @forever()
 
 
 	watcher2: ->
@@ -74,9 +74,9 @@ class Watch
 		if @server.options.type is 3
 			chokidar
 				.watch @browserifyServer, ignored: [ /[\/\\]\./, "#{@browserifyServer}/#{@server.options.browserify.file}".replace '.js', '.bundle.js' ]
-				.on 'add',		=> @browserify()
-				.on 'change',	=> @browserify()
-				.on 'unlink',	=> @browserify()
+				.on 'add',    => @browserify()
+				.on 'change', => @browserify()
+				.on 'unlink', => @browserify()
 
 
 	check: (filePath) ->
@@ -88,8 +88,8 @@ class Watch
 		log.debug 'LDE - Watch', "Add/Change: " + filePath.replace "#{@server.options.root}/", ''
 
 		# Compile specific extentions
-		return @server.less.compile filePath	if extention is '.less'
-		return @server.coffee.compile filePath	if extention is '.coffee'
+		return @server.less.compile filePath   if extention is '.less'
+		return @server.coffee.compile filePath if extention is '.coffee'
 
 		# Copy files in case no extention is recognized
 		@server.copy.compile filePath
@@ -97,7 +97,7 @@ class Watch
 
 	remove: (filePath) ->
 
-		console.log 'Remove file', filePath
+		log.debug 'LDE - Watch', 'File in build should be removed: ', filePath
 
 
 	browserify: ->
