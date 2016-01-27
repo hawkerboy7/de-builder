@@ -29,5 +29,6 @@
   "bugs": "https://github.com/hawkerboy7/de-builder/issues",
   "scripts": {
     "postinstall": "node install.js"
-  }
+  },
+  "homepage": "https://github.com/hawkerboy7/de-builder#readme"
 }
