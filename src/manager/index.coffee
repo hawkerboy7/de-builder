@@ -33,10 +33,12 @@ class Manager
 		log.info 'LDE', 'Live Development Environment started'
 
 		# Build / check default project folders based on options
-		new Project @options
+		new Project @options, (e) ->
 
-		# Start tasks
-		@tasks = new Tasks @options
+			log.warn 'LDE', e if e
+
+			# Start tasks
+			new Tasks @options
 
 
 

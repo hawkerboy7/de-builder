@@ -196,7 +196,7 @@ You can get the error: `Fatal error: watch ENOSPC`
 
 Use the follwoing line to increase the allowed filewatchers on your system:
 ```
-echo fs.inotify.max_user_watches=524288 | sudo tee -a /etc/sysctl.conf && sudo sysctl -
+echo fs.inotify.max_user_watches=524288 | sudo tee -a /etc/sysctl.conf && sudo sysctl -p
 ```
 source: http://stackoverflow.com/questions/16748737/grunt-watch-error-waiting-fatal-error-watch-enospc
 
@@ -206,9 +206,9 @@ If you run `node build.js` you may see the error: ` Error: listen EADDRINUSE`. C
 
 
 ## Planned Support / Features
-- Add support for __LDE__ type 4
-- Add testing support with [Mocha](https://github.com/mochajs/mocha)
 - Add support for .scss
+- Add testing support with [Mocha](https://github.com/mochajs/mocha)
+- Add support for __LDE__ type 4
 - Create a setup with
 	[de-base](https://github.com/hawkerboy7/de-base)
 	and

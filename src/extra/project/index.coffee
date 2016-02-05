@@ -13,10 +13,10 @@ Explaination = require './explaination'
 
 class Project
 
-	constructor: (@options) ->
+	constructor: (@options, @cb) ->
 
 		# Check if provided options are valid / allowed
-		return unless Validate @options
+		return @cb 'provided options where not valid' unless Validate @options
 
 		# Build folders
 		@folders()
@@ -36,25 +36,31 @@ class Project
 		@buildServer = "#{@build}/#{@options.server}"
 		@buildClient = "#{@build}/#{@options.client}"
 
+		@i = 0
 		@typeOne() if @options.type is 1
 		@typeTwo() if @options.type is 2
 		@typeTwo() if @options.type is 3
 
 
 	typeOne: ->
-		mkdirp @srcServer,   (err) -> folderError err if err
-		mkdirp @srcClient,   (err) -> folderError err if err
-		mkdirp @buildServer, (err) -> folderError err if err
-		mkdirp @buildClient, (err) -> folderError err if err
+		mkdirp @srcServer,   @handle
+		mkdirp @srcClient,   @handle
+		mkdirp @buildServer, @handle
+		mkdirp @buildClient, @handle
 
 
 	typeTwo: ->
-		mkdirp @src,   (err) -> folderError err if err
-		mkdirp @build, (err) -> folderError err if err
+		mkdirp @src,   @handle
+		mkdirp @build, @handle
 
 
-	folderError = (err) ->
-		log.debug 'LDE - Project', 'Unable to create folder', err
+	handle: (e) =>
+
+		@i++
+
+		return log.debug 'LDE - Project', 'Unable to create folder', e if e
+
+		@cb() if (@options.type is 1 and @i is 4) or (@options.type is 2 and @i is 2)
 
 
 
