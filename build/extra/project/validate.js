@@ -1,7 +1,5 @@
 (function() {
-  var Validate, log;
-
-  log = require('de-logger');
+  var Validate;
 
   Validate = function(options) {
     var valid;

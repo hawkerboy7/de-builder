@@ -1,7 +1,5 @@
 (function() {
-  var Less, Server, fs, less;
-
-  fs = require('fs');
+  var Less, Server, less;
 
   less = require('less');
 

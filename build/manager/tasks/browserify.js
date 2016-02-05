@@ -1,9 +1,7 @@
 (function() {
-  var Browserify, browserify, fs, jadeify, log, path, watchify;
+  var Browserify, browserify, fs, jadeify, log, watchify;
 
   fs = require('fs');
-
-  path = require('path');
 
   log = require('de-logger');
 

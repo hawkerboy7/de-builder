@@ -1,8 +1,6 @@
 (function() {
-  var Explaination, Project, Validate, fs, log, mkdirp,
+  var Explaination, Project, Validate, log, mkdirp,
     bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
-
-  fs = require('fs');
 
   log = require('de-logger');
 
