@@ -1,7 +1,6 @@
 # --------------------------------------------------
 #   Less ~ Turn .less into .css
 # --------------------------------------------------
-fs   = require 'fs'
 less = require 'less'
 
 # Define global

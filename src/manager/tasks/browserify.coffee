@@ -2,7 +2,6 @@
 #   Browserify ~ Bundles all client .js and .jade files
 # --------------------------------------------------
 fs          = require 'fs'
-path        = require 'path'
 log         = require 'de-logger'
 jadeify     = require 'jadeify'
 watchify    = require 'watchify'

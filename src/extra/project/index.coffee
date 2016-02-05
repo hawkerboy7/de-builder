@@ -1,7 +1,6 @@
 # --------------------------------------------------
 #	Project ~ Build a new default project structure based on provided options
 # --------------------------------------------------
-fs     = require 'fs'
 log    = require 'de-logger'
 mkdirp = require 'mkdirp'
 
