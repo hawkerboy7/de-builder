@@ -1,6 +1,6 @@
 {
   "name": "de-builder",
-  "version": "0.6.1",
+  "version": "0.6.2",
   "description": "A Live Development Environment with support for NodeWebkit",
   "main": "build/app.js",
   "author": "Dexter Esajas <dexter.esajas@gmail.com>",
