@@ -1,5 +1,6 @@
 (function() {
-  var Explaination, Project, Validate, fs, log, mkdirp;
+  var Explaination, Project, Validate, fs, log, mkdirp,
+    bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
 
   fs = require('fs');
 
@@ -12,12 +13,12 @@
   Explaination = require('./explaination');
 
   Project = (function() {
-    var folderError;
-
-    function Project(options) {
+    function Project(options, cb) {
       this.options = options;
+      this.cb = cb;
+      this.handle = bind(this.handle, this);
       if (!Validate(this.options)) {
-        return;
+        return this.cb('provided options where not valid');
       }
       this.folders();
       log.info('LDE - Project', Explaination(this.options.type));
@@ -30,6 +31,7 @@
       this.srcClient = this.src + "/" + this.options.client;
       this.buildServer = this.build + "/" + this.options.server;
       this.buildClient = this.build + "/" + this.options.client;
+      this.i = 0;
       if (this.options.type === 1) {
         this.typeOne();
       }
@@ -42,43 +44,25 @@
     };
 
     Project.prototype.typeOne = function() {
-      mkdirp(this.srcServer, function(err) {
-        if (err) {
-          return folderError(err);
-        }
-      });
-      mkdirp(this.srcClient, function(err) {
-        if (err) {
-          return folderError(err);
-        }
-      });
-      mkdirp(this.buildServer, function(err) {
-        if (err) {
-          return folderError(err);
-        }
-      });
-      return mkdirp(this.buildClient, function(err) {
-        if (err) {
-          return folderError(err);
-        }
-      });
+      mkdirp(this.srcServer, this.handle);
+      mkdirp(this.srcClient, this.handle);
+      mkdirp(this.buildServer, this.handle);
+      return mkdirp(this.buildClient, this.handle);
     };
 
     Project.prototype.typeTwo = function() {
-      mkdirp(this.src, function(err) {
-        if (err) {
-          return folderError(err);
-        }
-      });
-      return mkdirp(this.build, function(err) {
-        if (err) {
-          return folderError(err);
-        }
-      });
+      mkdirp(this.src, this.handle);
+      return mkdirp(this.build, this.handle);
     };
 
-    folderError = function(err) {
-      return log.debug('LDE - Project', 'Unable to create folder', err);
+    Project.prototype.handle = function(e) {
+      this.i++;
+      if (e) {
+        return log.debug('LDE - Project', 'Unable to create folder', e);
+      }
+      if ((this.options.type === 1 && this.i === 4) || (this.options.type === 2 && this.i === 2)) {
+        return this.cb();
+      }
     };
 
     return Project;

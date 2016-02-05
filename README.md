@@ -206,9 +206,9 @@ If you run `node build.js` you may see the error: ` Error: listen EADDRINUSE`. C
 
 
 ## Planned Support / Features
-- Add support for __LDE__ type 4
-- Add testing support with [Mocha](https://github.com/mochajs/mocha)
 - Add support for .scss
+- Add testing support with [Mocha](https://github.com/mochajs/mocha)
+- Add support for __LDE__ type 4
 - Create a setup with
 	[de-base](https://github.com/hawkerboy7/de-base)
 	and

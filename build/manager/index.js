@@ -24,8 +24,12 @@
       this.options.root = path.resolve('./');
       log.clear();
       log.info('LDE', 'Live Development Environment started');
-      new Project(this.options);
-      this.tasks = new Tasks(this.options);
+      new Project(this.options, function(e) {
+        if (e) {
+          log.warn('LDE', e);
+        }
+        return new Tasks(this.options);
+      });
     }
 
     return Manager;
