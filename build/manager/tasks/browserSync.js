@@ -1,5 +1,5 @@
 (function() {
-  var BrowserSync, browserSync, bsExists, bsPath, fs, http, log, mkdirp, path, version;
+  var BrowserSync, browserSync, fs, http, log, mkdirp, path, version;
 
   fs = require('fs');
 
@@ -13,21 +13,7 @@
 
   browserSync = require('browser-sync');
 
-  version = null;
-
-  bsExists = null;
-
-  bsPath = path.resolve(__dirname, '../../../node_modules/browser-sync');
-
-  fs.exists(bsPath, function(exists) {
-    var ref;
-    bsExists = exists;
-    if (bsExists) {
-      return ref = require('../../../node_modules/browser-sync/package.json'), version = ref.version, ref;
-    } else {
-      return log.warn('browser-sync not found');
-    }
-  });
+  version = require('browser-sync/package.json').version;
 
   BrowserSync = (function() {
     function BrowserSync(server) {

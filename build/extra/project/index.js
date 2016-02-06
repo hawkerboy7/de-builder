@@ -55,11 +55,11 @@
 
     Project.prototype.handle = function(e) {
       this.i++;
+      if ((this.options.type === 1 && this.i === 4) || (this.options.type === 2 && this.i === 2)) {
+        this.cb();
+      }
       if (e) {
         return log.debug('LDE - Project', 'Unable to create folder', e);
-      }
-      if ((this.options.type === 1 && this.i === 4) || (this.options.type === 2 && this.i === 2)) {
-        return this.cb();
       }
     };
 
