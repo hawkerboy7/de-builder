@@ -7,23 +7,7 @@ http        = require 'http'
 path        = require 'path'
 mkdirp      = require 'mkdirp'
 browserSync = require 'browser-sync'
-
-# Set version
-version     = null
-bsExists    = null
-
-# Get path to browser-sync
-bsPath = path.resolve __dirname, '../../../node_modules/browser-sync'
-
-# Check if path exists
-fs.exists bsPath, (exists) ->
-
-	bsExists = exists
-
-	if bsExists
-		{ version } = require '../../../node_modules/browser-sync/package.json'
-	else
-		log.warn 'browser-sync not found'
+{ version } = require 'browser-sync/package.json'
 
 
 

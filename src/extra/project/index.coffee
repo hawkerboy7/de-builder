@@ -57,9 +57,10 @@ class Project
 
 		@i++
 
+		@cb() if (@options.type is 1 and @i is 4) or (@options.type is 2 and @i is 2)
+
 		return log.debug 'LDE - Project', 'Unable to create folder', e if e
 
-		@cb() if (@options.type is 1 and @i is 4) or (@options.type is 2 and @i is 2)
 
 
 
