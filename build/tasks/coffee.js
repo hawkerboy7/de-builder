@@ -1,0 +1,59 @@
+(function() {
+  var Coffee, coffee, fs, log, mkdirp, path,
+    bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
+
+  fs = require('fs');
+
+  path = require('path');
+
+  log = require('de-logger');
+
+  mkdirp = require('mkdirp');
+
+  coffee = require('coffee-script');
+
+  Coffee = (function() {
+    function Coffee(server) {
+      this.server = server;
+      this.coffee = bind(this.coffee, this);
+      this.listeners();
+    }
+
+    Coffee.prototype.listeners = function() {
+      return this.server.vent.on('coffee:file', this.coffee);
+    };
+
+    Coffee.prototype.coffee = function(file, init) {
+      var build;
+      build = this.server.toBuild(file).replace('.coffee', '.js');
+      return fs.readFile(this.server.root + path.sep + file, {
+        encoding: 'utf-8'
+      }, (function(_this) {
+        return function(err, data) {
+          if (err) {
+            return log.error(err);
+          }
+          return mkdirp(path.dirname(build), function() {
+            return fs.writeFile(_this.server.root + path.sep + build, coffee.compile(data, {
+              bare: true
+            }), function(err) {
+              if (err) {
+                return log.error(err);
+              }
+              log.info(_this.server.config.title + " - Coffee", "" + build);
+              if (!init) {
+                return _this.server.vent.emit('watch:increase');
+              }
+            });
+          });
+        };
+      })(this));
+    };
+
+    return Coffee;
+
+  })();
+
+  module.exports = Coffee;
+
+}).call(this);
