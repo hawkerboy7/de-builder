@@ -14,7 +14,7 @@ config = {
   less: {
     file: 'app.css',
     entry: 'app.less',
-    folder: 'styles-multi-error'
+    folder: 'styles'
   },
   browserify: {
     file: 'app.js',

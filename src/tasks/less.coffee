@@ -4,9 +4,9 @@ path = require 'path'
 
 # NPM
 log    = require 'de-logger'
+less   = require 'less'
 mkdirp = require 'mkdirp'
 
-less   = require 'less'
 
 
 
@@ -51,6 +51,9 @@ class Less
 
 	determin: ->
 
+		log.debug "#{@server.config.title} - Less", "Entry file not found: #{@entry}"
+
+		# Store multi setup folders
 		@folders = []
 
 		# Read all files in entry folder
@@ -65,9 +68,12 @@ class Less
 				continue if not fs.statSync(folder = @folder+path.sep+file).isDirectory()
 
 				# Add less bundle folders
-				@folders.push folder
+				@folders.push
+					src   : folder
+					bare  : folder.replace @server.root+path.sep, ''
+					name  : file
 
-				log.error "#{@server.config.title} - Less", "No folders are found for a multi setup" if @folders.length is 0
+			log.error "#{@server.config.title} - Less", "No folders are found for a multi setup" if @folders.length is 0
 
 
 	less: (file, init) =>
@@ -78,17 +84,33 @@ class Less
 		log.debug "#{@server.config.title} - Less", "Change: #{file}" if file
 
 		# Comple a single bundle if multiple bundles are not required
-		@single @entry, @folder, @destination, @map if @type is 'single'
+		if @type is 'single'
+
+			@single
+				sFile   : @entry
+				sFolder : @folder
+				dFile   : @destination
+
+		# Compile one (or all) of the multiple bundles
+		if @type is 'multi'
+
+			@multi file
 
 
 	multi: (file) ->
 
-		console.log '', file
+		for folder in @folders
+
+			(continue if -1 is file.indexOf folder.bare) if file
+
+			@single
+				sFile   : folder.src+path.sep+'index.less'
+				sFolder : folder.src
+				dFile   : @map+path.sep+folder.name+'.css'
+				name    : folder.name
 
 
-
-
-	single: (sFile, sFolder, dFile, dFolder, type) ->
+	single: ({sFile, sFolder, dFile, name}) ->
 
 		fs.readFile sFile, 'utf8', (e, res) =>
 
@@ -97,10 +119,10 @@ class Less
 				return
 
 			# Create folder structure for the .css file
-			mkdirp dFolder, =>
+			mkdirp @map, =>
 
 				# Create less file
-				less.render res, {paths: [sFolder], filename: @config.file, compress: true}, (e, output) =>
+				less.render res, {paths: [sFolder], compress: true}, (e, output) =>
 
 					# In case of an error in the .less file
 					return log.error "#{@server.config.title} - Less", e if e
@@ -113,10 +135,10 @@ class Less
 						# In case of an error in the .less file
 						return log.error "#{@server.config.title} - Less", e if e
 
-						message = ""
-						message = "Multi: " if type
+						# Define prefix
+						if name then prefix = "#{name}: " else prefix = ""
 
-						log.info "#{@server.config.title} - Less", message+@destination.replace @server.root+path.sep, ''
+						log.info "#{@server.config.title} - Less", prefix+dFile.replace @server.root+path.sep, ''
 
 
 

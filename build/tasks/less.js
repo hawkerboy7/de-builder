@@ -8,9 +8,9 @@
 
   log = require('de-logger');
 
-  mkdirp = require('mkdirp');
-
   less = require('less');
+
+  mkdirp = require('mkdirp');
 
   Less = (function() {
     function Less(server) {
@@ -45,27 +45,28 @@
     };
 
     Less.prototype.determin = function() {
+      log.debug(this.server.config.title + " - Less", "Entry file not found: " + this.entry);
       this.folders = [];
       return fs.readdir(this.folder, (function(_this) {
         return function(e, files) {
-          var file, folder, i, len, results;
+          var file, folder, i, len;
           if (e) {
             return log.error(_this.server.config.title + " - Less", e);
           }
-          results = [];
           for (i = 0, len = files.length; i < len; i++) {
             file = files[i];
             if (!fs.statSync(folder = _this.folder + path.sep + file).isDirectory()) {
               continue;
             }
-            _this.folders.push(folder);
-            if (_this.folders.length === 0) {
-              results.push(log.error(_this.server.config.title + " - Less", "No folders are found for a multi setup"));
-            } else {
-              results.push(void 0);
-            }
+            _this.folders.push({
+              src: folder,
+              bare: folder.replace(_this.server.root + path.sep, ''),
+              name: file
+            });
           }
-          return results;
+          if (_this.folders.length === 0) {
+            return log.error(_this.server.config.title + " - Less", "No folders are found for a multi setup");
+          }
         };
       })(this));
     };
@@ -78,25 +79,50 @@
         log.debug(this.server.config.title + " - Less", "Change: " + file);
       }
       if (this.type === 'single') {
-        return this.single(this.entry, this.folder, this.destination, this.map);
+        this.single({
+          sFile: this.entry,
+          sFolder: this.folder,
+          dFile: this.destination
+        });
+      }
+      if (this.type === 'multi') {
+        return this.multi(file);
       }
     };
 
     Less.prototype.multi = function(file) {
-      return console.log('', file);
+      var folder, i, len, ref, results;
+      ref = this.folders;
+      results = [];
+      for (i = 0, len = ref.length; i < len; i++) {
+        folder = ref[i];
+        if (file) {
+          if (-1 === file.indexOf(folder.bare)) {
+            continue;
+          }
+        }
+        results.push(this.single({
+          sFile: folder.src + path.sep + 'index.less',
+          sFolder: folder.src,
+          dFile: this.map + path.sep + folder.name + '.css',
+          name: folder.name
+        }));
+      }
+      return results;
     };
 
-    Less.prototype.single = function(sFile, sFolder, dFile, dFolder, type) {
+    Less.prototype.single = function(arg) {
+      var dFile, name, sFile, sFolder;
+      sFile = arg.sFile, sFolder = arg.sFolder, dFile = arg.dFile, name = arg.name;
       return fs.readFile(sFile, 'utf8', (function(_this) {
         return function(e, res) {
           if (e) {
             log.error(_this.server.config.title + " - Less", "" + e);
             return;
           }
-          return mkdirp(dFolder, function() {
+          return mkdirp(_this.map, function() {
             return less.render(res, {
               paths: [sFolder],
-              filename: _this.config.file,
               compress: true
             }, function(e, output) {
               var css;
@@ -107,15 +133,16 @@
                 return log.error(_this.server.config.title + " - Less", "No css output: " + output);
               }
               return fs.writeFile(dFile, css, function(e) {
-                var message;
+                var prefix;
                 if (e) {
                   return log.error(_this.server.config.title + " - Less", e);
                 }
-                message = "";
-                if (type) {
-                  message = "Multi: ";
+                if (name) {
+                  prefix = name + ": ";
+                } else {
+                  prefix = "";
                 }
-                return log.info(_this.server.config.title + " - Less", message + _this.destination.replace(_this.server.root + path.sep, ''));
+                return log.info(_this.server.config.title + " - Less", prefix + dFile.replace(_this.server.root + path.sep, ''));
               });
             });
           });
