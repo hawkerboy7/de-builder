@@ -59,10 +59,7 @@ class Watch
 	addChange: (type, file) ->
 
 		# Notify
-		if @init
-			log.info "#{@server.config.title} - Watch", "#{type}: #{file}"
-		else
-			log.debug "#{@server.config.title} - Watch", "#{type}: #{file}"
+		log.debug "#{@server.config.title} - Watch", "#{type}: #{file}"
 
 		# Get extention
 		extention = path.extname file

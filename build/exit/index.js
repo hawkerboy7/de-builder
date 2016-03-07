@@ -56,9 +56,8 @@
 
     Exit.prototype.command = function(command) {
       if (command === 'exit') {
-        process.exit();
+        return process.exit();
       }
-      return log.event('command', command);
     };
 
     return Exit;

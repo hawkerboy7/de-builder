@@ -60,7 +60,7 @@ class Exit
 		process.exit() if command is 'exit'
 
 		# Log command
-		log.event 'command', command
+		# log.event 'command', command
 
 
 

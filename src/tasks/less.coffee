@@ -28,11 +28,7 @@ class Less
 		# Guard: don't build .css if the watch issn't ready
 		return if file and not init
 
-		# Declare what happens the initial build
-		if file
-			log.debug "#{@server.config.title} - Less", "Start #{file}"
-		else
-			log.info "#{@server.config.title} - Less", "Start initial build"
+		log.debug "#{@server.config.title} - Less", "Change: #{file}" if file
 
 		# Create path to less entry file and folder
 		folder = @server.folders.src.client+path.sep+@server.config.less.folder
@@ -45,7 +41,6 @@ class Less
 		fs.readFile entry, 'utf8', (e, res) =>
 
 			if e
-				log.warn "#{@server.config.title} - Less", "Unable to read entry file: #{entry}"
 				log.error "#{@server.config.title} - Less", "#{e}"
 				return
 

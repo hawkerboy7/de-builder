@@ -30,9 +30,7 @@
         return;
       }
       if (file) {
-        log.debug(this.server.config.title + " - Less", "Start " + file);
-      } else {
-        log.info(this.server.config.title + " - Less", "Start initial build");
+        log.debug(this.server.config.title + " - Less", "Change: " + file);
       }
       folder = this.server.folders.src.client + path.sep + this.server.config.less.folder;
       entry = folder + path.sep + this.server.config.less.entry;
@@ -41,7 +39,6 @@
       return fs.readFile(entry, 'utf8', (function(_this) {
         return function(e, res) {
           if (e) {
-            log.warn(_this.server.config.title + " - Less", "Unable to read entry file: " + entry);
             log.error(_this.server.config.title + " - Less", "" + e);
             return;
           }

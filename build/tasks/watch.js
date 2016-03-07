@@ -52,11 +52,7 @@
 
     Watch.prototype.addChange = function(type, file) {
       var extention;
-      if (this.init) {
-        log.info(this.server.config.title + " - Watch", type + ": " + file);
-      } else {
-        log.debug(this.server.config.title + " - Watch", type + ": " + file);
-      }
+      log.debug(this.server.config.title + " - Watch", type + ": " + file);
       extention = path.extname(file);
       if (extention === '.less') {
         return this.server.vent.emit('less:file', file, this.init);
