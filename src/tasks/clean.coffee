@@ -4,6 +4,7 @@ fs = require 'fs'
 # NPM
 log   = require 'de-logger'
 rmdir = require 'rmdir'
+mkdirp = require 'mkdirp'
 
 
 
@@ -21,28 +22,16 @@ class Clean
 
 	start: =>
 
-		# Remove the client and server folders' content based on type
-		if (@type = @server.config.type) is 1
+		# Remove build folder
+		rmdir @server.folders.build.index, =>
 
-			rmdir @server.folders.build.server, @handle
-			rmdir @server.folders.build.client, @handle
+			# Create build folder
+			mkdirp @server.folders.build.index, =>
 
-		# Remove the build's folder content based on type
-		if @type is 2 or @type is 3
+				log.info 'LDE - Clean', @server.symbols.finished
 
-			rmdir @server.folders.build.index, @handle
-
-
-	handle: =>
-
-		# Guard in case of type 1
-		return @check = true if @type is 1 and not @check
-
-		# Notify terminal
-		log.info 'LDE - Clean', @server.symbols.finished
-
-		# Notify clean status
-		@server.vent.emit 'clean:done'
+				# Notify application
+				@server.vent.emit 'clean:done'
 
 
 
