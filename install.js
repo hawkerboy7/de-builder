@@ -1,5 +1,5 @@
 // --------------------------------------------------
-//	Install ~ Creates a build.js file
+// Install ~ Creates a build.js file with all default options
 // --------------------------------------------------
 "use strict"
 
