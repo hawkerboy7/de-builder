@@ -19,6 +19,7 @@ class Watch
 
 		@server.vent.on 'project:done', @watchSrc
 		@server.vent.on 'watch:increase', @increase
+		@server.vent.on 'watch:initialized', @watchBuild
 
 
 	watchSrc: =>
@@ -102,21 +103,14 @@ class Watch
 		# Watch has found all files
 		@server.vent.emit 'watch:init'
 
-		# # Start watching the build after CLEAN is finished
-		# @watcher2()     if @server.options.type is 3
 
-		# # This proccess will become event driven (so after all compiling is done) instead of a time delay
-		# setTimeout(=>
-		# 	@server.ready = true
-		# 	@browserify()   if @server.options.type is 1 or @server.options.type is 3
-		# 	@forever()      if @server.options.type is 1 or @server.options.type is 2
-		# ,250)
+	increase: (count) =>
 
-
-	increase: =>
-
-		# Count init file builds
-		@count.second++
+		# Count init file builds (due to less it also accepts multiple counts)
+		if count
+			@count.second += count
+		else
+			@count.second++
 
 		# Guard: Don't do anything until ready trigger is fired and counts are the same
 		return if not (@init and @count.second is @count.first)
@@ -131,6 +125,39 @@ class Watch
 		@server.vent.emit 'watch:initialized'
 
 
+	watchBuild: =>
+
+		@browserify()
+		@application()
+
+
+	application: ->
+
+		# console.log "start watching for the application"
+
+		# # Set application entry folder path
+		# application = @server.folders.build.index
+		# application = @server.folders.build.build if @server.config.type is 2
+
+		# console.log 'application', application
+
+		# chokidar
+		# 	.watch application, ignored: /[\/\\]\./
+		# 	# .on 'add', @appAdd
+		# 	.on 'change', @appChange
+		# 	.on 'ready', @appReady
+
+
+	# appAdd: (file) => console.log "appAdd", file
+	appChange: => console.log "appChange"
+	appReady: => console.log "appReady"
+
+
+	browserify: ->
+
+		console.log "start watching for browserify"
+
+
 
 module.exports = Watch
 
@@ -139,10 +166,6 @@ module.exports = Watch
 # --------------------------------------------------
 #   Watch ~ Watches all relevant LDE files
 # --------------------------------------------------
-log      = require 'de-logger'
-path     = require 'path'
-chokidar = require 'chokidar'
-
 
 
 class Watch
@@ -228,11 +251,6 @@ class Watch
 
 		# Copy files in case no extention is recognized
 		@server.copy.compile filePath
-
-
-	remove: (filePath) ->
-
-		log.debug 'LDE - Watch', 'File in build should be removed: ', filePath
 
 
 	browserify: ->

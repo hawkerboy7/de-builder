@@ -26,6 +26,8 @@
     };
 
     Less.prototype.setup = function() {
+      this.done = false;
+      this.count = 0;
       this.config = this.server.config.less;
       this.folder = this.server.folders.src.client + path.sep + this.config.folder;
       this.entry = this.folder + path.sep + this.config.entry;
@@ -73,7 +75,7 @@
 
     Less.prototype.less = function(file, init) {
       if (file && !init) {
-        return;
+        return this.count++;
       }
       if (file) {
         log.debug(this.server.config.title + " - Less", "Change: " + file);
@@ -92,6 +94,9 @@
 
     Less.prototype.multi = function(file) {
       var folder, i, len, ref, results;
+      if (this.folders.length === 0) {
+        return this.notify();
+      }
       ref = this.folders;
       results = [];
       for (i = 0, len = ref.length; i < len; i++) {
@@ -118,7 +123,7 @@
         return function(e, res) {
           if (e) {
             log.error(_this.server.config.title + " - Less", "" + e);
-            return;
+            return _this.notify();
           }
           return mkdirp(_this.map, function() {
             return less.render(res, {
@@ -127,27 +132,39 @@
             }, function(e, output) {
               var css;
               if (e) {
-                return log.error(_this.server.config.title + " - Less", e);
+                log.error(_this.server.config.title + " - Less", e);
+                return _this.notify();
               }
               if (!(css = output != null ? output.css : void 0) && (css !== "")) {
-                return log.error(_this.server.config.title + " - Less", "No css output: " + output);
+                log.error(_this.server.config.title + " - Less", "No css output: " + output);
+                return _this.notify();
               }
               return fs.writeFile(dFile, css, function(e) {
                 var prefix;
                 if (e) {
-                  return log.error(_this.server.config.title + " - Less", e);
+                  log.error(_this.server.config.title + " - Less", e);
+                  return _this.notify();
                 }
                 if (name) {
                   prefix = name + ": ";
                 } else {
                   prefix = "";
                 }
-                return log.info(_this.server.config.title + " - Less", prefix + dFile.replace(_this.server.root + path.sep, ''));
+                log.info(_this.server.config.title + " - Less", prefix + dFile.replace(_this.server.root + path.sep, ''));
+                return _this.notify();
               });
             });
           });
         };
       })(this));
+    };
+
+    Less.prototype.notify = function() {
+      if (this.done) {
+        return;
+      }
+      this.done = true;
+      return this.server.vent.emit('watch:increase', this.count);
     };
 
     return Less;

@@ -23,6 +23,11 @@ config =
 		entry  : 'app.less'
 		folder : 'styles'
 
+	# Server path/file to be started by forever
+	forever:
+		file    : 'app.js'
+		enabled : true
+
 	# Show de-builder events
 	debug: false
 	# debug: true
@@ -39,11 +44,6 @@ config =
 		file   : 'app.js'
 		debug  : true
 		folder : 'js'
-
-	# Server path/file to be started by forever
-	forever:
-		file    : 'app.js'
-		enabled : true
 
 	# Start browser-sync and add's it to the browserify bundle
 	browserSync:

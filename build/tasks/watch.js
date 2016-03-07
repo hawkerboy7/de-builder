@@ -13,6 +13,9 @@
   Watch = (function() {
     function Watch(server) {
       this.server = server;
+      this.appReady = bind(this.appReady, this);
+      this.appChange = bind(this.appChange, this);
+      this.watchBuild = bind(this.watchBuild, this);
       this.increase = bind(this.increase, this);
       this.ready = bind(this.ready, this);
       this.unlink = bind(this.unlink, this);
@@ -24,7 +27,8 @@
 
     Watch.prototype.listeners = function() {
       this.server.vent.on('project:done', this.watchSrc);
-      return this.server.vent.on('watch:increase', this.increase);
+      this.server.vent.on('watch:increase', this.increase);
+      return this.server.vent.on('watch:initialized', this.watchBuild);
     };
 
     Watch.prototype.watchSrc = function() {
@@ -80,14 +84,37 @@
       return this.server.vent.emit('watch:init');
     };
 
-    Watch.prototype.increase = function() {
-      this.count.second++;
+    Watch.prototype.increase = function(count) {
+      if (count) {
+        this.count.second += count;
+      } else {
+        this.count.second++;
+      }
       if (!(this.init && this.count.second === this.count.first)) {
         return;
       }
       this.initialized = true;
       log.debug(this.server.config.title + " - Watch", "Ready: " + this.count.second + " files have initially been created");
       return this.server.vent.emit('watch:initialized');
+    };
+
+    Watch.prototype.watchBuild = function() {
+      this.browserify();
+      return this.application();
+    };
+
+    Watch.prototype.application = function() {};
+
+    Watch.prototype.appChange = function() {
+      return console.log("appChange");
+    };
+
+    Watch.prototype.appReady = function() {
+      return console.log("appReady");
+    };
+
+    Watch.prototype.browserify = function() {
+      return console.log("start watching for browserify");
     };
 
     return Watch;
@@ -101,10 +128,6 @@
    * --------------------------------------------------
    *   Watch ~ Watches all relevant LDE files
    * --------------------------------------------------
-  log      = require 'de-logger'
-  path     = require 'path'
-  chokidar = require 'chokidar'
-  
   
   
   class Watch
@@ -190,11 +213,6 @@
   
   		 * Copy files in case no extention is recognized
   		@server.copy.compile filePath
-  
-  
-  	remove: (filePath) ->
-  
-  		log.debug 'LDE - Watch', 'File in build should be removed: ', filePath
   
   
   	browserify: ->

@@ -9,7 +9,6 @@ mkdirp = require 'mkdirp'
 
 
 
-
 class Less
 
 	constructor: (@server) ->
@@ -25,6 +24,9 @@ class Less
 
 
 	setup: ->
+
+		@done = false
+		@count = 0
 
 		# Short refrence to less config
 		@config = @server.config.less
@@ -79,7 +81,7 @@ class Less
 	less: (file, init) =>
 
 		# Guard: don't build .css if the watch issn't ready
-		return if file and not init
+		return @count++ if file and not init
 
 		log.debug "#{@server.config.title} - Less", "Change: #{file}" if file
 
@@ -99,6 +101,8 @@ class Less
 
 	multi: (file) ->
 
+		return @notify() if @folders.length is 0
+
 		for folder in @folders
 
 			(continue if -1 is file.indexOf folder.bare) if file
@@ -116,7 +120,7 @@ class Less
 
 			if e
 				log.error "#{@server.config.title} - Less", "#{e}"
-				return
+				return @notify()
 
 			# Create folder structure for the .css file
 			mkdirp @map, =>
@@ -125,20 +129,39 @@ class Less
 				less.render res, {paths: [sFolder], compress: true}, (e, output) =>
 
 					# In case of an error in the .less file
-					return log.error "#{@server.config.title} - Less", e if e
+					if e
+						log.error "#{@server.config.title} - Less", e
+						return @notify()
 
-					return log.error "#{@server.config.title} - Less", "No css output: #{output}" if not (css = output?.css) and (css isnt "")
+					if not (css = output?.css) and (css isnt "")
+						log.error "#{@server.config.title} - Less", "No css output: #{output}"
+						return @notify()
 
 					# Write css file to destination
 					fs.writeFile dFile, css, (e) =>
 
 						# In case of an error in the .less file
-						return log.error "#{@server.config.title} - Less", e if e
+						if e
+							log.error "#{@server.config.title} - Less", e
+							return @notify()
 
 						# Define prefix
 						if name then prefix = "#{name}: " else prefix = ""
 
 						log.info "#{@server.config.title} - Less", prefix+dFile.replace @server.root+path.sep, ''
+
+						@notify()
+
+
+	notify: ->
+
+		return if @done
+
+		# Set bool
+		@done = true
+
+		# Notify watcher for the initialized trigger
+		@server.vent.emit 'watch:increase', @count
 
 
 

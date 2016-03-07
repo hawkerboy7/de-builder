@@ -7,11 +7,10 @@ Less    = require './less'
 Clean   = require './clean'
 Watch   = require './watch'
 Coffee  = require './coffee'
+Forever = require './forever'
 Project = require './project'
 
-# Forever     = require './forever'
 # Browserify  = require './browserify'
-# FileSystem  = require './fileSystem'
 # BrowserSync = require './browserSync'
 
 
@@ -33,36 +32,13 @@ class Tasks
 		@clean   = new Clean @server
 		@watch   = new Watch @server
 		@coffee  = new Coffee @server
+		@forever = new Forever @server
 		@project = new Project @server
 
-		# @copy       = new Copy @server
-		# @coffee     = new Coffee @server
-		# @fileSystem = new FileSystem @server
-
-		# Create a server object which has an EventEmitter
-		# 	files:         {}
-
-		# @server.copy       =
-		# @server.clean      = new Clean      @server
-		# @server.watch      = new Watch      @server
-		# @server.coffee     = new Coffee     @server
-		# @server.fileSystem = new FileSystem @server
-
-		# # Don't add less, browserify, browser-sync if type is 2 (server only)
+		# Don't add less, browserify, browser-sync if type is 2 (server only)
 		# if @server.config.type isnt 2
-		# 	@server.less        = new Less        @server
 		# 	@server.browserify  = new Browserify  @server
 		# 	@server.browserSync = new BrowserSync @server
-
-		# # Don't add forever if type is 3 (node-webkit)
-		# if @server.config.type isnt 3
-		# 	@server.forever = new Forever @server
-
-		# # Clean build folder
-		# @server.clean.start =>
-
-		# 	# Start watch
-		# 	@server.watch.start()
 
 		@server.vent.emit 'builder:start'
 

@@ -16,15 +16,15 @@ config = {
     entry: 'app.less',
     folder: 'styles'
   },
+  forever: {
+    file: 'app.js',
+    enabled: true
+  },
   debug: false,
   browserify: {
     file: 'app.js',
     debug: true,
     folder: 'js'
-  },
-  forever: {
-    file: 'app.js',
-    enabled: true
   },
   browserSync: {
     enabled: true

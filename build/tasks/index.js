@@ -1,5 +1,5 @@
 (function() {
-  var Clean, Coffee, Copy, Less, Project, Tasks, Watch, path;
+  var Clean, Coffee, Copy, Forever, Less, Project, Tasks, Watch, path;
 
   path = require('path');
 
@@ -12,6 +12,8 @@
   Watch = require('./watch');
 
   Coffee = require('./coffee');
+
+  Forever = require('./forever');
 
   Project = require('./project');
 
@@ -28,6 +30,7 @@
       this.clean = new Clean(this.server);
       this.watch = new Watch(this.server);
       this.coffee = new Coffee(this.server);
+      this.forever = new Forever(this.server);
       this.project = new Project(this.server);
       return this.server.vent.emit('builder:start');
     };
