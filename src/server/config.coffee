@@ -21,7 +21,9 @@ config =
 	less:
 		file:   'app.css'
 		entry:  'app.less'
-		folder: 'styles'
+		# folder: 'styles'
+		# folder: 'styles-multi'
+		folder: 'styles-multi-error'
 
 	# Browserify directory and entry file
 	browserify:
