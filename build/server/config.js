@@ -13,7 +13,7 @@ config = {
   server: 'server',
   less: {
     file: 'app.css',
-    entry: 'index.less',
+    entry: 'app.less',
     folder: 'styles'
   },
   debug: false,

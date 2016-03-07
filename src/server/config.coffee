@@ -20,7 +20,7 @@ config =
 	# Less directory and entry file
 	less:
 		file   : 'app.css'
-		entry  : 'index.less'
+		entry  : 'app.less'
 		folder : 'styles'
 
 	# Show de-builder events
