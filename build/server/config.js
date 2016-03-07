@@ -13,9 +13,10 @@ config = {
   server: 'server',
   less: {
     file: 'app.css',
-    entry: 'app.less',
+    entry: 'index.less',
     folder: 'styles'
   },
+  debug: false,
   browserify: {
     file: 'app.js',
     debug: true,
@@ -28,8 +29,7 @@ config = {
   browserSync: {
     enabled: true
   },
-  type: 1,
-  debug: false
+  type: 1
 };
 
 module.exports = config;
