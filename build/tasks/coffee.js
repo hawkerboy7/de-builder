@@ -34,7 +34,7 @@
             return log.error(err);
           }
           return mkdirp(path.dirname(build), function() {
-            var coffeeScript, e, error;
+            var coffeeScript, e, error, name;
             try {
               coffeeScript = coffee.compile(data, {
                 bare: true
@@ -44,11 +44,15 @@
               coffeeScript = "";
               log.error(_this.server.config.title + " - Coffee", file, e.message, e.location);
             }
-            return fs.writeFile(_this.server.root + path.sep + build, coffeeScript, function(err) {
+            return fs.writeFile(name = _this.server.root + path.sep + build, coffeeScript, function(err) {
               if (err) {
                 return log.error(err);
               }
-              log.info(_this.server.config.title + " - Coffee", "" + build);
+              _this.server.vent.emit('compiled:file', {
+                file: name,
+                title: _this.server.config.title + " - Coffee",
+                message: "" + build
+              });
               if (!init) {
                 return _this.server.vent.emit('watch:increase');
               }

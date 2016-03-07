@@ -1,5 +1,5 @@
 (function() {
-  var Clean, Coffee, Copy, Forever, Less, Project, Tasks, Watch, path;
+  var Browserify, Clean, Coffee, Copy, Forever, Less, Logger, Project, Tasks, Watch, path;
 
   path = require('path');
 
@@ -13,9 +13,13 @@
 
   Coffee = require('./coffee');
 
+  Logger = require('./logger');
+
   Forever = require('./forever');
 
   Project = require('./project');
+
+  Browserify = require('./browserify');
 
   Tasks = (function() {
     function Tasks(server) {
@@ -25,13 +29,15 @@
 
     Tasks.prototype.load = function() {
       this.folders();
-      this.copy = new Copy(this.server);
-      this.less = new Less(this.server);
-      this.clean = new Clean(this.server);
-      this.watch = new Watch(this.server);
-      this.coffee = new Coffee(this.server);
-      this.forever = new Forever(this.server);
-      this.project = new Project(this.server);
+      new Copy(this.server);
+      new Less(this.server);
+      new Clean(this.server);
+      new Watch(this.server);
+      new Coffee(this.server);
+      new Logger(this.server);
+      new Forever(this.server);
+      new Project(this.server);
+      new Browserify(this.server);
       return this.server.vent.emit('builder:start');
     };
 

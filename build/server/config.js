@@ -20,12 +20,13 @@ config = {
     file: 'app.js',
     enabled: true
   },
-  debug: false,
   browserify: {
     file: 'app.js',
+    entry: 'app.coffee',
     debug: true,
     folder: 'js'
   },
+  debug: false,
   browserSync: {
     enabled: true
   },

@@ -41,11 +41,14 @@ class Coffee
 					log.error "#{@server.config.title} - Coffee", file, e.message, e.location
 
 				# Write compiled coffee file to its destination
-				fs.writeFile @server.root+path.sep+build, coffeeScript , (err) =>
+				fs.writeFile name = @server.root+path.sep+build, coffeeScript , (err) =>
 
 					return log.error err if err
 
-					log.info "#{@server.config.title} - Coffee", "#{build}"
+					@server.vent.emit 'compiled:file',
+						file    : name
+						title   : "#{@server.config.title} - Coffee"
+						message : "#{build}"
 
 					# Notify the watch in case the init hassn't been triggered
 					@server.vent.emit 'watch:increase' if not init

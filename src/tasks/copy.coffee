@@ -32,11 +32,14 @@ class Copy
 		mkdirp path.dirname(build), =>
 
 			# Create write stream
-			write = fs.createWriteStream @server.root+path.sep+build
+			write = fs.createWriteStream name = @server.root+path.sep+build
 
 			write.on 'finish', =>
 
-				log.info "#{@server.config.title} - Copy", "#{build}"
+				@server.vent.emit 'compiled:file',
+					file    : name
+					title   : "#{@server.config.title} - Copy"
+					message : "#{build}"
 
 				# Notify the watch in case the init hassn't been triggered
 				@server.vent.emit 'watch:increase' if not init

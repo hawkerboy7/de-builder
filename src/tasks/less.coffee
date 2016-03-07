@@ -130,7 +130,7 @@ class Less
 
 					# In case of an error in the .less file
 					if e
-						log.error "#{@server.config.title} - Less", e
+						log.error "#{@server.config.title} - Less", e.message
 						return @notify()
 
 					if not (css = output?.css) and (css isnt "")
@@ -148,7 +148,10 @@ class Less
 						# Define prefix
 						if name then prefix = "#{name}: " else prefix = ""
 
-						log.info "#{@server.config.title} - Less", prefix+dFile.replace @server.root+path.sep, ''
+						@server.vent.emit 'compiled:file',
+							file    : dFile
+							title   : "#{@server.config.title} - Less"
+							message : prefix+dFile.replace @server.root+path.sep, ''
 
 						@notify()
 

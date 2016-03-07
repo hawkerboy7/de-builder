@@ -132,7 +132,7 @@
             }, function(e, output) {
               var css;
               if (e) {
-                log.error(_this.server.config.title + " - Less", e);
+                log.error(_this.server.config.title + " - Less", e.message);
                 return _this.notify();
               }
               if (!(css = output != null ? output.css : void 0) && (css !== "")) {
@@ -150,7 +150,11 @@
                 } else {
                   prefix = "";
                 }
-                log.info(_this.server.config.title + " - Less", prefix + dFile.replace(_this.server.root + path.sep, ''));
+                _this.server.vent.emit('compiled:file', {
+                  file: dFile,
+                  title: _this.server.config.title + " - Less",
+                  message: prefix + dFile.replace(_this.server.root + path.sep, '')
+                });
                 return _this.notify();
               });
             });

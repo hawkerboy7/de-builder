@@ -2,15 +2,16 @@
 path = require 'path'
 
 # My Modules
-Copy    = require './copy'
-Less    = require './less'
-Clean   = require './clean'
-Watch   = require './watch'
-Coffee  = require './coffee'
-Forever = require './forever'
-Project = require './project'
+Copy       = require './copy'
+Less       = require './less'
+Clean      = require './clean'
+Watch      = require './watch'
+Coffee     = require './coffee'
+Logger     = require './logger'
+Forever    = require './forever'
+Project    = require './project'
+Browserify = require './browserify'
 
-# Browserify  = require './browserify'
 # BrowserSync = require './browserSync'
 
 
@@ -27,13 +28,15 @@ class Tasks
 		# Setup project folders
 		@folders()
 
-		@copy    = new Copy @server
-		@less    = new Less @server
-		@clean   = new Clean @server
-		@watch   = new Watch @server
-		@coffee  = new Coffee @server
-		@forever = new Forever @server
-		@project = new Project @server
+		new Copy @server
+		new Less @server
+		new Clean @server
+		new Watch @server
+		new Coffee @server
+		new Logger @server
+		new Forever @server
+		new Project @server
+		new Browserify @server
 
 		# Don't add less, browserify, browser-sync if type is 2 (server only)
 		# if @server.config.type isnt 2

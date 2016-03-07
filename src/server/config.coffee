@@ -28,6 +28,15 @@ config =
 		file    : 'app.js'
 		enabled : true
 
+	# Browserify directory and entry file
+	browserify:
+		file   : 'app.js'
+		entry  : 'app.coffee'
+		debug  : true
+		folder : 'js'
+		# folder : 'js-multi'
+		# folder : 'js-error'
+
 	# Show de-builder events
 	debug: false
 	# debug: true
@@ -38,12 +47,6 @@ config =
 
 
 
-
-	# Browserify directory and entry file
-	browserify:
-		file   : 'app.js'
-		debug  : true
-		folder : 'js'
 
 	# Start browser-sync and add's it to the browserify bundle
 	browserSync:

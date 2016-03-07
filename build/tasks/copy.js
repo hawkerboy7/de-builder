@@ -27,10 +27,14 @@
       read = fs.createReadStream(this.server.root + path.sep + file);
       return mkdirp(path.dirname(build), (function(_this) {
         return function() {
-          var write;
-          write = fs.createWriteStream(_this.server.root + path.sep + build);
+          var name, write;
+          write = fs.createWriteStream(name = _this.server.root + path.sep + build);
           write.on('finish', function() {
-            log.info(_this.server.config.title + " - Copy", "" + build);
+            _this.server.vent.emit('compiled:file', {
+              file: name,
+              title: _this.server.config.title + " - Copy",
+              message: "" + build
+            });
             if (!init) {
               return _this.server.vent.emit('watch:increase');
             }
