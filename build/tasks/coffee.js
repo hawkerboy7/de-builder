@@ -34,9 +34,17 @@
             return log.error(err);
           }
           return mkdirp(path.dirname(build), function() {
-            return fs.writeFile(_this.server.root + path.sep + build, coffee.compile(data, {
-              bare: true
-            }), function(err) {
+            var coffeeScript, e, error;
+            try {
+              coffeeScript = coffee.compile(data, {
+                bare: true
+              });
+            } catch (error) {
+              e = error;
+              coffeeScript = "";
+              log.error(_this.server.config.title + " - Coffee", file, e.message, e.location);
+            }
+            return fs.writeFile(_this.server.root + path.sep + build, coffeeScript, function(err) {
               if (err) {
                 return log.error(err);
               }

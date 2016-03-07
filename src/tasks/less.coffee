@@ -46,7 +46,7 @@ class Less
 				@type = 'multi'
 				@determin()
 
-			log.info "#{@server.config.title} - Less", "Using type: #{@type}"
+			log.info "#{@server.config.title} - Less", "Type: #{@type}"
 
 
 	determin: ->

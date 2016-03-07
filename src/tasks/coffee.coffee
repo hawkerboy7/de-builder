@@ -34,8 +34,14 @@ class Coffee
 			# Make sure path to destination exists
 			mkdirp path.dirname(build), =>
 
+				try
+					coffeeScript = coffee.compile(data, bare: true)
+				catch e
+					coffeeScript = ""
+					log.error "#{@server.config.title} - Coffee", file, e.message, e.location
+
 				# Write compiled coffee file to its destination
-				fs.writeFile @server.root+path.sep+build, coffee.compile(data, bare: true), (err) =>
+				fs.writeFile @server.root+path.sep+build, coffeeScript , (err) =>
 
 					return log.error err if err
 

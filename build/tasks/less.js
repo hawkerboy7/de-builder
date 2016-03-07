@@ -39,7 +39,7 @@
             _this.type = 'multi';
             _this.determin();
           }
-          return log.info(_this.server.config.title + " - Less", "Using type: " + _this.type);
+          return log.info(_this.server.config.title + " - Less", "Type: " + _this.type);
         };
       })(this));
     };
