@@ -19,7 +19,7 @@
       this.server = server;
       this.check = bind(this.check, this);
       this.initialized = bind(this.initialized, this);
-      if ((this.type = this.server.config.type) === 2) {
+      if (this.server.config.type === 2) {
         return;
       }
       this.setup();
@@ -29,18 +29,19 @@
     Browserify.prototype.setup = function() {
       this.config = this.server.config.browserify;
       this.folders = [];
-      this.folder = this.server.folders.src.client;
-      if (this.type === 2) {
-        this.folder = this.server.folders.src.index;
+      this.sFolder = this.server.folders.src.client;
+      if (this.server.config.type === 3) {
+        this.sFolder = this.server.folders.src.index;
       }
-      this.folder += path.sep + this.config.folder;
-      this.entry = this.folder + path.sep + this.config.entry;
-      this.destination = this.server.folders.build.client;
-      if (this.type === 2) {
-        this.destination = this.server.folders.build.index;
+      this.sFolder += path.sep + this.config.folder;
+      this.sFile = this.sFolder + path.sep + this.config.entry;
+      this.bFolder = this.server.folders.build.client;
+      if (this.server.config.type === 3) {
+        this.bFolder = this.server.folders.build.index;
       }
-      this.destination += path.sep + this.config.folder;
-      return fs.stat(this.entry, (function(_this) {
+      this.bFolder += path.sep + this.config.folder;
+      this.bFile = this.bFolder + path.sep + this.config.entry.replace('.coffee', '.js');
+      return fs.stat(this.sFile, (function(_this) {
         return function(e) {
           if (!e) {
             _this.type = 'single';
@@ -54,8 +55,8 @@
     };
 
     Browserify.prototype.determin = function() {
-      log.debug(this.server.config.title + " - Browserify", "Entry file not found: " + this.entry);
-      return fs.readdir(this.folder, (function(_this) {
+      log.debug(this.server.config.title + " - Browserify", "Entry file not found: " + this.sFile);
+      return fs.readdir(this.sFolder, (function(_this) {
         return function(e, files) {
           var file, folder, i, len;
           if (e) {
@@ -63,17 +64,18 @@
           }
           for (i = 0, len = files.length; i < len; i++) {
             file = files[i];
-            if (!fs.statSync(folder = _this.folder + path.sep + file).isDirectory()) {
+            if (!fs.statSync(folder = _this.sFolder + path.sep + file).isDirectory()) {
               continue;
             }
             _this.folders.push({
               name: file,
-              build: _this.destination + path.sep + file
+              build: _this.bFolder + path.sep + file
             });
           }
-          if (_this.folders.length === 0) {
-            return _this.error();
+          if (_this.folders.length !== 0) {
+            return;
           }
+          return _this.error();
         };
       })(this));
     };
@@ -84,29 +86,41 @@
     };
 
     Browserify.prototype.initialized = function() {
-      var folder, i, len, options, ref, results;
+      var bundle, folder, i, len, name, options, ref, results;
       this.init = true;
       options = {
+        test222: 'name222',
         cache: {},
         packageCache: {},
-        debug: this.server.options.browserify.debug,
+        debug: this.config.debug,
         fullPaths: false
       };
       if (this.type === 'single') {
-        this.f = fs.createWriteStream(this.destination + path.sep + this.config);
-        this.w = watchify(browserify(options)).add(this.entry).transform(jadeify, {
+        bundle = this.createBundle();
+        this.dFile = this.bFolder + path.sep + this.config.bundle;
+        this.w = watchify(browserify(options)).add(this.bFile).transform(jadeify, {
           runtimePath: require.resolve('jade/runtime')
-        }).on('bundle', this.single);
+        }).on('bundle', bundle);
+        this.t = (new Date).getTime();
+        this.w.bundle();
       }
       if (this.type === 'multi') {
-        this.f = {};
         this.w = {};
+        this.t = {};
+        this._bundle = {};
+        this.dFile = {};
         ref = this.folders;
         results = [];
         for (i = 0, len = ref.length; i < len; i++) {
           folder = ref[i];
-          this.f[folder.name] = fs.createWriteStream(this.name);
-          results.push(this.w[folder.name] = watchify(browserify(options)));
+          name = folder.name;
+          this.t[name] = (new Date).getTime();
+          this._bundle[name] = this.createBundle(name);
+          this.dFile[name] = this.bFolder + path.sep + name + path.sep + this.config.multi;
+          this.w[name] = watchify(browserify(options)).add(this.bFolder + path.sep + folder.name + path.sep + 'index.js').transform(jadeify, {
+            runtimePath: require.resolve('jade/runtime')
+          }).on('bundle', this._bundle[name]);
+          results.push(this.w[name].bundle());
         }
         return results;
       }
@@ -140,28 +154,59 @@
             continue;
           }
         }
-        results.push(this.make());
+        results.push(this.make(folder.name));
       }
       return results;
     };
 
-    Browserify.prototype.make = function() {};
+    Browserify.prototype.make = function(name) {
+      if (name) {
+        this.t[name] = (new Date).getTime();
+      } else {
+        this.t = (new Date).getTime();
+      }
+      if (!name) {
+        return this.w.bundle();
+      }
+      return this.w[name].bundle();
+    };
 
-    Browserify.prototype.single = function(stream) {
-      stream.pipe(this.file);
-      stream.on('error', function(err) {
-        if (err) {
-          return log.error('LDE - Browserify', "Unable to creat bundle \n\n", err);
-        }
-      });
-      return stream.on('end', (function(_this) {
-        return function() {
-          var time;
-          time = (new Date().getTime() - _this.s.getTime()) / 1000;
-          log.info("LDE - Browserify", _this.server.symbols.finished + " " + time + " s");
-          return _this.server.browserSync.reload(_this.name);
+    Browserify.prototype.createBundle = function(name) {
+      var bundle;
+      return bundle = (function(_this) {
+        return function(stream) {
+          var f, message;
+          message = "";
+          if (name) {
+            message = name + ": ";
+          }
+          stream.on('error', function(err) {
+            if (err) {
+              return log.error(_this.server.config.title + " - Browserify", message + "Unable to creat bundle \n\n", err);
+            }
+          });
+          stream.on('end', function() {
+            var dFile, destination, time;
+            time = _this.t;
+            if (name) {
+              time = _this.t[name];
+            }
+            time = (new Date().getTime() - time) / 1000;
+            dFile = _this.dFile;
+            if (name) {
+              dFile = _this.dFile[name];
+            }
+            destination = dFile.replace(_this.server.root + path.sep, '');
+            return log.info(_this.server.config.title + " - Browserify", "" + message + destination + " | " + _this.server.symbols.finished + " " + time + " s");
+          });
+          if (name) {
+            f = fs.createWriteStream(_this.dFile[name]);
+          } else {
+            f = fs.createWriteStream(_this.dFile);
+          }
+          return stream.pipe(f);
         };
-      })(this));
+      })(this);
     };
 
     Browserify.prototype.error = function() {

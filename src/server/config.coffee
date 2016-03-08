@@ -30,12 +30,25 @@ config =
 
 	# Browserify directory and entry file
 	browserify:
-		file   : 'app.js'
-		entry  : 'app.coffee'
+
+		# Used for single build
+		single:
+			entry  : 'app.coffee'
+			bundle : 'app.bundle.js'
+
+		# Used for multi build
+		multi : 'bundle.js'
+
+		# Used in both cases
 		debug  : true
 		folder : 'js'
-		# folder : 'js-multi'
-		# folder : 'js-error'
+
+	# LDE environments
+	# 1 Server+Client
+	# 2 Server
+	# 3 Client (Node Webkit)
+	# 4 Client (Cordova)
+	type: 1
 
 	# Show de-builder events
 	debug: false
@@ -44,20 +57,9 @@ config =
 	# next: multi bundles on client side, browserify, browserSync, forever
 
 
-
-
-
-
 	# Start browser-sync and add's it to the browserify bundle
 	browserSync:
 		enabled: true
-
-	# LDE environments
-	# 1 Server+Client
-	# 2 Server
-	# 3 Client (Node Webkit)
-	# 4 Client (Cordova)
-	type: 1
 
 
 

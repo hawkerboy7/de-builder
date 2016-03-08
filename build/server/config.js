@@ -21,16 +21,19 @@ config = {
     enabled: true
   },
   browserify: {
-    file: 'app.js',
-    entry: 'app.coffee',
+    single: {
+      entry: 'app.coffee',
+      bundle: 'app.bundle.js'
+    },
+    multi: 'bundle.js',
     debug: true,
     folder: 'js'
   },
+  type: 1,
   debug: false,
   browserSync: {
     enabled: true
-  },
-  type: 1
+  }
 };
 
 module.exports = config;

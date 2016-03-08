@@ -21,9 +21,9 @@
 
     Forever.prototype.forever = function() {
       var file, src;
-      src = this.server.folder.index;
+      src = this.server.folder.server;
       if (this.server.config.type === 2) {
-        src = this.server.folder.server;
+        src = this.server.folder.index;
       }
       file = src + path.sep + this.server.config.forever.file;
       console.log("file: ", file);

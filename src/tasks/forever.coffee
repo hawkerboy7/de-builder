@@ -19,8 +19,8 @@ class Forever
 	forever: =>
 
 		# Determin the src directory
-		src = @server.folder.index
-		src = @server.folder.server if @server.config.type is 2
+		src = @server.folder.server
+		src = @server.folder.index if @server.config.type is 2
 
 		# Create file path
 		file = src+path.sep+@server.config.forever.file

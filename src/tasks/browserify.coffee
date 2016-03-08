@@ -14,7 +14,7 @@ class Browserify
 
 	constructor: (@server) ->
 
-		return if (@type = @server.config.type) is 2
+		return if @server.config.type is 2
 
 		@setup()
 		@listeners()
@@ -28,19 +28,24 @@ class Browserify
 		# Store multi setup folders
 		@folders = []
 
-		# Src
-		@folder = @server.folders.src.client
-		@folder = @server.folders.src.index if @type is 2
-		@folder += path.sep+@config.folder
-		@entry  = @folder+path.sep+@config.entry
+		# Determin source folder
+		@sFolder = @server.folders.src.client
+		@sFolder = @server.folders.src.index if @server.config.type is 3
+		@sFolder += path.sep+@config.folder
 
-		# Build
-		@destination = @server.folders.build.client
-		@destination = @server.folders.build.index if @type is 2
-		@destination += path.sep+@config.folder
+		# Determin source file
+		@sFile = @sFolder+path.sep+@config.entry
+
+		# Determin build folder
+		@bFolder = @server.folders.build.client
+		@bFolder = @server.folders.build.index if @server.config.type is 3
+		@bFolder += path.sep+@config.folder
+
+		# Determin build file
+		@bFile  = @bFolder+path.sep+@config.entry.replace '.coffee', '.js'
 
 		# Check if entry file exists
-		fs.stat @entry, (e) =>
+		fs.stat @sFile, (e) =>
 
 			if not e
 				@type = 'single'
@@ -53,10 +58,10 @@ class Browserify
 
 	determin: ->
 
-		log.debug "#{@server.config.title} - Browserify", "Entry file not found: #{@entry}"
+		log.debug "#{@server.config.title} - Browserify", "Entry file not found: #{@sFile}"
 
 		# Read all files in entry folder
-		fs.readdir @folder, (e, files) =>
+		fs.readdir @sFolder, (e, files) =>
 
 			return log.error "#{@server.config.title} - Browserify", e if e
 
@@ -64,14 +69,16 @@ class Browserify
 			for file in files
 
 				# Read the results in sync otherwise the link between file and response is lost in async (due to the loop)
-				continue if not fs.statSync(folder = @folder+path.sep+file).isDirectory()
+				continue if not fs.statSync(folder = @sFolder+path.sep+file).isDirectory()
 
 				# Add less bundle folders
 				@folders.push
 					name  : file
-					build : @destination+path.sep+file
+					build : @bFolder+path.sep+file
 
-			@error() if @folders.length is 0
+			return if @folders.length isnt 0
+
+			@error()
 
 
 	listeners: ->
@@ -85,48 +92,84 @@ class Browserify
 		@init = true
 
 		options =
-
+			test222 : 'name222'
 			# Watchify
 			cache:        {}
 			packageCache: {}
 
 			# Add source map
-			debug:        @server.options.browserify.debug
+			debug:        @config.debug
 
 			# Don't show paths to files in the app.bundle.js
 			fullPaths:    false
 
 		if @type is 'single'
 
+			bundle = @createBundle()
+
 			# Create bundle stream
-			@f = fs.createWriteStream @destination+path.sep+@config
+			@dFile = @bFolder+path.sep+@config.bundle
 
 			# Store watchify browserify bundle
 			@w = watchify browserify options
 
 				# Add user entry file
-				.add @entry
+				.add @bFile
 
 				# Allow for .jade files to be added into the bundle
 				.transform jadeify, runtimePath: require.resolve 'jade/runtime'
 
 				# Stream the bundle to a file write stream
-				.on 'bundle', @single
+				.on 'bundle', bundle
+
+			# Store starting time
+			@t = (new Date).getTime()
+
+			# Create bundle
+			@w.bundle()
 
 		if @type is 'multi'
-
-			# Store write streams
-			@f = {}
 
 			# Store watchify browserify bundles
 			@w = {}
 
+			# Store bundle times
+			@t = {}
+
+			# Store different bundles
+			@_bundle = {}
+
+			# Store destination files
+			@dFile = {}
+
 			for folder in @folders
 
-				@f[folder.name] = fs.createWriteStream @name
-				@w[folder.name] = watchify browserify options
+				# Get folder name
+				name = folder.name
 
+				# Store time
+				@t[name] = (new Date).getTime()
 
+				# Create bundle by name
+				@_bundle[name] = @createBundle name
+
+				# Create bundle output stream path
+				@dFile[name] = @bFolder+path.sep+name+path.sep+@config.multi
+
+				# Store watchify browserify bundle
+				@w[name] = watchify browserify options
+
+					# Add user entry file
+					.add @bFolder+path.sep+folder.name+path.sep+'index.js'
+
+					# Allow for .jade files to be added into the bundle
+					.transform jadeify, runtimePath: require.resolve 'jade/runtime'
+
+					# Stream the bundle to a file write stream
+					.on 'bundle', @_bundle[name]
+
+				# Create bundle
+				@w[name].bundle()
 
 
 	check: (arg) =>
@@ -136,13 +179,10 @@ class Browserify
 		return if not @init
 
 		# Comple a single bundle if multiple bundles are not required
-		if @type is 'single'
-			@make()
+		@make() if @type is 'single'
 
 		# Compile one (or all) of the multiple bundles
-		if @type is 'multi'
-
-			@multi file
+		@multi file if @type is 'multi'
 
 
 	multi: (file) ->
@@ -153,33 +193,63 @@ class Browserify
 
 			(continue if -1 is file.indexOf folder.build) if file
 
-			@make()
+			@make folder.name
 
 
-	make: () ->
+	make: (name) ->
+
+		# Set new time stamp again
+		if name
+			@t[name] = (new Date).getTime()
+		else
+			@t = (new Date).getTime()
+
+		# Create for single bundle
+		return @w.bundle() if not name
+
+		# Rebuild the name specific bundle
+		@w[name].bundle()
 
 
+	createBundle: (name) ->
 
-	single: (stream) ->
+		bundle = (stream) =>
 
-		# Stream into the file
-		stream.pipe @file
+			message = ""
+			message = "#{name}: " if name
 
-		# Notify if mkdirp failed
-		stream.on 'error', (err) ->
-			return log.error 'LDE - Browserify', "Unable to creat bundle \n\n", err if err
+			# Notify if mkdirp failed
+			stream.on 'error', (err) =>
+				return log.error "#{@server.config.title} - Browserify", "#{message}Unable to creat bundle \n\n", err if err
 
-		# Notify succes
-		stream.on 'end', =>
+			# Notify succes
+			stream.on 'end', =>
 
-			# Calculate time differenve from the start of browserify
-			time = (new Date().getTime()-@s.getTime())/1000
+				# Determin time
+				time = @t
+				time = @t[name] if name
 
-			# Notify Browserify results
-			log.info "LDE - Browserify", "#{@server.symbols.finished} #{time} s"
+				# Calculate time differenve from the start of browserify
+				time = (new Date().getTime()-time)/1000
 
-			# Reload browser sync iwht a new less file
-			@server.browserSync.reload @name
+				# Determin destination file
+				dFile = @dFile
+				dFile = @dFile[name] if name
+
+				# Make the resulting path pretty
+				destination = dFile.replace @server.root+path.sep, ''
+
+				# Notify Browserify results
+				log.info "#{@server.config.title} - Browserify", "#{message}#{destination} | #{@server.symbols.finished} #{time} s"
+
+			# Create a destination write stream
+			if name
+				f = fs.createWriteStream @dFile[name]
+			else
+				f = fs.createWriteStream @dFile
+
+			# Stream into the file
+			stream.pipe f
 
 
 	error: ->

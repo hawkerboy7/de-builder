@@ -38,11 +38,6 @@ class Tasks
 		new Project @server
 		new Browserify @server
 
-		# Don't add less, browserify, browser-sync if type is 2 (server only)
-		# if @server.config.type isnt 2
-		# 	@server.browserify  = new Browserify  @server
-		# 	@server.browserSync = new BrowserSync @server
-
 		@server.vent.emit 'builder:start'
 
 
