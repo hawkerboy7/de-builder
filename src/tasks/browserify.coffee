@@ -92,16 +92,16 @@ class Browserify
 		@init = true
 
 		options =
-			test222 : 'name222'
+
 			# Watchify
 			cache:        {}
 			packageCache: {}
 
 			# Add source map
-			debug:        @config.debug
+			debug: @config.debug
 
 			# Don't show paths to files in the app.bundle.js
-			fullPaths:    false
+			fullPaths: false
 
 		if @type is 'single'
 

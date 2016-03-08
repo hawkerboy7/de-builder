@@ -89,7 +89,6 @@
       var bundle, folder, i, len, name, options, ref, results;
       this.init = true;
       options = {
-        test222: 'name222',
         cache: {},
         packageCache: {},
         debug: this.config.debug,

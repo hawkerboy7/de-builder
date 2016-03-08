@@ -47,8 +47,11 @@ class Server
 			start    : '•'
 			finished : '✔'
 
-		# Set the root folder of the project
+		# Set the root folder of the project that de-builder is working for
 		@root = path.resolve './'
+
+		# Root of de-builder
+		@myRoot = path.resolve __dirname, '../../'
 
 		# Set an event emitter
 		@vent = new EventEmitter

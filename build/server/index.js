@@ -36,6 +36,7 @@ Server = (function() {
       finished: '✔'
     };
     this.root = path.resolve('./');
+    this.myRoot = path.resolve(__dirname, '../../');
     this.vent = new EventEmitter;
     return this.toBuild = (function(_this) {
       return function(file) {
