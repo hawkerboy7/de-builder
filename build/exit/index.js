@@ -34,6 +34,7 @@
     };
 
     Exit.prototype.exit = function(code) {
+      this.server.vent.emit('terminate:child');
       return log.info(this.server.config.title, 'Exit:', code);
     };
 

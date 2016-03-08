@@ -20,12 +20,12 @@ var location = path.resolve('../../'+name);
 fs.exists(location, function(exists) {
 
 	// Only create file if it doesn't exists yet
-	if (exists) { return log.info('LDE - Project', 'build.js file already exists'); }
+	if (exists) { return log.info('LDE - Install', 'build.js file already exists'); }
 
 	// Create build.js file
 	fs.writeFile(location, file, function (err) {
 		if (!err) { return; }
-		log.warn('LDE - Project', 'Couldn\'t create build.js file');
-		log.error('LDE - Project', err);
+		log.warn('LDE - Install', 'Couldn\'t create build.js file');
+		log.error('LDE - Install', err);
 	});
 });

@@ -11,6 +11,7 @@
   Forever = (function() {
     function Forever(server) {
       this.server = server;
+      this.terminate = bind(this.terminate, this);
       this.forever = bind(this.forever, this);
       this.initialized = bind(this.initialized, this);
       if (this.server.config.forever.enabled && this.server.config.type !== 3) {
@@ -19,6 +20,7 @@
     }
 
     Forever.prototype.listeners = function() {
+      this.server.vent.on('terminate:child', this.terminate);
       this.server.vent.on('compiled:file', this.forever);
       return this.server.vent.on('watch:initialized', this.initialized);
     };
@@ -54,9 +56,7 @@
         src = this.server.folders.build.index;
       }
       entry = src + path.sep + this.server.config.forever.entry;
-      if (this.child) {
-        this.child.kill();
-      }
+      this.terminate();
       this.child = new Monitor(entry, {
         max: 1,
         killTree: true
@@ -69,6 +69,12 @@
         };
       })(this));
       return this.child.start();
+    };
+
+    Forever.prototype.terminate = function() {
+      if (this.child) {
+        return this.child.kill();
+      }
     };
 
     return Forever;

@@ -31,6 +31,8 @@ config = {
   },
   browserSync: {
     enabled: true,
+    server: 9001,
+    ui: 9000,
     multi: ['vendor']
   },
   type: 1,

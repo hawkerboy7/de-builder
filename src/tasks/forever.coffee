@@ -16,6 +16,7 @@ class Forever
 
 	listeners: ->
 
+		@server.vent.on 'terminate:child', @terminate
 		@server.vent.on 'compiled:file', @forever
 		@server.vent.on 'watch:initialized', @initialized
 
@@ -57,7 +58,7 @@ class Forever
 		entry = src+path.sep+@server.config.forever.entry
 
 		# Kill previous child if it exists
-		@child.kill() if @child
+		@terminate()
 
 		# Create a monitor for starting a child process
 		@child = new Monitor entry, max: 1, killTree: true
@@ -69,6 +70,11 @@ class Forever
 
 		# Start child process
 		@child.start()
+
+
+	terminate: =>
+
+		@child.kill() if @child
 
 
 

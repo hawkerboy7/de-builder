@@ -49,6 +49,12 @@ config =
 		# Use it, or not
 		enabled: true
 
+		# server port
+		server: 9001
+
+		# user interface port
+		ui: 9000
+
 		# Provide names of the multi bundle(s) that should contain the browser-sync code
 		multi: ['vendor']
 

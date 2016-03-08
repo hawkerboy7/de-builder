@@ -11,8 +11,8 @@ Logger     = require './logger'
 Forever    = require './forever'
 Project    = require './project'
 Browserify = require './browserify'
+BrowserSync = require './browser-sync'
 
-# BrowserSync = require './browserSync'
 
 
 
@@ -37,6 +37,7 @@ class Tasks
 		new Forever @server
 		new Project @server
 		new Browserify @server
+		new BrowserSync @server
 
 		@server.vent.emit 'builder:start'
 

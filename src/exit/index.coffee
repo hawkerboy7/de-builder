@@ -34,6 +34,9 @@ class Exit
 
 
 	exit: (code) =>
+
+		@server.vent.emit 'terminate:child'
+
 		log.info @server.config.title, 'Exit:', code
 
 

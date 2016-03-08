@@ -1,5 +1,5 @@
 (function() {
-  var Browserify, Clean, Coffee, Copy, Forever, Less, Logger, Project, Tasks, Watch, path;
+  var BrowserSync, Browserify, Clean, Coffee, Copy, Forever, Less, Logger, Project, Tasks, Watch, path;
 
   path = require('path');
 
@@ -21,6 +21,8 @@
 
   Browserify = require('./browserify');
 
+  BrowserSync = require('./browser-sync');
+
   Tasks = (function() {
     function Tasks(server) {
       this.server = server;
@@ -38,6 +40,7 @@
       new Forever(this.server);
       new Project(this.server);
       new Browserify(this.server);
+      new BrowserSync(this.server);
       return this.server.vent.emit('builder:start');
     };
 
