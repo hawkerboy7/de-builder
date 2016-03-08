@@ -1,6 +1,8 @@
 (function() {
-  var Forever, Monitor, log,
+  var Forever, Monitor, log, path,
     bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
+
+  path = require('path');
 
   log = require('de-logger');
 
@@ -10,34 +12,60 @@
     function Forever(server) {
       this.server = server;
       this.forever = bind(this.forever, this);
+      this.initialized = bind(this.initialized, this);
       if (this.server.config.forever.enabled && this.server.config.type !== 3) {
         this.listeners();
       }
     }
 
     Forever.prototype.listeners = function() {
-      return this.server.vent.on('forever:file', this.forever);
+      this.server.vent.on('compiled:file', this.forever);
+      return this.server.vent.on('watch:initialized', this.initialized);
     };
 
-    Forever.prototype.forever = function() {
-      var file, src;
-      src = this.server.folder.server;
+    Forever.prototype.initialized = function() {
+      this.init = true;
+      return this.forever();
+    };
+
+    Forever.prototype.forever = function(args) {
+      var build, file;
+      if (!this.init) {
+        return;
+      }
+      file = args != null ? args.file : void 0;
+      if (!file) {
+        return this.start();
+      }
+      build = this.server.folders.build.server;
       if (this.server.config.type === 2) {
-        src = this.server.folder.index;
+        build = this.server.folders.build.index;
       }
-      file = src + path.sep + this.server.config.forever.file;
-      console.log("file: ", file);
+      if (path.extname(file) === '.jade' || -1 === file.indexOf(build)) {
+        return;
+      }
+      return this.start();
+    };
+
+    Forever.prototype.start = function() {
+      var entry, src;
+      src = this.server.folders.build.server;
+      if (this.server.config.type === 2) {
+        src = this.server.folders.build.index;
+      }
+      entry = src + path.sep + this.server.config.forever.entry;
       if (this.child) {
-        this.child.exit();
+        this.child.kill();
       }
-      this.child = new Monitor(file, {
+      this.child = new Monitor(entry, {
         max: 1,
         killTree: true
       });
       this.child.on('exit:code', (function(_this) {
         return function(code) {
-          console.log(arguments);
-          return log.info(_this.server.config.title + " - Forever stopped with code:", code);
+          if (code) {
+            return log.warn(_this.server.config.title + " - Forever stopped with code: " + code);
+          }
         };
       })(this));
       return this.child.start();

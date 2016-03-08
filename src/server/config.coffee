@@ -25,7 +25,7 @@ config =
 
 	# Server path/file to be started by forever
 	forever:
-		file    : 'app.js'
+		entry   : 'app.js'
 		enabled : true
 
 	# Browserify directory and entry file
@@ -43,6 +43,15 @@ config =
 		debug  : true
 		folder : 'js'
 
+	# Use browser-sync options
+	browserSync:
+
+		# Use it, or not
+		enabled: true
+
+		# Provide names of the multi bundle(s) that should contain the browser-sync code
+		multi: ['vendor']
+
 	# LDE environments
 	# 1 Server+Client
 	# 2 Server
@@ -54,12 +63,7 @@ config =
 	debug: false
 	# debug: true
 
-	# next: multi bundles on client side, browserify, browserSync, forever
-
-
-	# Start browser-sync and add's it to the browserify bundle
-	browserSync:
-		enabled: true
+	# next: browserSync, forever
 
 
 

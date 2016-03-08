@@ -17,7 +17,7 @@ config = {
     folder: 'styles'
   },
   forever: {
-    file: 'app.js',
+    entry: 'app.js',
     enabled: true
   },
   browserify: {
@@ -29,11 +29,12 @@ config = {
     debug: true,
     folder: 'js'
   },
-  type: 1,
-  debug: false,
   browserSync: {
-    enabled: true
-  }
+    enabled: true,
+    multi: ['vendor']
+  },
+  type: 1,
+  debug: false
 };
 
 module.exports = config;
