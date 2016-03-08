@@ -34,13 +34,13 @@
         this.sFolder = this.server.folders.src.index;
       }
       this.sFolder += path.sep + this.config.folder;
-      this.sFile = this.sFolder + path.sep + this.config.entry;
+      this.sFile = this.sFolder + path.sep + this.config.single.entry;
       this.bFolder = this.server.folders.build.client;
       if (this.server.config.type === 3) {
         this.bFolder = this.server.folders.build.index;
       }
       this.bFolder += path.sep + this.config.folder;
-      this.bFile = this.bFolder + path.sep + this.config.entry.replace('.coffee', '.js');
+      this.bFile = this.bFolder + path.sep + this.config.single.entry.replace('.coffee', '.js');
       return fs.stat(this.sFile, (function(_this) {
         return function(e) {
           if (!e) {
@@ -97,7 +97,7 @@
       };
       if (this.type === 'single') {
         bundle = this.createBundle();
-        this.dFile = this.bFolder + path.sep + this.config.bundle;
+        this.dFile = this.bFolder + path.sep + this.config.single.bundle;
         this.w = watchify(browserify(options)).add(this.bFile).transform(jadeify, {
           runtimePath: require.resolve('jade/runtime')
         }).on('bundle', bundle);

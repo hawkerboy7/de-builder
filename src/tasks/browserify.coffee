@@ -34,7 +34,7 @@ class Browserify
 		@sFolder += path.sep+@config.folder
 
 		# Determin source file
-		@sFile = @sFolder+path.sep+@config.entry
+		@sFile = @sFolder+path.sep+@config.single.entry
 
 		# Determin build folder
 		@bFolder = @server.folders.build.client
@@ -42,7 +42,7 @@ class Browserify
 		@bFolder += path.sep+@config.folder
 
 		# Determin build file
-		@bFile  = @bFolder+path.sep+@config.entry.replace '.coffee', '.js'
+		@bFile  = @bFolder+path.sep+@config.single.entry.replace '.coffee', '.js'
 
 		# Check if entry file exists
 		fs.stat @sFile, (e) =>
@@ -108,7 +108,7 @@ class Browserify
 			bundle = @createBundle()
 
 			# Create bundle stream
-			@dFile = @bFolder+path.sep+@config.bundle
+			@dFile = @bFolder+path.sep+@config.single.bundle
 
 			# Store watchify browserify bundle
 			@w = watchify browserify options
