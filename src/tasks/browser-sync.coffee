@@ -15,7 +15,7 @@ class BrowserSync
 
 	constructor: (@server) ->
 
-		@load()
+		@load() if @server.config.browserSync.enabled
 
 
 	load: ->
@@ -28,61 +28,46 @@ class BrowserSync
 
 		# Set browsersync config
 		@config =
-			ui:
-				port: @server.config.browserSync.ui
-			port: @server.config.browserSync.server
-			logLevel: 'silent'
-			logFileChanges: false
+			ui: port       : @server.config.browserSync.ui
+			port           : @server.config.browserSync.server
+			logLevel       : 'silent'
+			logFileChanges : false
 
 		# Initialize server
 		@bs.init @config, (err) =>
 
 			# Notify error
-			return log.error 'LDE - BrowserSync', 'Couldn\'t start BrowserSync \n\n', err if err
+			return log.error "#{@server.config.title} - Browser-sync", "Couldn't start \n\n", err if err
 
 			# Retreive browserify code
 			@code()
 
 
-	reload: (path) ->
-
-		# Notify start
-		log.info 'LDE - BrowserSync', "Reload", path.replace "#{@server.options.root}/", ''
-
-		# Reload based on file path
-		@bs.reload path
-
-
 	code: ->
 
 		# Notify start
-		log.info 'LDE - BrowserSync', "BrowserSync server started"
+		log.info "#{@server.config.title} - Browser-sync", "Browser-sync server started"
 
 		# Download file
 		@download "http://localhost:#{@config.port}/browser-sync/browser-sync-client.#{version}.js", (err) =>
 
 			# Notify start
-			return log.error 'LDE - BrowserSync', "Unable to get browser-sync .js file", err if err
+			return log.error "#{@server.config.title} - Browser-sync", "Unable to get browser-sync .js file", err if err
 
 			# Notify ready
-			log.info 'LDE - BrowserSync', "Ready at localhost:#{@config.ui.port}"
+			log.info "#{@server.config.title} - Browser-sync", "Ready at localhost:#{@config.ui.port}"
 
-			if @server.options.browserSync.enabled
 
-				# Make socket.io-client require'able
-				@server.browserify.w.require 'socket.io-client', expose: 'socket.io-client'
+			### TODO: fix this ###
 
-				# Add socket.io-client trough a file
-				@server.browserify.w.add path.resolve __dirname, '../../helper/socket.io-client'
+			# Make socket.io-client require'able
+			@server.browserify.w.require 'socket.io-client', expose: 'socket.io-client'
 
-				# Add Browser-sync to the bundle
-				@server.browserify.w.add @filePath
+			# Add socket.io-client trough a file
+			@server.browserify.w.add path.resolve __dirname, '../socketIO/socket.io-client'
 
-			# Shows Browserify the browser sync file has been made
-			@.ready = true
-
-			# Trigger Browserify start
-			@server.watch.browserify()
+			# Add Browser-sync to the bundle
+			@server.browserify.w.add @filePath
 
 
 	download: (url, cb) ->
@@ -102,6 +87,15 @@ class BrowserSync
 						cb err
 					.on 'finish', =>
 						@file.close cb
+
+
+	reload: (path) ->
+
+		# Notify start
+		log.info "#{@server.config.title} - Browser-sync", "Reload", path.replace "#{@server.options.root}/", ''
+
+		# Reload based on file path
+		@bs.reload path
 
 
 
