@@ -48,12 +48,23 @@ The following types of LDE are supported:
 - Server [ 0.4.0+ is requried ]
 - Client [ 0.5.0+ is requried ]
 
+**Starting from version 0.7.0+ you can also create multiple browserify and less bundles!**
 
 ## LDE's
 Which LDE should I use?<br>
 _Type 1_ __Server + Client__: If you are making a program / server with a website interface.<br>
 _Type 2_ __Server__: If you are making a program / server without a website as an interface.<br>
 _Type 3_ __Client__: If you are making a program / server only using the client-side bundle part<br>
+
+
+## Multiple bundles
+`de-builder` will switch to 'multiple bundle mode' if the entry file defined in the config cannot be found.
+In the console it will notify you which type is being used e.g.
+```
+info  LDE - Less       →  Type: single
+info  LDE - Browserify →  Type: multi
+```
+In multi mode it will check all child folders of the `js` and/or `styles` (.less) folder and used them as the entry points. This means that a folder in multi mode must contain an `index(.coffee/.less)` file.
 
 
 ## Structure
