@@ -18,6 +18,8 @@ Server = (function() {
   function Server(config) {
     this.pkg = pkg;
     this.config = extend(cfg, config);
+    this.config.title = 'LDE';
+    this.config.fullTitle = 'Live Development Environment';
     process.title = this.pkg.name;
     this.env = process.env.NODE_ENV || 'development';
     log.set({

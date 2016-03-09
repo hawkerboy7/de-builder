@@ -23,10 +23,10 @@ class SocketIO
 		@server.io = io()
 
 			# Listen on the config provided ports
-			.listen @server.config.io.port
+			.listen @server.config.port
 
 		# Notify
-		log.info 'LDE - Socket.io', "#{@server.config.title} events at #{@server.config.io.port}"
+		log.info 'LDE - Socket.io', "#{@server.config.title} events at #{@server.config.port}"
 
 		# Listen for events
 		@listeners()

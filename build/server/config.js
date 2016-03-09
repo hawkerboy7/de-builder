@@ -1,11 +1,7 @@
 var config;
 
 config = {
-  title: 'LDE',
-  fullTitle: 'Live Development Environment',
-  io: {
-    port: 8009
-  },
+  io: 8009,
   src: 'src',
   build: 'build',
   client: 'client',
@@ -14,10 +10,6 @@ config = {
     file: 'app.css',
     entry: 'app.less',
     folder: 'styles'
-  },
-  forever: {
-    entry: 'app.js',
-    enabled: true
   },
   browserify: {
     single: {
@@ -28,10 +20,14 @@ config = {
     debug: true,
     folder: 'js'
   },
+  forever: {
+    entry: 'app.js',
+    enabled: true
+  },
   browserSync: {
     enabled: true,
-    server: 9001,
     ui: 9000,
+    server: 9001,
     multi: ['vendor']
   },
   type: 1,

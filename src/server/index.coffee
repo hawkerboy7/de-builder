@@ -23,6 +23,10 @@ class Server
 		# Extend config with provided config
 		@config = extend cfg, config
 
+		# Project
+		@config.title     = 'LDE'
+		@config.fullTitle = 'Live Development Environment'
+
 		# Set title of the process
 		process.title = @pkg.name
 
