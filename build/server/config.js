@@ -4,8 +4,7 @@ config = {
   title: 'LDE',
   fullTitle: 'Live Development Environment',
   io: {
-    port: 8009,
-    host: 'localhost'
+    port: 8009
   },
   src: 'src',
   build: 'build',
