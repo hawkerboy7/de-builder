@@ -18,50 +18,58 @@
 
 
 # de-builder
+`npm install --save-dev de-builder`
 
 
 ## What is it?
 `de-builder` creates a __Live Development Environment__ (LDE).<br>
-In this environment you can write `.coffee`,`.js`, `.less`, `.css` and `.jade` and your code will be compiled on save.<br>
-The corresponding part of you program will be either reloaded or restarted.<br>
-This is achieved by using the [modules](https://github.com/hawkerboy7/de-builder#modules).
+In this environment you can write `.coffee`, `.less`, `.css` and `.jade` and your code will be compiled on save.<br>
+The corresponding part of you program will be either injected or restarted.<br>
+This is achieved by using various [modules](https://github.com/hawkerboy7/de-builder#modules).
 
 
 ## Getting Started
-- Create a project folder `mkdir example-project`.
-- Then `cd example-project/`.
+- Navigate to your project folder.
 - There `npm install --save-dev de-builder`.
 - Once `de-builder` has been installed a `build.js` file will have been created.
-- You can adjust the config in the `build.js` file according to your specifications.
+- You can adjust the config in the `build.js` file according to your specifications (all default options are shown).
 - Now run `node build.js` and your __LDE__ will run and you can start working on your project.
 
 
 ## Support
 The following languages are supported:
 - .coffee
-- .js
 - .less
 - .css
 - .jade
 
-The following types of LDE are [going to be] supported:
-- __supported__ Server + Client
-- __supported__ Server [ 0.4.0+ is requried ]
-- __supported__ Client (node-webkit) [ 0.5.0+ is requried ]
-- __not supported yet__ (Cordova)
+The following types of LDE are supported:
+- Server + Client
+- Server [ 0.4.0+ is requried ]
+- Client [ 0.5.0+ is requried ]
 
+**Starting from version 0.7.0+ you can also create multiple browserify and less bundles!**
 
 ## LDE's
 Which LDE should I use?<br>
 _Type 1_ __Server + Client__: If you are making a program / server with a website interface.<br>
 _Type 2_ __Server__: If you are making a program / server without a website as an interface.<br>
-_Type 3_ __Client__: If you are making a program / server only using the client-side part (like node-webkit)<br>
-_Type 4_ : If you are building an app for your phone with (Phonegap - Cordova)
+_Type 3_ __Client__: If you are making a program / server only using the client-side bundle part<br>
+
+
+## Multiple bundles
+`de-builder` will switch to 'multiple bundle mode' if the entry file defined in the config cannot be found.
+In the console it will notify you which type is being used e.g.
+```
+info  LDE - Less       →  Type: single
+info  LDE - Browserify →  Type: multi
+```
+In multi mode it will check all child folders of the `js` and/or `styles` (.less) folder and used them as the entry points. This means that a folder in multi mode must contain an `index(.coffee/.less)` file.
 
 
 ## Structure
-Ok so how should I strucutre my project?
-You can use the strucutre described below but you are free to choose, however make sure you provide the correct entry folder and file in the build.js folder if you choose a custom structure. You can also check [de-base](https://github.com/hawkerboy7/de-base) and [de-nw-base](https://github.com/hawkerboy7/de-nw-base) as an example project or even better use them since they are made to be a base for a project.
+Ok so how should I structre my project?
+You can use the structre described below but you are free to choose, however make sure you provide the correct entry folder and file in the build.js folder if you choose a custom structure. You could also check [de-base](https://github.com/hawkerboy7/de-base) as an example project or better yet use it, since it's created as a basis to start other projects from.
 
 
 #### Server + Client (LDE type 1)
@@ -79,14 +87,22 @@ src/
 #### Server (LDE type 2)
 ```
 src/
-	features/
-		feature-1.coffee
-		feature-2.coffee
+	express/
+		views/
+			index.jade
 		index.coffee
 	server/
-		mongodb.coffee
+		db/
+			users.coffee
+			index.coffee
+		config.coffee
+		index.coffee
+	socketIO/
+		handler/
+			index.coffee
 		index.coffee
 	app.coffee
+	manager.coffee
 ```
 
 
@@ -102,30 +118,29 @@ src/
 			user1.png
 			user2.png
 	js/
-		templates/
-			pages/
-				page-1.jade
-				page-2.jade
-			header.jade
-			navigation.jade
-			footer.jade
-			index.jade
-		pages/
-			page-1.coffee
-			page-2.coffee
-		navigation.coffee
-		app.coffee
+		app/
+			elements/
+				header.coffee
+			templates/
+				header.jade
+			index.coffee
+			main.coffee
+			router.coffee
+		vendor/
+			index.coffee
 	styles/
-		pages/
-			page-1.less
-			page-2.less
+		elements/
+			header.less
+			main.less
 		app.less
+		variables.less
 ```
 
 
 ## Browser-sync
-Once `de-builder` is running the `browser-sync` `ui` can be found at [localhost:9000](http://localhost:9000).
+Once `de-builder` is running the `browser-sync` `ui` can by default be found at [localhost:9000](http://localhost:9000).
 The required `browser-sync` code-snippet has been added to the bundle already by `de-builder` so `browser-sync` will work out of the box on all your pages and devices =D!
+In `multi` mode folder(s) are to be provided telling `de-builder` in which bundle(s) to add the browser-sync snippet. By default `vendor` is used.
 
 
 ## Modules
@@ -146,45 +161,70 @@ The main modules used to create this __LDE__:
 config =
 
 	# Source and build directory
-	src:	'src'
-	build:	'build'
+	src   : 'src'
+	build : 'build'
 
 	# Client and server directory
-	client:	'client'
-	server:	'server'
+	client: 'client'
+	server: 'server'
 
 	# Less directory and entry file
 	less:
-		file:	'app.less'
-		folder:	'styles'
+		file   : 'app.css'
+		entry  : 'app.less'
+		folder : 'styles'
 
 	# Browserify directory and entry file
 	browserify:
-		file:	'app.js'
-		folder:	'js'
 
-		# show or hide source maps that allow you to debug your files separately.
-		debug:	true
+		# Used for single build
+		single:
+			entry  : 'app.coffee'
+			bundle : 'app.bundle.js'
+
+		# Used for multi build
+		multi : 'bundle.js'
+
+		# Used in both cases
+		# Show or hide source maps that allow you to debug your files separately.
+		debug  : true
+
+		# Folder to js files
+		folder : 'js'
 
 	# Server path/file to be started by forever
 	forever:
-		enabled: true
-		file:	 'app.js'
+		entry   : 'app.js'
+		enabled : true
 
-	# Start browser-sync and adds it to the browserify bundle
+	# Use browser-sync options
 	browserSync:
-		enabled: true
+
+		# Use it, or not
+		enabled : true
+
+		# user interface port
+		ui      : 9000
+
+		# server port
+		server  : 9001
+
+		# Provide names of the multi bundle(s) that should contain the browser-sync code
+		multi   : ['vendor']
 
 	# LDE environments
-	# 1 Server + Client
+	# 1 Server+Client
 	# 2 Server
-	# 3 Client (node-webkit)
-	# 4 Client (Cordova)
-	type:	1
+	# 3 Client
+	type: 1
 
-	# Show de-builder events
+	# Socket.io server for listening to de-builder events
+	io : 8009
+
+	# Show de-builder debug events
 	debug: false
 ```
+
 
 
 ## Common errors
@@ -203,14 +243,3 @@ source: http://stackoverflow.com/questions/16748737/grunt-watch-error-waiting-fa
 #### Port in use
 Pay attention to which port you are using and if another process issn't already running it.
 If you run `node build.js` you may see the error: ` Error: listen EADDRINUSE`. Check if your port is unique. If so your current application might still be running. Check with `top` or `htop` in the ternimal and terminate it.
-
-
-## Planned Support / Features
-- Add support for .scss
-- Add testing support with [Mocha](https://github.com/mochajs/mocha)
-- Add support for __LDE__ type 4
-- Create a setup with
-	[de-base](https://github.com/hawkerboy7/de-base)
-	and
-	[de-nw-base](https://github.com/hawkerboy7/de-nw-base)
-	by providing arguments: `--de-base` and `--de-nw-base`
