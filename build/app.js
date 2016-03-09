@@ -3,10 +3,8 @@
 
   Manager = require('./manager');
 
-  process.title = "de-builder";
-
-  module.exports = function(options) {
-    return new Manager(options);
+  module.exports = function(config) {
+    return new Manager(config);
   };
 
 }).call(this);

@@ -22,9 +22,9 @@
 
 ## What is it?
 `de-builder` creates a __Live Development Environment__ (LDE).<br>
-In this environment you can write `.coffee`,`.js`, `.less`, `.css` and `.jade` and your code will be compiled on save.<br>
+In this environment you can write `.coffee`, `.less`, `.css` and `.jade` and your code will be compiled on save.<br>
 The corresponding part of you program will be either reloaded or restarted.<br>
-This is achieved by using the [modules](https://github.com/hawkerboy7/de-builder#modules).
+This is achieved by using various [modules](https://github.com/hawkerboy7/de-builder#modules).
 
 
 ## Getting Started
@@ -39,7 +39,6 @@ This is achieved by using the [modules](https://github.com/hawkerboy7/de-builder
 ## Support
 The following languages are supported:
 - .coffee
-- .js
 - .less
 - .css
 - .jade
@@ -60,8 +59,8 @@ _Type 4_ : If you are building an app for your phone with (Phonegap - Cordova)
 
 
 ## Structure
-Ok so how should I strucutre my project?
-You can use the strucutre described below but you are free to choose, however make sure you provide the correct entry folder and file in the build.js folder if you choose a custom structure. You can also check [de-base](https://github.com/hawkerboy7/de-base) and [de-nw-base](https://github.com/hawkerboy7/de-nw-base) as an example project or even better use them since they are made to be a base for a project.
+Ok so how should I structre my project?
+You can use the structre described below but you are free to choose, however make sure you provide the correct entry folder and file in the build.js folder if you choose a custom structure. You could also check [de-base](https://github.com/hawkerboy7/de-base) as an example project or better yet use it, since it's created as a basis to start other projects from.
 
 
 #### Server + Client (LDE type 1)
@@ -203,14 +202,3 @@ source: http://stackoverflow.com/questions/16748737/grunt-watch-error-waiting-fa
 #### Port in use
 Pay attention to which port you are using and if another process issn't already running it.
 If you run `node build.js` you may see the error: ` Error: listen EADDRINUSE`. Check if your port is unique. If so your current application might still be running. Check with `top` or `htop` in the ternimal and terminate it.
-
-
-## Planned Support / Features
-- Add support for .scss
-- Add testing support with [Mocha](https://github.com/mochajs/mocha)
-- Add support for __LDE__ type 4
-- Create a setup with
-	[de-base](https://github.com/hawkerboy7/de-base)
-	and
-	[de-nw-base](https://github.com/hawkerboy7/de-nw-base)
-	by providing arguments: `--de-base` and `--de-nw-base`
