@@ -1,7 +1,7 @@
 {
   "name": "de-builder",
   "version": "0.7.0",
-  "description": "A Live Development Environment with support for NodeWebkit",
+  "description": "A Live Development Environment",
   "main": "build/app.js",
   "author": "Dexter Esajas <dexter.esajas@gmail.com>",
   "license": "MIT",
