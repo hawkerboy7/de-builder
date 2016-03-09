@@ -42,7 +42,7 @@
 
     Project.prototype.handle = function() {
       this.i++;
-      if ((this.server.config.type === 1 && this.i === 4) || (this.server.config.type === 2 && this.i === 2)) {
+      if ((this.server.config.type === 1 && this.i === 4) || ((this.server.config.type === 2 || this.server.config.type === 3) && this.i === 2)) {
         log.info('LDE - Project', this.explaination());
         return this.server.vent.emit('project:done');
       }
@@ -59,7 +59,7 @@
         message += 'Server';
       }
       if (type === 3) {
-        message += 'Client (NodeWebkit)';
+        message += 'Client';
       }
       return message += '" is used';
     };

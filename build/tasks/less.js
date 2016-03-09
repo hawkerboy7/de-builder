@@ -33,8 +33,14 @@
       this.count = 0;
       this.config = this.server.config.less;
       this.folder = this.server.folders.src.client + path.sep + this.config.folder;
+      if (this.server.config.type === 3) {
+        this.folder = this.server.folders.src.index + path.sep + this.config.folder;
+      }
       this.entry = this.folder + path.sep + this.config.entry;
       this.map = this.server.folders.build.client + path.sep + this.config.folder;
+      if (this.server.config.type === 3) {
+        this.map = this.server.folders.build.index + path.sep + this.config.folder;
+      }
       this.destination = this.map + path.sep + this.config.file;
       return fs.stat(this.entry, (function(_this) {
         return function(e) {

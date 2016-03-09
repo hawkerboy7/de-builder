@@ -35,10 +35,12 @@ class Less
 
 		# Create path to less entry file and folder
 		@folder = @server.folders.src.client+path.sep+@config.folder
+		@folder = @server.folders.src.index+path.sep+@config.folder if @server.config.type is 3
 		@entry  = @folder+path.sep+@config.entry
 
 		# Create path to destination file and folder
 		@map         = @server.folders.build.client+path.sep+@config.folder
+		@map         = @server.folders.build.index+path.sep+@config.folder if @server.config.type is 3
 		@destination = @map+path.sep+@config.file
 
 		# Check if entry file exists

@@ -46,7 +46,7 @@ class Project
 
 		@i++
 
-		if (@server.config.type is 1 and @i is 4) or (@server.config.type is 2 and @i is 2)
+		if (@server.config.type is 1 and @i is 4) or ((@server.config.type is 2 or @server.config.type is 3) and @i is 2)
 
 			# Notify project type
 			log.info 'LDE - Project', @explaination()
@@ -60,9 +60,9 @@ class Project
 		type = @server.config.type
 
 		message = 'Project type "'
-		message += 'Server-Client'       if type is 1
-		message += 'Server'              if type is 2
-		message += 'Client (NodeWebkit)' if type is 3
+		message += 'Server-Client' if type is 1
+		message += 'Server'        if type is 2
+		message += 'Client'        if type is 3
 		message += '" is used'
 
 
