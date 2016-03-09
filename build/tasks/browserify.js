@@ -86,7 +86,7 @@
     };
 
     Browserify.prototype.initialized = function() {
-      var bundle, folder, i, len, name, options, ref, results;
+      var bundle, folder, i, len, name, options, ref;
       this.init = true;
       options = {
         cache: {},
@@ -104,12 +104,13 @@
         this.w.bundle();
       }
       if (this.type === 'multi') {
-        this.w = {};
+        this.w = {
+          _browserSyncIndicator: true
+        };
         this.t = {};
         this._bundle = {};
         this.dFile = {};
         ref = this.folders;
-        results = [];
         for (i = 0, len = ref.length; i < len; i++) {
           folder = ref[i];
           name = folder.name;
@@ -119,10 +120,10 @@
           this.w[name] = watchify(browserify(options)).add(this.bFolder + path.sep + folder.name + path.sep + 'index.js').transform(jadeify, {
             runtimePath: require.resolve('jade/runtime')
           }).on('bundle', this._bundle[name]);
-          results.push(this.w[name].bundle());
+          this.w[name].bundle();
         }
-        return results;
       }
+      return this.server.vent.emit('browserify:initialized', this.w);
     };
 
     Browserify.prototype.check = function(arg) {
@@ -196,7 +197,8 @@
               dFile = _this.dFile[name];
             }
             destination = dFile.replace(_this.server.root + path.sep, '');
-            return log.info(_this.server.config.title + " - Browserify", "" + message + destination + " | " + _this.server.symbols.finished + " " + time + " s");
+            log.info(_this.server.config.title + " - Browserify", "" + message + destination + " | " + _this.server.symbols.finished + " " + time + " s");
+            return _this.server.vent.emit('browserify:bundle', dFile, destination);
           });
           if (name) {
             f = fs.createWriteStream(_this.dFile[name]);

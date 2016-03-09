@@ -131,7 +131,9 @@ class Browserify
 		if @type is 'multi'
 
 			# Store watchify browserify bundles
-			@w = {}
+			@w =
+				# Tells browser-sync if type is multi or single
+				_browserSyncIndicator: true
 
 			# Store bundle times
 			@t = {}
@@ -170,6 +172,9 @@ class Browserify
 
 				# Create bundle
 				@w[name].bundle()
+
+		# Notify browser-sync
+		@server.vent.emit 'browserify:initialized', @w
 
 
 	check: (arg) =>
@@ -241,6 +246,9 @@ class Browserify
 
 				# Notify Browserify results
 				log.info "#{@server.config.title} - Browserify", "#{message}#{destination} | #{@server.symbols.finished} #{time} s"
+
+				# Notify the creation of a bundle
+				@server.vent.emit 'browserify:bundle', dFile, destination
 
 			# Create a destination write stream
 			if name
