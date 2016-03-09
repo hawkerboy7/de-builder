@@ -15,7 +15,7 @@ class BrowserSync
 
 	constructor: (@server) ->
 
-		return if not @server.config.browserSync.enabled
+		return if not @server.config.browserSync.enabled or @server.config.type is 2
 
 		@load()
 		@listeners()

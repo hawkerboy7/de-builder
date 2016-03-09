@@ -16,6 +16,9 @@
     function Less(server) {
       this.server = server;
       this.less = bind(this.less, this);
+      if (this.server.config.type === 2) {
+        return;
+      }
       this.setup();
       this.listeners();
     }

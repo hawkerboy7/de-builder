@@ -13,6 +13,8 @@ class Less
 
 	constructor: (@server) ->
 
+		return if @server.config.type is 2
+
 		@setup()
 		@listeners()
 

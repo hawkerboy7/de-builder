@@ -14,7 +14,6 @@ class Project
 		@listeners()
 
 
-
 	listeners: ->
 
 		@server.vent.on 'clean:done', @setup

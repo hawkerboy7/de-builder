@@ -22,7 +22,7 @@
       this.bundle = bind(this.bundle, this);
       this.reload = bind(this.reload, this);
       this.initialized = bind(this.initialized, this);
-      if (!this.server.config.browserSync.enabled) {
+      if (!this.server.config.browserSync.enabled || this.server.config.type === 2) {
         return;
       }
       this.load();
