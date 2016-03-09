@@ -248,7 +248,7 @@ class Browserify
 				log.info "#{@server.config.title} - Browserify", "#{message}#{destination} | #{@server.symbols.finished} #{time} s"
 
 				# Notify the creation of a bundle
-				@server.vent.emit 'browserify:bundle', dFile, destination
+				@server.vent.emit 'browserify:bundle', dFile
 
 			# Create a destination write stream
 			if name

@@ -30,9 +30,9 @@
           });
         };
       })(this));
-      return this.server.vent.on('project:done', (function(_this) {
+      return this.server.vent.on('browserify:bundle', (function(_this) {
         return function() {
-          return _this.server.io.emit('project:done');
+          return _this.server.io.emit('browserify:bundle');
         };
       })(this));
     };

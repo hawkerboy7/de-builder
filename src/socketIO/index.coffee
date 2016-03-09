@@ -19,8 +19,11 @@ class SocketIO
 
 	load: ->
 
-		# Link the socket.io server to the express server
-		@server.io = io().listen @server.config.io.port, @server.config.io.host
+		# Setupt socket sever
+		@server.io = io()
+
+			# Listen on the config provided ports
+			.listen @server.config.io.port, @server.config.io.host
 
 		# Notify
 		log.info 'LDE - Socket.io', "#{@server.config.title} events at #{@server.config.io.host}:#{@server.config.io.port}"
@@ -35,7 +38,7 @@ class SocketIO
 		@server.io.on 'connection', (socket) => new Handler socket: socket, server: @server
 
 		# de-builder events for external applications
-		@server.vent.on 'project:done', => @server.io.emit 'project:done'
+		@server.vent.on 'browserify:bundle', => @server.io.emit 'browserify:bundle'
 
 
 

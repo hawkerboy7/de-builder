@@ -198,7 +198,7 @@
             }
             destination = dFile.replace(_this.server.root + path.sep, '');
             log.info(_this.server.config.title + " - Browserify", "" + message + destination + " | " + _this.server.symbols.finished + " " + time + " s");
-            return _this.server.vent.emit('browserify:bundle', dFile, destination);
+            return _this.server.vent.emit('browserify:bundle', dFile);
           });
           if (name) {
             f = fs.createWriteStream(_this.dFile[name]);
