@@ -141,7 +141,7 @@
             }, function(e, output) {
               var css;
               if (e) {
-                log.error(_this.server.config.title + " - Less", e.message);
+                log.error(_this.server.config.title + " - Less", e.type, ' error', e.message + '\nLine: ', e.line, ' | ', e.extract);
                 return _this.notify();
               }
               if (!(css = output != null ? output.css : void 0) && (css !== "")) {

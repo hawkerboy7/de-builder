@@ -134,7 +134,7 @@ class Less
 
 					# In case of an error in the .less file
 					if e
-						log.error "#{@server.config.title} - Less", e.type, ' error', e.message'\nLine: ', e.line, ' | ', e.extract # <-- check this info
+						log.error "#{@server.config.title} - Less", e.type, ' error', e.message+'\nLine: ', e.line, ' | ', e.extract # <-- check this info
 						return @notify()
 
 					if not (css = output?.css) and (css isnt "")
