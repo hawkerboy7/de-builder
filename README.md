@@ -29,11 +29,15 @@ This is achieved by using various [modules](https://github.com/hawkerboy7/de-bui
 
 
 ## Getting Started
-- Navigate to your project folder.
-- There `npm install --save-dev de-builder`.
+- Create a project folder `mkdir test`.
+- Navigate to the project folder `cd test`.
+- Create a package.json file to store all your project information `npm init`.
+- Then `npm install --save-dev de-builder`.
 - Once `de-builder` has been installed a `build.js` file will have been created.
 - You can adjust the config in the `build.js` file according to your specifications (all default options are shown).
 - Now run `node build.js` and your __LDE__ will run and you can start working on your project.
+
+NOTE: If you've keept all default settings and started `node build.js` in an empty project you will encounter two error's `LDE - Less` and `LDE - Browserify`. That's because by default an entry file for `less` and `browserify` is expected. You can take a look at [de-base](https://github.com/hawkerboy7/de-base) which is an example project using `de-builder`.
 
 
 ## Support
