@@ -1,4 +1,1 @@
-(function() {
-  window.io = require('socket.io-client');
-
-}).call(this);
+window.io = require('socket.io-client');
