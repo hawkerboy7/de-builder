@@ -3,7 +3,6 @@ path             = require 'path'
 { EventEmitter } = require 'events'
 
 # NPM
-_      = require 'lodash'
 log    = require 'de-logger'
 extend = require 'deep-extend'
 
@@ -18,7 +17,7 @@ class Server
 	constructor: (config) ->
 
 		# Set package
-		@pkg    = pkg
+		@pkg = pkg
 
 		# Extend config with provided config
 		@config = extend cfg, config

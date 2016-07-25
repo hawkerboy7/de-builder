@@ -1,10 +1,7 @@
-(function() {
-  var Manager;
+var Manager;
 
-  Manager = require('./manager');
+Manager = require('./manager');
 
-  module.exports = function(config) {
-    return new Manager(config);
-  };
-
-}).call(this);
+module.exports = function(config) {
+  return new Manager(config);
+};

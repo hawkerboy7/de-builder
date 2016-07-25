@@ -1,30 +1,27 @@
-(function() {
-  var Exit, Manager, Server, SocketIO, Tasks, log;
+var Exit, Manager, Server, SocketIO, Tasks, log;
 
-  log = require('de-logger');
+log = require('de-logger');
 
-  Exit = require('./exit');
+Exit = require('./exit');
 
-  Tasks = require('./tasks');
+Tasks = require('./tasks');
 
-  Server = require('./server');
+Server = require('./server');
 
-  SocketIO = require('./socketIO');
+SocketIO = require('./socketIO');
 
-  Manager = (function() {
-    function Manager(config) {
-      var server;
-      log.clear();
-      server = new Server(config);
-      new Exit(server);
-      new SocketIO(server);
-      new Tasks(server);
-    }
+Manager = (function() {
+  function Manager(config) {
+    var server;
+    log.clear();
+    server = new Server(config);
+    new Exit(server);
+    new SocketIO(server);
+    new Tasks(server);
+  }
 
-    return Manager;
+  return Manager;
 
-  })();
+})();
 
-  module.exports = Manager;
-
-}).call(this);
+module.exports = Manager;

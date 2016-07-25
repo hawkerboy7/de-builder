@@ -1,10 +1,8 @@
-var EventEmitter, Server, _, cfg, extend, log, path, pkg;
+var EventEmitter, Server, cfg, extend, log, path, pkg;
 
 path = require('path');
 
 EventEmitter = require('events').EventEmitter;
-
-_ = require('lodash');
 
 log = require('de-logger');
 
