@@ -1,4 +1,4 @@
-var Browserify, browserify, fs, jadeify, log, path, watchify,
+var Browserify, browserify, fs, jadeify, log, path,
   bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
 
 fs = require('fs');
@@ -9,9 +9,7 @@ log = require('de-logger');
 
 jadeify = require('jadeify');
 
-watchify = require('watchify');
-
-browserify = require('browserify');
+browserify = require('browserify-windows-fix');
 
 Browserify = (function() {
   function Browserify(server) {
@@ -96,7 +94,7 @@ Browserify = (function() {
     if (this.type === 'single') {
       bundle = this.createBundle();
       this.dFile = this.bFolder + path.sep + this.config.single.bundle;
-      this.w = watchify(browserify(options)).add(this.bFile).transform(jadeify, {
+      this.w = browserify(options).add(this.bFile).transform(jadeify, {
         runtimePath: require.resolve('jade/runtime')
       }).on('bundle', bundle);
       this.t = (new Date).getTime();
@@ -116,7 +114,7 @@ Browserify = (function() {
         this.t[name] = (new Date).getTime();
         this._bundle[name] = this.createBundle(name);
         this.dFile[name] = this.bFolder + path.sep + name + path.sep + this.config.multi;
-        this.w[name] = watchify(browserify(options)).add(this.bFolder + path.sep + folder.name + path.sep + 'index.js').transform(jadeify, {
+        this.w[name] = browserify(options).add(this.bFolder + path.sep + folder.name + path.sep + 'index.js').transform(jadeify, {
           runtimePath: require.resolve('jade/runtime')
         }).on('bundle', this._bundle[name]);
         this.w[name].bundle();

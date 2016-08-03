@@ -5,8 +5,7 @@ path = require 'path'
 # NPM
 log        = require 'de-logger'
 jadeify    = require 'jadeify'
-watchify   = require 'watchify'
-browserify = require 'browserify'
+browserify = require 'browserify-windows-fix'
 
 
 
@@ -111,7 +110,7 @@ class Browserify
 			@dFile = @bFolder+path.sep+@config.single.bundle
 
 			# Store watchify browserify bundle
-			@w = watchify browserify options
+			@w = browserify options
 
 				# Add user entry file
 				.add @bFile
@@ -159,7 +158,7 @@ class Browserify
 				@dFile[name] = @bFolder+path.sep+name+path.sep+@config.multi
 
 				# Store watchify browserify bundle
-				@w[name] = watchify browserify options
+				@w[name] = browserify options
 
 					# Add user entry file
 					.add @bFolder+path.sep+folder.name+path.sep+'index.js'
