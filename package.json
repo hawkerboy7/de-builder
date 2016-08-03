@@ -8,6 +8,7 @@
   "dependencies": {
     "browser-sync": "^2.13.0",
     "browserify": "^13.0.1",
+    "browserify-windows-fix": "^3.43.0",
     "chokidar": "^1.6.0",
     "coffee-script": "^1.10.0",
     "de-logger": "^0.3.3",
