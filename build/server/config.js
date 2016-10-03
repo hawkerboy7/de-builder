@@ -1,7 +1,10 @@
 var config;
 
 config = {
-  io: 8009,
+  io: {
+    port: 8009,
+    enabled: false
+  },
   src: 'src',
   build: 'build',
   client: 'client',

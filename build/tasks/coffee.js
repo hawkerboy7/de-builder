@@ -33,7 +33,7 @@ Coffee = (function() {
           return log.error(err);
         }
         return mkdirp(path.dirname(build), function() {
-          var coffeeScript, e, error, name;
+          var coffeeScript, e, name;
           try {
             coffeeScript = coffee.compile(data, {
               bare: true

@@ -1,7 +1,9 @@
 config =
 
 	# Socket.io server for listening to de-builder events
-	io: 8009
+	io:
+		port    : 8009
+		enabled : false
 
 	# Source and build directory
 	src   : 'src'
