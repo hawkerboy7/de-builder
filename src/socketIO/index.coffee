@@ -19,14 +19,16 @@ class SocketIO
 
 	load: ->
 
+		return if not @server.config.io.enabled
+
 		# Setupt socket sever
 		@server.io = io()
 
 			# Listen on the config provided ports
-			.listen @server.config.io
+			.listen @server.config.io.port
 
 		# Notify
-		log.info 'LDE - Socket.io', "#{@server.config.title} events at #{@server.config.io}"
+		log.info 'LDE - Socket.io', "#{@server.config.title} events at #{@server.config.io.port}"
 
 		# Listen for events
 		@listeners()

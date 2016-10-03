@@ -99,7 +99,7 @@ class BrowserSync
 		log.info "#{@server.config.title} - Browser-sync", "Browser-sync server started"
 
 		# Download file
-		@download "http://localhost:#{@config.server}/browser-sync/browser-sync-client.#{version}.js", (err) =>
+		@download "http://localhost:#{@config.server}/browser-sync/browser-sync-client.js?v=#{version}", (err) =>
 
 			# Notify start
 			return log.error "#{@server.config.title} - Browser-sync", "Unable to get browser-sync .js file", err if err

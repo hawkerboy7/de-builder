@@ -89,7 +89,7 @@ BrowserSync = (function() {
 
   BrowserSync.prototype.code = function() {
     log.info(this.server.config.title + " - Browser-sync", "Browser-sync server started");
-    return this.download("http://localhost:" + this.config.server + "/browser-sync/browser-sync-client." + version + ".js", (function(_this) {
+    return this.download("http://localhost:" + this.config.server + "/browser-sync/browser-sync-client.js?v=" + version, (function(_this) {
       return function(err) {
         if (err) {
           return log.error(_this.server.config.title + " - Browser-sync", "Unable to get browser-sync .js file", err);

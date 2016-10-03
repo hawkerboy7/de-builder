@@ -15,8 +15,11 @@ SocketIO = (function() {
   }
 
   SocketIO.prototype.load = function() {
-    this.server.io = io().listen(this.server.config.io);
-    log.info('LDE - Socket.io', this.server.config.title + " events at " + this.server.config.io);
+    if (!this.server.config.io.enabled) {
+      return;
+    }
+    this.server.io = io().listen(this.server.config.io.port);
+    log.info('LDE - Socket.io', this.server.config.title + " events at " + this.server.config.io.port);
     return this.listeners();
   };
 
