@@ -15,7 +15,7 @@ class Logger
 		@server.vent.on 'compiled:file', @log
 
 
-	log: ({title, message, file}) =>
+	log: ({title, message, file}) ->
 
 		log.info title, message
 

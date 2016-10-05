@@ -27,7 +27,7 @@ class Exit
 		process.stdin.setEncoding 'utf8'
 
 		# Listen for terminal user input (leaves the process running too)
-		process.stdin.on 'data', (command) =>
+		process.stdin.on 'data', (command) ->
 
 			# Send terminal command through the application - Remove the \n from the command
 			process.emit 'command', command.slice 0, -1
@@ -57,7 +57,7 @@ class Exit
 		process.exit 143
 
 
-	command: (command) =>
+	command: (command) ->
 
 		# Exit process
 		process.exit() if command is 'exit'
