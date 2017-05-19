@@ -1,6 +1,6 @@
 {
   "name": "de-builder",
-  "version": "0.7.4",
+  "version": "0.7.5",
   "description": "A Live Development Environment",
   "main": "build/app.js",
   "author": "Dexter Esajas <dexter.esajas@gmail.com>",
