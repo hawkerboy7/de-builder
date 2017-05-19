@@ -74,7 +74,7 @@ class Forever
 
 	terminate: =>
 
-		@child.kill() if @child
+		@child.kill() if @child and @child.running
 
 
 

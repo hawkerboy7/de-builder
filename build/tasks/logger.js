@@ -1,12 +1,10 @@
-var Logger, log,
-  bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
+var Logger, log;
 
 log = require('de-logger');
 
 Logger = (function() {
   function Logger(server) {
     this.server = server;
-    this.log = bind(this.log, this);
     this.listeners();
   }
 
