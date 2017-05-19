@@ -87,7 +87,7 @@ class Watch
 		log.info "#{@server.config.title} - Watch", "Unlink: #{remove}"
 
 		# Try to remove the file in the build folder
-		fs.unlink @server.root+path.sep+remove, (e) =>
+		fs.unlink @server.root+path.sep+remove, (e) ->
 
 			# Catch error but don't do anything with it in case the file isn't there for some reason
 

@@ -71,7 +71,7 @@ Forever = (function() {
   };
 
   Forever.prototype.terminate = function() {
-    if (this.child) {
+    if (this.child && this.child.running) {
       return this.child.kill();
     }
   };

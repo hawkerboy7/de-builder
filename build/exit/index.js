@@ -6,7 +6,6 @@ log = require('de-logger');
 Exit = (function() {
   function Exit(server) {
     this.server = server;
-    this.command = bind(this.command, this);
     this.sigterm = bind(this.sigterm, this);
     this.sigint = bind(this.sigint, this);
     this.uncaughtException = bind(this.uncaughtException, this);
@@ -25,11 +24,9 @@ Exit = (function() {
 
   Exit.prototype.readInput = function() {
     process.stdin.setEncoding('utf8');
-    return process.stdin.on('data', (function(_this) {
-      return function(command) {
-        return process.emit('command', command.slice(0, -1));
-      };
-    })(this));
+    return process.stdin.on('data', function(command) {
+      return process.emit('command', command.slice(0, -1));
+    });
   };
 
   Exit.prototype.exit = function(code) {

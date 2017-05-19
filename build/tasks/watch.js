@@ -68,9 +68,7 @@ Watch = (function() {
     seperated.shift();
     remove = this.server.config.build + path.sep + seperated.join(path.sep);
     log.info(this.server.config.title + " - Watch", "Unlink: " + remove);
-    return fs.unlink(this.server.root + path.sep + remove, (function(_this) {
-      return function(e) {};
-    })(this));
+    return fs.unlink(this.server.root + path.sep + remove, function(e) {});
   };
 
   Watch.prototype.ready = function() {
