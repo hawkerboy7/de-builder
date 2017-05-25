@@ -1,6 +1,6 @@
 {
   "name": "de-builder",
-  "version": "0.7.5",
+  "version": "0.7.6",
   "description": "A Live Development Environment",
   "main": "build/app.js",
   "author": "Dexter Esajas <dexter.esajas@gmail.com>",
@@ -24,7 +24,7 @@
     "watchify": "^3.7.0"
   },
   "devDependencies": {
-    "de-builder": "^0.7.1"
+    "de-builder": "^0.7.5"
   },
   "repository": {
     "type": "git",
