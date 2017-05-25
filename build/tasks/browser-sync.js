@@ -39,6 +39,7 @@ BrowserSync = (function() {
       },
       port: this.config.server,
       logLevel: 'silent',
+      ghostMode: false,
       logFileChanges: false
     };
     return this.bs.init(config, (function(_this) {

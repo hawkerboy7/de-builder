@@ -36,6 +36,7 @@ class BrowserSync
 			ui: port       : @config.ui
 			port           : @config.server
 			logLevel       : 'silent'
+			ghostMode      : false
 			logFileChanges : false
 
 		# Initialize server
