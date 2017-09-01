@@ -1,5 +1,5 @@
 # NPM
-log = require 'de-logger'
+log = require "de-logger"
 
 
 
@@ -14,56 +14,56 @@ class Exit
 
 		@readInput()
 
-		process.on 'exit', @exit
-		process.on 'SIGINT', @sigint
-		process.on 'SIGTERM', @sigterm
-		process.on 'command', @command
-		process.on 'uncaughtException', @uncaughtException
+		process.on "exit", @exit
+		process.on "SIGINT", @sigint
+		process.on "SIGTERM", @sigterm
+		process.on "command", @command
+		process.on "uncaughtException", @uncaughtException
 
 
 	readInput: ->
 
 		# Set encoding
-		process.stdin.setEncoding 'utf8'
+		process.stdin.setEncoding "utf8"
 
 		# Listen for terminal user input (leaves the process running too)
-		process.stdin.on 'data', (command) ->
+		process.stdin.on "data", (command) ->
 
 			# Send terminal command through the application - Remove the \n from the command
-			process.emit 'command', command.slice 0, -1
+			process.emit "command", command.slice 0, -1
 
 
 	exit: (code) =>
 
-		@server.vent.emit 'terminate:child'
+		@server.vent.emit "terminate:child"
 
-		log.info @server.config.title, 'Exit:', code
+		log.info @server.config.title, "Exit:", code
 
 
 	uncaughtException: (e) =>
-		console.log ''
-		log.warn @server.config.title, 'Uncaught Exception Found\n\n', e.stack
+		console.log ""
+		log.warn @server.config.title, "Uncaught Exception Found\n\n", e.stack
 
 
 	sigint: =>
-		console.log ''
-		log.info @server.config.title, 'Application Interrupted'
+		console.log ""
+		log.info @server.config.title, "Application Interrupted"
 		process.exit 130
 
 
 	sigterm: =>
-		console.log ''
-		log.info @server.config.title, 'Application Terminated'
+		console.log ""
+		log.info @server.config.title, "Application Terminated"
 		process.exit 143
 
 
 	command: (command) ->
 
 		# Exit process
-		process.exit() if command is 'exit'
+		process.exit() if command is "exit"
 
 		# Log command
-		# log.event 'command', command
+		# log.event "command", command
 
 
 

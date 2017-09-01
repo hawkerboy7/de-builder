@@ -1,10 +1,10 @@
 # Node
-fs = require 'fs'
+fs = require "fs"
 
 # NPM
-log   = require 'de-logger'
-rmdir = require 'rmdir'
-mkdirp = require 'mkdirp'
+log   = require "de-logger"
+rmdir = require "rmdir"
+mkdirp = require "mkdirp"
 
 
 
@@ -17,7 +17,7 @@ class Clean
 
 	listeners: ->
 
-		@server.vent.on 'builder:start', @start
+		@server.vent.on "builder:start", @start
 
 
 	start: =>
@@ -28,10 +28,10 @@ class Clean
 			# Create build folder
 			mkdirp @server.folders.build.index, =>
 
-				log.info 'LDE - Clean', @server.symbols.finished
+				log.info "LDE - Clean", @server.symbols.finished
 
 				# Notify application
-				@server.vent.emit 'clean:done'
+				@server.vent.emit "clean:done"
 
 
 
