@@ -21,7 +21,7 @@ BrowserSync = (function() {
     this.bundle = bind(this.bundle, this);
     this.reload = bind(this.reload, this);
     this.initialized = bind(this.initialized, this);
-    if (!this.server.config.browserSync.enabled || this.server.config.type === 2) {
+    if (false || !this.server.config.browserSync.enabled || this.server.config.type === 2 || this.server.env === "production") {
       return;
     }
     this.load();
