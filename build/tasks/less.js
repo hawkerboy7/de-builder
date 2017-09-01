@@ -1,15 +1,15 @@
 var Less, fs, less, log, mkdirp, path,
   bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
 
-fs = require('fs');
+fs = require("fs");
 
-path = require('path');
+path = require("path");
 
-log = require('de-logger');
+log = require("de-logger");
 
-less = require('less');
+less = require("less");
 
-mkdirp = require('mkdirp');
+mkdirp = require("mkdirp");
 
 Less = (function() {
   function Less(server) {
@@ -23,8 +23,8 @@ Less = (function() {
   }
 
   Less.prototype.listeners = function() {
-    this.server.vent.on('less:file', this.less);
-    return this.server.vent.on('watch:init', this.less);
+    this.server.vent.on("less:file", this.less);
+    return this.server.vent.on("watch:init", this.less);
   };
 
   Less.prototype.setup = function() {
@@ -44,9 +44,9 @@ Less = (function() {
     return fs.stat(this.entry, (function(_this) {
       return function(e) {
         if (!e) {
-          _this.type = 'single';
+          _this.type = "single";
         } else {
-          _this.type = 'multi';
+          _this.type = "multi";
           _this.determin();
         }
         return log.info(_this.server.config.title + " - Less", "Type: " + _this.type);
@@ -70,7 +70,7 @@ Less = (function() {
           }
           _this.folders.push({
             src: folder,
-            bare: folder.replace(_this.server.root + path.sep, ''),
+            bare: folder.replace(_this.server.root + path.sep, ""),
             name: file
           });
         }
@@ -88,14 +88,14 @@ Less = (function() {
     if (file) {
       log.debug(this.server.config.title + " - Less", "Change: " + file);
     }
-    if (this.type === 'single') {
+    if (this.type === "single") {
       this.single({
         sFile: this.entry,
         sFolder: this.folder,
         dFile: this.destination
       });
     }
-    if (this.type === 'multi') {
+    if (this.type === "multi") {
       return this.multi(file);
     }
   };
@@ -115,9 +115,9 @@ Less = (function() {
         }
       }
       results.push(this.single({
-        sFile: folder.src + path.sep + 'index.less',
+        sFile: folder.src + path.sep + "index.less",
         sFolder: folder.src,
-        dFile: this.map + path.sep + folder.name + '.css',
+        dFile: this.map + path.sep + folder.name + ".css",
         name: folder.name
       }));
     }
@@ -127,7 +127,7 @@ Less = (function() {
   Less.prototype.single = function(arg) {
     var dFile, name, sFile, sFolder;
     sFile = arg.sFile, sFolder = arg.sFolder, dFile = arg.dFile, name = arg.name;
-    return fs.readFile(sFile, 'utf8', (function(_this) {
+    return fs.readFile(sFile, "utf8", (function(_this) {
       return function(e, res) {
         if (e) {
           log.error(_this.server.config.title + " - Less", "" + e);
@@ -136,11 +136,11 @@ Less = (function() {
         return mkdirp(_this.map, function() {
           return less.render(res, {
             paths: [sFolder],
-            compress: true
+            compress: _this.server.env === "production"
           }, function(e, output) {
             var css;
             if (e) {
-              log.error(_this.server.config.title + " - Less", e.type, ' error', e.message + '\nLine: ', e.line, ' | ', e.extract);
+              log.error(_this.server.config.title + " - Less", e.type, " error", e.message + "\nLine: ", e.line, " | ", e.extract);
               return _this.notify();
             }
             if (!(css = output != null ? output.css : void 0) && (css !== "")) {
@@ -158,10 +158,10 @@ Less = (function() {
               } else {
                 prefix = "";
               }
-              _this.server.vent.emit('compiled:file', {
+              _this.server.vent.emit("compiled:file", {
                 file: dFile,
                 title: _this.server.config.title + " - Less",
-                message: prefix + dFile.replace(_this.server.root + path.sep, '')
+                message: prefix + dFile.replace(_this.server.root + path.sep, "")
               });
               return _this.notify();
             });
@@ -176,7 +176,7 @@ Less = (function() {
       return;
     }
     this.done = true;
-    return this.server.vent.emit('watch:increase', this.count);
+    return this.server.vent.emit("watch:increase", this.count);
   };
 
   return Less;
