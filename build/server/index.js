@@ -19,7 +19,7 @@ Server = (function() {
     this.config.title = "LDE";
     this.config.fullTitle = "Live Development Environment";
     process.title = this.pkg.name;
-    this.env = process.env.NODE_ENV || "development";
+    this.env = process.argv[2] === "-prod" ? "production" : "development";
     log.set({
       debug: {
         display: this.config.debug

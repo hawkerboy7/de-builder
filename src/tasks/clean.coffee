@@ -2,8 +2,8 @@
 fs = require "fs"
 
 # NPM
-log   = require "de-logger"
-rmdir = require "rmdir"
+log    = require "de-logger"
+rmdir  = require "rmdir"
 mkdirp = require "mkdirp"
 
 

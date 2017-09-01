@@ -22,7 +22,7 @@ class Server
 		# Extend config with provided config
 		@config = extend cfg, config
 
-		# Project
+		# Set project info
 		@config.title     = "LDE"
 		@config.fullTitle = "Live Development Environment"
 
@@ -30,7 +30,7 @@ class Server
 		process.title = @pkg.name
 
 		# Determin application environment
-		@env = process.env.NODE_ENV || "development"
+		@env = if process.argv[2] is "-prod" then "production" else "development"
 
 		# Set debug
 		log.set debug: display: @config.debug
