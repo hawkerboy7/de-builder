@@ -5,7 +5,7 @@ path = require 'path'
 # NPM
 log        = require 'de-logger'
 jadeify    = require 'jadeify'
-browserify = require 'browserify-windows-fix'
+browserify = require 'browserify'
 
 
 

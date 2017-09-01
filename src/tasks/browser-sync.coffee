@@ -25,7 +25,7 @@ class BrowserSync
 
 		@config = @server.config.browserSync
 
-		# Create path to gfbrowser-sync file
+		# Create path to gf browser-sync file
 		@filePath = @server.myRoot+path.sep+'build'+path.sep+'browser-sync.js'
 
 		# Create browsersync server

@@ -32,7 +32,7 @@ class Server
 		# Determin application environment
 		@env = if process.argv[2] is "-prod" then "production" else "development"
 
-		# Set debug
+		# Set the value of debug messages logged
 		log.set debug: display: @config.debug
 
 		# Notify start of project
