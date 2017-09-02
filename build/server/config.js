@@ -16,6 +16,7 @@ config = {
       bundle: "app.bundle.js"
     },
     multi: "bundle.js",
+    pugify: true,
     debug: true,
     folder: "js"
   },

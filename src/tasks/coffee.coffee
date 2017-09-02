@@ -1,11 +1,11 @@
 # Node
-fs   = require 'fs'
-path = require 'path'
+fs   = require "fs"
+path = require "path"
 
 # NPM
-log    = require 'de-logger'
-mkdirp = require 'mkdirp'
-coffee = require 'coffee-script'
+log    = require "de-logger"
+mkdirp = require "mkdirp"
+coffee = require "coffee-script"
 
 
 
@@ -18,16 +18,16 @@ class Coffee
 
 	listeners: ->
 
-		@server.vent.on 'coffee:file', @coffee
+		@server.vent.on "coffee:file", @coffee
 
 
 	coffee: (file, init) =>
 
 		# Create destination path for compiled file
-		build = @server.toBuild(file).replace '.coffee', '.js'
+		build = @server.toBuild(file).replace ".coffee", ".js"
 
 		# Read coffee file
-		fs.readFile @server.root+path.sep+file, encoding: 'utf-8' , (err, data) =>
+		fs.readFile @server.root+path.sep+file, encoding: "utf-8" , (err, data) =>
 
 			return log.error err if err
 
@@ -45,13 +45,13 @@ class Coffee
 
 					return log.error err if err
 
-					@server.vent.emit 'compiled:file',
+					@server.vent.emit "compiled:file",
 						file    : name
 						title   : "#{@server.config.title} - Coffee"
 						message : "#{build}"
 
-					# Notify the watch in case the init hassn't been triggered
-					@server.vent.emit 'watch:increase' if not init
+					# Notify the watch in case the init has not been triggered
+					@server.vent.emit "watch:increase" if not init
 
 
 
