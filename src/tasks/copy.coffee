@@ -1,10 +1,10 @@
 # Node
-fs   = require 'fs'
-path = require 'path'
+fs   = require "fs"
+path = require "path"
 
 # NPM
-log    = require 'de-logger'
-mkdirp = require 'mkdirp'
+log    = require "de-logger"
+mkdirp = require "mkdirp"
 
 
 
@@ -17,7 +17,7 @@ class Copy
 
 	listeners: ->
 
-		@server.vent.on 'copy:file', @copy
+		@server.vent.on "copy:file", @copy
 
 
 	copy: (file, init) =>
@@ -34,15 +34,15 @@ class Copy
 			# Create write stream
 			write = fs.createWriteStream name = @server.root+path.sep+build
 
-			write.on 'finish', =>
+			write.on "finish", =>
 
-				@server.vent.emit 'compiled:file',
+				@server.vent.emit "compiled:file",
 					file    : name
 					title   : "#{@server.config.title} - Copy"
 					message : "#{build}"
 
-				# Notify the watch in case the init hassn't been triggered
-				@server.vent.emit 'watch:increase' if not init
+				# Notify the watch in case the init has not been triggered
+				@server.vent.emit "watch:increase" if not init
 
 			# Read file and write to destination
 			read.pipe write

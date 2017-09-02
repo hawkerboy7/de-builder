@@ -3,13 +3,14 @@
 # --------------------------------------------------
 
 # NPM
-log = require 'de-logger'
+log = require "de-logger"
 
 # Modules
-Exit     = require './exit'
-Tasks    = require './tasks'
-Server   = require './server'
-SocketIO = require './socketIO'
+Exit   = require "./exit"
+Tasks  = require "./tasks"
+Server = require "./server"
+
+
 
 # --------------------------------------------------
 # Application Manager | Starts all main processes
@@ -26,9 +27,6 @@ class Manager
 
 		# Handle program exit
 		new Exit server
-
-		# Start Socket server
-		new SocketIO server
 
 		# Startup all de-builder tasks
 		new Tasks server

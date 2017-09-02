@@ -1,13 +1,13 @@
 var Copy, fs, log, mkdirp, path,
   bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
 
-fs = require('fs');
+fs = require("fs");
 
-path = require('path');
+path = require("path");
 
-log = require('de-logger');
+log = require("de-logger");
 
-mkdirp = require('mkdirp');
+mkdirp = require("mkdirp");
 
 Copy = (function() {
   function Copy(server) {
@@ -17,7 +17,7 @@ Copy = (function() {
   }
 
   Copy.prototype.listeners = function() {
-    return this.server.vent.on('copy:file', this.copy);
+    return this.server.vent.on("copy:file", this.copy);
   };
 
   Copy.prototype.copy = function(file, init) {
@@ -28,14 +28,14 @@ Copy = (function() {
       return function() {
         var name, write;
         write = fs.createWriteStream(name = _this.server.root + path.sep + build);
-        write.on('finish', function() {
-          _this.server.vent.emit('compiled:file', {
+        write.on("finish", function() {
+          _this.server.vent.emit("compiled:file", {
             file: name,
             title: _this.server.config.title + " - Copy",
             message: "" + build
           });
           if (!init) {
-            return _this.server.vent.emit('watch:increase');
+            return _this.server.vent.emit("watch:increase");
           }
         });
         return read.pipe(write);

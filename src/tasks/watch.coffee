@@ -1,10 +1,10 @@
 # Node
-fs   = require 'fs'
-path = require 'path'
+fs   = require "fs"
+path = require "path"
 
 # NPM
-log      = require 'de-logger'
-chokidar = require 'chokidar'
+log      = require "de-logger"
+chokidar = require "chokidar"
 
 
 
@@ -17,8 +17,8 @@ class Watch
 
 	listeners: ->
 
-		@server.vent.on 'project:done', @watchSrc
-		@server.vent.on 'watch:increase', @increase
+		@server.vent.on "project:done", @watchSrc
+		@server.vent.on "watch:increase", @increase
 
 
 	watchSrc: =>
@@ -30,15 +30,15 @@ class Watch
 			second : 0
 
 		# Start watch
-		log.info "#{@server.config.title} - Watch", '~ Night gathers, and now my watch begins ~'
+		log.info "#{@server.config.title} - Watch", "~ Night gathers, and now my watch begins ~"
 
-		# Start the watcher chokidar
+		# Start the chokidar the file wachter
 		chokidar
 			.watch @server.config.src, ignored: /[\/\\]\./
-			.on 'add', @add
-			.on 'change', @change
-			.on 'unlink', @unlink
-			.on 'ready', @ready
+			.on "add", @add
+			.on "change", @change
+			.on "unlink", @unlink
+			.on "ready", @ready
 
 
 	add: (file) =>
@@ -47,13 +47,13 @@ class Watch
 		@count.first++ if not @init
 
 		# Add handler
-		@addChange 'Add', file
+		@addChange "Add", file
 
 
 	change: (file) =>
 
 		# Change handler
-		@addChange 'Change', file
+		@addChange "Change", file
 
 
 	addChange: (type, file) ->
@@ -65,11 +65,11 @@ class Watch
 		extention = path.extname file
 
 		# Compile specific extentions
-		return @server.vent.emit 'less:file', file, @init if extention is '.less'
-		return @server.vent.emit 'coffee:file', file, @init if extention is '.coffee'
+		return @server.vent.emit "less:file", file, @init if extention is ".less"
+		return @server.vent.emit "coffee:file", file, @init if extention is ".coffee"
 
-		# Copy file in case extention isn't supported
-		@server.vent.emit 'copy:file', file, @init
+		# Copy file in case extention is not supported
+		@server.vent.emit "copy:file", file, @init
 
 
 	unlink: (file) =>
@@ -89,7 +89,7 @@ class Watch
 		# Try to remove the file in the build folder
 		fs.unlink @server.root+path.sep+remove, (e) ->
 
-			# Catch error but don't do anything with it in case the file isn't there for some reason
+			# Catch error but do not do anything with it in case the file is not there for some reason
 
 
 	ready: =>
@@ -97,10 +97,10 @@ class Watch
 		@init = true
 
 		# Notify
-		log.debug "#{@server.config.title} - Watch", "Ready: #{@count.first} files initially added"
+		log.info "#{@server.config.title} - Watch", "Ready: #{@count.first} files initially added"
 
 		# Watch has found all files
-		@server.vent.emit 'watch:init'
+		@server.vent.emit "watch:init"
 
 
 	increase: (count) =>
@@ -111,7 +111,7 @@ class Watch
 		else
 			@count.second++
 
-		# Guard: Don't do anything until ready trigger is fired and counts are the same
+		# Guard: Do not do anything until ready trigger is fired and counts are the same
 		return if not (@init and @count.second is @count.first)
 
 		# Watch has fully been initialized
@@ -121,7 +121,7 @@ class Watch
 		log.debug "#{@server.config.title} - Watch", "Ready: #{@count.second} files have initially been created"
 
 		# Notify the initial addition of files trough watch has been finished
-		@server.vent.emit 'watch:initialized'
+		@server.vent.emit "watch:initialized"
 
 
 

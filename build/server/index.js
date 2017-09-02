@@ -1,25 +1,25 @@
 var EventEmitter, Server, cfg, extend, log, path, pkg;
 
-path = require('path');
+path = require("path");
 
-EventEmitter = require('events').EventEmitter;
+EventEmitter = require("events").EventEmitter;
 
-log = require('de-logger');
+log = require("de-logger");
 
-extend = require('deep-extend');
+extend = require("deep-extend");
 
-cfg = require('./config');
+cfg = require("./config");
 
-pkg = require('../../package.json');
+pkg = require("../../package.json");
 
 Server = (function() {
   function Server(config) {
     this.pkg = pkg;
     this.config = extend(cfg, config);
-    this.config.title = 'LDE';
-    this.config.fullTitle = 'Live Development Environment';
+    this.config.title = "LDE";
+    this.config.fullTitle = "Live Development Environment";
     process.title = this.pkg.name;
-    this.env = process.env.NODE_ENV || 'development';
+    this.env = process.argv[2] === "-prod" ? "production" : "development";
     log.set({
       debug: {
         display: this.config.debug
@@ -32,11 +32,11 @@ Server = (function() {
 
   Server.prototype.load = function(cb) {
     this.symbols = {
-      start: '•',
-      finished: '✔'
+      start: "•",
+      finished: "✔"
     };
-    this.root = path.resolve('./');
-    this.myRoot = path.resolve(__dirname, '../../');
+    this.root = path.resolve("./");
+    this.myRoot = path.resolve(__dirname, "../../");
     this.vent = new EventEmitter;
     return this.toBuild = (function(_this) {
       return function(file) {

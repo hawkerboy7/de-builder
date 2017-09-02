@@ -1,9 +1,9 @@
 # Node
-path = require 'path'
+path = require "path"
 
 # NPM
-log    = require 'de-logger'
-mkdirp = require 'mkdirp'
+log    = require "de-logger"
+mkdirp = require "mkdirp"
 
 
 
@@ -16,7 +16,7 @@ class Project
 
 	listeners: ->
 
-		@server.vent.on 'clean:done', @setup
+		@server.vent.on "clean:done", @setup
 
 
 	setup: =>
@@ -49,21 +49,21 @@ class Project
 		if (@server.config.type is 1 and @i is 4) or ((@server.config.type is 2 or @server.config.type is 3) and @i is 2)
 
 			# Notify project type
-			log.info 'LDE - Project', @explaination()
+			log.info "LDE - Project", @explaination()
 
 			# Send event
-			@server.vent.emit 'project:done'
+			@server.vent.emit "project:done"
 
 
 	explaination: ->
 
 		type = @server.config.type
 
-		message = 'Project type "'
-		message += 'Server-Client' if type is 1
-		message += 'Server'        if type is 2
-		message += 'Client'        if type is 3
-		message += '" is used'
+		message = "Project type \""
+		message += "Server-Client" if type is 1
+		message += "Server"        if type is 2
+		message += "Client"        if type is 3
+		message += "\" is used"
 
 
 

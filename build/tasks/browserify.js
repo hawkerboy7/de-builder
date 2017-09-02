@@ -1,15 +1,19 @@
-var Browserify, browserify, fs, jadeify, log, path,
+var Browserify, browserify, fs, jadeify, log, notifier, path, pugify,
   bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
 
-fs = require('fs');
+fs = require("fs");
 
-path = require('path');
+path = require("path");
 
-log = require('de-logger');
+log = require("de-logger");
 
-jadeify = require('jadeify');
+pugify = require("pugify");
 
-browserify = require('browserify-windows-fix');
+jadeify = require("jadeify");
+
+notifier = require("node-notifier");
+
+browserify = require("browserify");
 
 Browserify = (function() {
   function Browserify(server) {
@@ -37,13 +41,13 @@ Browserify = (function() {
       this.bFolder = this.server.folders.build.index;
     }
     this.bFolder += path.sep + this.config.folder;
-    this.bFile = this.bFolder + path.sep + this.config.single.entry.replace('.coffee', '.js');
+    this.bFile = this.bFolder + path.sep + this.config.single.entry.replace(".coffee", ".js");
     return fs.stat(this.sFile, (function(_this) {
       return function(e) {
         if (!e) {
-          _this.type = 'single';
+          _this.type = "single";
         } else {
-          _this.type = 'multi';
+          _this.type = "multi";
           _this.determin();
         }
         return log.info(_this.server.config.title + " - Browserify", "Type: " + _this.type);
@@ -52,12 +56,13 @@ Browserify = (function() {
   };
 
   Browserify.prototype.determin = function() {
-    log.debug(this.server.config.title + " - Browserify", "Entry file not found: " + this.sFile);
     return fs.readdir(this.sFolder, (function(_this) {
       return function(e, files) {
-        var file, folder, i, len;
+        var file, folder, i, len, msg;
         if (e) {
-          return log.error(_this.server.config.title + " - Browserify", e);
+          _this.notify(msg = "Entry file not found: " + _this.sFile);
+          log.error(_this.server.config.title + " - Browserify", msg + "\n", e);
+          return;
         }
         for (i = 0, len = files.length; i < len; i++) {
           file = files[i];
@@ -78,30 +83,42 @@ Browserify = (function() {
   };
 
   Browserify.prototype.listeners = function() {
-    this.server.vent.on('compiled:file', this.check);
-    return this.server.vent.on('watch:initialized', this.initialized);
+    this.server.vent.on("compiled:file", this.check);
+    return this.server.vent.on("watch:initialized", this.initialized);
   };
 
   Browserify.prototype.initialized = function() {
-    var bundle, folder, i, len, name, options, ref;
+    var bundle, folder, i, len, name, options, ref, runtimePath;
     this.init = true;
+    runtimePath = require.resolve((this.config.pugify ? "pug-runtime" : "jade/runtime"));
     options = {
-      cache: {},
-      packageCache: {},
-      debug: this.config.debug,
+      debug: this.server.env !== "production" && this.config.debug,
       fullPaths: false
     };
-    if (this.type === 'single') {
+    if (this.type === "single") {
       bundle = this.createBundle();
       this.dFile = this.bFolder + path.sep + this.config.single.bundle;
-      this.w = browserify(options).add(this.bFile).transform(jadeify, {
-        runtimePath: require.resolve('jade/runtime')
-      }).on('bundle', bundle);
+      this.b = browserify(options).add(this.bFile).on("bundle", bundle).on("error", function() {
+        console.log("\nDexter");
+        return console.log(arguments);
+      });
+      if (this.config.pugify) {
+        this.b.transform(pugify.pug({
+          pretty: false,
+          runtimePath: runtimePath,
+          compileDebug: this.server.env !== "production"
+        }));
+      }
+      if (!this.config.pugify) {
+        this.b.transform(jadeify, {
+          runtimePath: runtimePath
+        });
+      }
       this.t = (new Date).getTime();
-      this.w.bundle();
+      this.b.bundle();
     }
-    if (this.type === 'multi') {
-      this.w = {
+    if (this.type === "multi") {
+      this.b = {
         _browserSyncIndicator: true
       };
       this.t = {};
@@ -114,13 +131,26 @@ Browserify = (function() {
         this.t[name] = (new Date).getTime();
         this._bundle[name] = this.createBundle(name);
         this.dFile[name] = this.bFolder + path.sep + name + path.sep + this.config.multi;
-        this.w[name] = browserify(options).add(this.bFolder + path.sep + folder.name + path.sep + 'index.js').transform(jadeify, {
-          runtimePath: require.resolve('jade/runtime')
-        }).on('bundle', this._bundle[name]);
-        this.w[name].bundle();
+        this.b[name] = browserify(options).add(this.bFolder + path.sep + folder.name + path.sep + "index.js").on("bundle", this._bundle[name]).on("error", function() {
+          console.log("\nDexter multi");
+          return console.log(arguments);
+        });
+        if (this.config.pugify) {
+          this.b[name].transform(pugify.pug({
+            pretty: false,
+            runtimePath: runtimePath,
+            compileDebug: this.server.env !== "production"
+          }));
+        }
+        if (!this.config.pugify) {
+          this.b[name].transform(jadeify, {
+            runtimePath: runtimePath
+          });
+        }
+        this.b[name].bundle();
       }
     }
-    return this.server.vent.emit('browserify:initialized', this.w);
+    return this.server.vent.emit("browserify:initialized", this.b);
   };
 
   Browserify.prototype.check = function(arg) {
@@ -129,10 +159,10 @@ Browserify = (function() {
     if (!this.init) {
       return;
     }
-    if (this.type === 'single') {
+    if (this.type === "single") {
       this.make();
     }
-    if (this.type === 'multi') {
+    if (this.type === "multi") {
       return this.multi(file);
     }
   };
@@ -163,9 +193,9 @@ Browserify = (function() {
       this.t = (new Date).getTime();
     }
     if (!name) {
-      return this.w.bundle();
+      return this.b.bundle();
     }
-    return this.w[name].bundle();
+    return this.b[name].bundle();
   };
 
   Browserify.prototype.createBundle = function(name) {
@@ -175,14 +205,15 @@ Browserify = (function() {
         var f, message;
         message = "";
         if (name) {
-          message = name + ": ";
+          message = "Bundle '" + name + "' - ";
         }
-        stream.on('error', function(err) {
+        stream.on("error", function(err) {
           if (err) {
-            return log.error(_this.server.config.title + " - Browserify", message + "Unable to creat bundle \n\n", err);
+            _this.notify("Unable to creat bundle\n" + err.message, name);
+            log.error(_this.server.config.title + " - Browserify", "\n" + message + "Unable to creat bundle\n" + err.message + "\n");
           }
         });
-        stream.on('end', function() {
+        stream.on("end", function() {
           var dFile, destination, time;
           time = _this.t;
           if (name) {
@@ -193,9 +224,9 @@ Browserify = (function() {
           if (name) {
             dFile = _this.dFile[name];
           }
-          destination = dFile.replace(_this.server.root + path.sep, '');
+          destination = dFile.replace(_this.server.root + path.sep, "");
           log.info(_this.server.config.title + " - Browserify", "" + message + destination + " | " + _this.server.symbols.finished + " " + time + " s");
-          return _this.server.vent.emit('browserify:bundle', dFile);
+          return _this.server.vent.emit("browserify:bundle", dFile);
         });
         if (name) {
           f = fs.createWriteStream(_this.dFile[name]);
@@ -208,7 +239,16 @@ Browserify = (function() {
   };
 
   Browserify.prototype.error = function() {
-    return log.error(this.server.config.title + " - Browserify", "No folders are found for a multi setup");
+    var msg;
+    this.notify(msg = "No folders are found for a multi setup");
+    return log.error(this.server.config.title + " - Browserify", "\n" + msg);
+  };
+
+  Browserify.prototype.notify = function(message, name) {
+    return notifier.notify({
+      title: this.server.config.title + " - Browserify - " + name,
+      message: message
+    });
   };
 
   return Browserify;

@@ -1,11 +1,12 @@
 # Node
-fs   = require 'fs'
-path = require 'path'
+fs   = require "fs"
+path = require "path"
 
 # NPM
-log    = require 'de-logger'
-less   = require 'less'
-mkdirp = require 'mkdirp'
+log      = require "de-logger"
+less     = require "less"
+mkdirp   = require "mkdirp"
+notifier = require "node-notifier"
 
 
 
@@ -21,8 +22,8 @@ class Less
 
 	listeners: ->
 
-		@server.vent.on 'less:file', @less
-		@server.vent.on 'watch:init', @less
+		@server.vent.on "less:file", @less
+		@server.vent.on "watch:init", @less
 
 
 	setup: ->
@@ -47,9 +48,9 @@ class Less
 		fs.stat @entry, (e) =>
 
 			if not e
-				@type = 'single'
+				@type = "single"
 			else
-				@type = 'multi'
+				@type = "multi"
 				@determin()
 
 			log.info "#{@server.config.title} - Less", "Type: #{@type}"
@@ -76,21 +77,25 @@ class Less
 				# Add less bundle folders
 				@folders.push
 					src   : folder
-					bare  : folder.replace @server.root+path.sep, ''
+					bare  : folder.replace @server.root+path.sep, ""
 					name  : file
 
-			log.error "#{@server.config.title} - Less", "No folders are found for a multi setup" if @folders.length is 0
+			if @folders.length is 0
+
+				@notify msg = "No folders are found for a multi setup"
+
+				log.error "#{@server.config.title} - Less", msg
 
 
 	less: (file, init) =>
 
-		# Guard: don't build .css if the watch issn't ready
+		# Guard: don"t build .css if the watch issn"t ready
 		return @count++ if file and not init
 
 		log.debug "#{@server.config.title} - Less", "Change: #{file}" if file
 
 		# Comple a single bundle if multiple bundles are not required
-		if @type is 'single'
+		if @type is "single"
 
 			@single
 				sFile   : @entry
@@ -98,48 +103,56 @@ class Less
 				dFile   : @destination
 
 		# Compile one (or all) of the multiple bundles
-		if @type is 'multi'
+		if @type is "multi"
 
 			@multi file
 
 
 	multi: (file) ->
 
-		return @notify() if @folders.length is 0
+		return @increase() if @folders.length is 0
 
 		for folder in @folders
 
 			(continue if -1 is file.indexOf folder.bare) if file
 
 			@single
-				sFile   : folder.src+path.sep+'index.less'
+				sFile   : folder.src+path.sep+"index.less"
 				sFolder : folder.src
-				dFile   : @map+path.sep+folder.name+'.css'
+				dFile   : @map+path.sep+folder.name+".css"
 				name    : folder.name
 
 
 	single: ({sFile, sFolder, dFile, name}) ->
 
-		fs.readFile sFile, 'utf8', (e, res) =>
+		fs.readFile sFile, "utf8", (e, res) =>
 
 			if e
+				@notify e.message
+
 				log.error "#{@server.config.title} - Less", "#{e}"
-				return @notify()
+				return @increase()
 
 			# Create folder structure for the .css file
 			mkdirp @map, =>
 
 				# Create less file
-				less.render res, {paths: [sFolder], compress: true}, (e, output) =>
+				less.render res, {paths: [sFolder], compress: @server.env is "production"}, (e, output) =>
 
 					# In case of an error in the .less file
 					if e
-						log.error "#{@server.config.title} - Less", e.type, ' error', e.message+'\nLine: ', e.line, ' | ', e.extract # <-- check this info
-						return @notify()
+						@notify "#{e.filename}\nLine: #{e.line}\n#{e.type} error - #{e.message}"
+
+						log.error "#{@server.config.title} - Less", "\n", "#{e.filename}\nLine: #{e.line}\nColumn: #{e.column}\n#{e.type} error\n#{e.message}\nExtract:", e.extract
+
+						return @increase()
 
 					if not (css = output?.css) and (css isnt "")
+
+						@notify "No css output, check terminal"
+
 						log.error "#{@server.config.title} - Less", "No css output: #{output}"
-						return @notify()
+						return @increase()
 
 					# Write css file to destination
 					fs.writeFile dFile, css, (e) =>
@@ -147,20 +160,20 @@ class Less
 						# In case of an error in the .less file
 						if e
 							log.error "#{@server.config.title} - Less", e
-							return @notify()
+							return @increase()
 
 						# Define prefix
 						if name then prefix = "#{name}: " else prefix = ""
 
-						@server.vent.emit 'compiled:file',
+						@server.vent.emit "compiled:file",
 							file    : dFile
 							title   : "#{@server.config.title} - Less"
-							message : prefix+dFile.replace @server.root+path.sep, ''
+							message : prefix+dFile.replace @server.root+path.sep, ""
 
-						@notify()
+						@increase()
 
 
-	notify: ->
+	increase: ->
 
 		return if @done
 
@@ -168,7 +181,14 @@ class Less
 		@done = true
 
 		# Notify watcher for the initialized trigger
-		@server.vent.emit 'watch:increase', @count
+		@server.vent.emit "watch:increase", @count
+
+
+	notify: (message, name) ->
+
+		notifier.notify
+			title   : "#{@server.config.title} - Less - #{name}"
+			message : message
 
 
 

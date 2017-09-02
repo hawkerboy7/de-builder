@@ -1,11 +1,13 @@
 # Node
-fs   = require 'fs'
-path = require 'path'
+fs   = require "fs"
+path = require "path"
 
 # NPM
-log        = require 'de-logger'
-jadeify    = require 'jadeify'
-browserify = require 'browserify-windows-fix'
+log        = require "de-logger"
+pugify     = require "pugify"
+jadeify    = require "jadeify"
+notifier   = require "node-notifier"
+browserify = require "browserify"
 
 
 
@@ -41,15 +43,15 @@ class Browserify
 		@bFolder += path.sep+@config.folder
 
 		# Determin build file
-		@bFile  = @bFolder+path.sep+@config.single.entry.replace '.coffee', '.js'
+		@bFile  = @bFolder+path.sep+@config.single.entry.replace ".coffee", ".js"
 
 		# Check if entry file exists
 		fs.stat @sFile, (e) =>
 
 			if not e
-				@type = 'single'
+				@type = "single"
 			else
-				@type = 'multi'
+				@type = "multi"
 				@determin()
 
 			log.info "#{@server.config.title} - Browserify", "Type: #{@type}"
@@ -57,12 +59,16 @@ class Browserify
 
 	determin: ->
 
-		log.debug "#{@server.config.title} - Browserify", "Entry file not found: #{@sFile}"
-
 		# Read all files in entry folder
 		fs.readdir @sFolder, (e, files) =>
 
-			return log.error "#{@server.config.title} - Browserify", e if e
+			if e
+
+				@notify msg = "Entry file not found: #{@sFile}"
+
+				log.error "#{@server.config.title} - Browserify", "#{msg}\n", e
+
+				return
 
 			# Loop over all results
 			for file in files
@@ -82,55 +88,64 @@ class Browserify
 
 	listeners: ->
 
-		@server.vent.on 'compiled:file', @check
-		@server.vent.on 'watch:initialized', @initialized
+		@server.vent.on "compiled:file", @check
+		@server.vent.on "watch:initialized", @initialized
 
 
 	initialized: =>
 
 		@init = true
 
+		# Tell the bundle where to find the pug or jade runtime
+		runtimePath = require.resolve (if @config.pugify then "pug-runtime" else "jade/runtime")
+
 		options =
 
-			# Watchify
-			cache:        {}
-			packageCache: {}
+			# Add source map on envs other than production
+			debug: @server.env isnt "production" and @config.debug
 
-			# Add source map
-			debug: @config.debug
-
-			# Don't show paths to files in the app.bundle.js
+			# Do not show paths to files in the app.bundle.js
 			fullPaths: false
 
-		if @type is 'single'
+		if @type is "single"
 
 			bundle = @createBundle()
 
 			# Create bundle stream
 			@dFile = @bFolder+path.sep+@config.single.bundle
 
-			# Store watchify browserify bundle
-			@w = browserify options
+			# Store browserify bundle
+			@b = browserify options
 
 				# Add user entry file
 				.add @bFile
 
-				# Allow for .jade files to be added into the bundle
-				.transform jadeify, runtimePath: require.resolve 'jade/runtime'
-
 				# Stream the bundle to a file write stream
-				.on 'bundle', bundle
+				.on "bundle", bundle
+
+				# Handle error
+				.on "error", ->
+
+					console.log "\nDexter"
+					console.log arguments
+
+			# Allow for .pug and .jade files to be added into the bundle (v2.x)
+			@b.transform pugify.pug pretty: false, runtimePath: runtimePath, compileDebug: @server.env isnt "production" if @config.pugify
+
+			# Allow for .jade files to be added into the bundle (v1.x)
+			@b.transform jadeify, runtimePath: runtimePath if not @config.pugify
 
 			# Store starting time
 			@t = (new Date).getTime()
 
 			# Create bundle
-			@w.bundle()
+			@b.bundle()
 
-		if @type is 'multi'
 
-			# Store watchify browserify bundles
-			@w =
+		if @type is "multi"
+
+			# Store browserify bundles
+			@b =
 				# Tells browser-sync if type is multi or single
 				_browserSyncIndicator: true
 
@@ -157,23 +172,32 @@ class Browserify
 				# Create bundle output stream path
 				@dFile[name] = @bFolder+path.sep+name+path.sep+@config.multi
 
-				# Store watchify browserify bundle
-				@w[name] = browserify options
+				# Store browserify bundle
+				@b[name] = browserify options
 
 					# Add user entry file
-					.add @bFolder+path.sep+folder.name+path.sep+'index.js'
-
-					# Allow for .jade files to be added into the bundle
-					.transform jadeify, runtimePath: require.resolve 'jade/runtime'
+					.add @bFolder+path.sep+folder.name+path.sep+"index.js"
 
 					# Stream the bundle to a file write stream
-					.on 'bundle', @_bundle[name]
+					.on "bundle", @_bundle[name]
+
+					# Handle error
+					.on "error", ->
+
+						console.log "\nDexter multi"
+						console.log arguments
+
+				# Allow for .pug and .jade files to be added into the bundle (v2.x)
+				@b[name].transform pugify.pug pretty: false, runtimePath: runtimePath, compileDebug: @server.env isnt "production" if @config.pugify
+
+				# Allow for .jade files to be added into the bundle (v1.x)
+				@b[name].transform jadeify, runtimePath: runtimePath if not @config.pugify
 
 				# Create bundle
-				@w[name].bundle()
+				@b[name].bundle()
 
 		# Notify browser-sync
-		@server.vent.emit 'browserify:initialized', @w
+		@server.vent.emit "browserify:initialized", @b
 
 
 	check: (arg) =>
@@ -183,10 +207,10 @@ class Browserify
 		return if not @init
 
 		# Comple a single bundle if multiple bundles are not required
-		@make() if @type is 'single'
+		@make() if @type is "single"
 
 		# Compile one (or all) of the multiple bundles
-		@multi file if @type is 'multi'
+		@multi file if @type is "multi"
 
 
 	multi: (file) ->
@@ -209,10 +233,10 @@ class Browserify
 			@t = (new Date).getTime()
 
 		# Create for single bundle
-		return @w.bundle() if not name
+		return @b.bundle() if not name
 
 		# Rebuild the name specific bundle
-		@w[name].bundle()
+		@b[name].bundle()
 
 
 	createBundle: (name) ->
@@ -220,14 +244,21 @@ class Browserify
 		bundle = (stream) =>
 
 			message = ""
-			message = "#{name}: " if name
+			message = "Bundle '#{name}' - " if name
 
 			# Notify if mkdirp failed
-			stream.on 'error', (err) =>
-				return log.error "#{@server.config.title} - Browserify", "#{message}Unable to creat bundle \n\n", err if err
+			stream.on "error", (err) =>
+
+				if err
+
+					@notify "Unable to creat bundle\n#{err.message}", name
+
+					log.error "#{@server.config.title} - Browserify", "\n#{message}Unable to creat bundle\n#{err.message}\n"
+
+				return
 
 			# Notify succes
-			stream.on 'end', =>
+			stream.on "end", =>
 
 				# Determin time
 				time = @t
@@ -241,13 +272,13 @@ class Browserify
 				dFile = @dFile[name] if name
 
 				# Make the resulting path pretty
-				destination = dFile.replace @server.root+path.sep, ''
+				destination = dFile.replace @server.root+path.sep, ""
 
 				# Notify Browserify results
 				log.info "#{@server.config.title} - Browserify", "#{message}#{destination} | #{@server.symbols.finished} #{time} s"
 
 				# Notify the creation of a bundle
-				@server.vent.emit 'browserify:bundle', dFile
+				@server.vent.emit "browserify:bundle", dFile
 
 			# Create a destination write stream
 			if name
@@ -261,8 +292,16 @@ class Browserify
 
 	error: ->
 
-		log.error "#{@server.config.title} - Browserify", "No folders are found for a multi setup"
+		@notify msg = "No folders are found for a multi setup"
 
+		log.error "#{@server.config.title} - Browserify", "\n#{msg}"
+
+
+	notify: (message, name) ->
+
+		notifier.notify
+			title   : "#{@server.config.title} - Browserify - #{name}"
+			message : message
 
 
 

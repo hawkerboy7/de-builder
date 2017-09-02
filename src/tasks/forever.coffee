@@ -1,9 +1,9 @@
 # Node
-path = require 'path'
+path = require "path"
 
 # NPM
-log         = require 'de-logger'
-{ Monitor } = require 'forever-monitor'
+log         = require "de-logger"
+{ Monitor } = require "forever-monitor"
 
 
 
@@ -16,9 +16,9 @@ class Forever
 
 	listeners: ->
 
-		@server.vent.on 'terminate:child', @terminate
-		@server.vent.on 'compiled:file', @forever
-		@server.vent.on 'watch:initialized', @initialized
+		@server.vent.on "terminate:child", @terminate
+		@server.vent.on "compiled:file", @forever
+		@server.vent.on "watch:initialized", @initialized
 
 
 	initialized: =>
@@ -34,7 +34,7 @@ class Forever
 
 		return if not @init
 
-		# get file if it exists
+		# Get file if it exists
 		file = args?.file
 
 		return @start() if not file
@@ -43,7 +43,7 @@ class Forever
 		build = @server.folders.build.index if @server.config.type is 2
 
 		# Restart the server on any file change in the src
-		return if path.extname(file) is '.jade' or -1 is file.indexOf build
+		return if path.extname(file) is ".jade" or -1 is file.indexOf build
 
 		@start()
 
@@ -64,7 +64,7 @@ class Forever
 		@child = new Monitor entry, max: 1, killTree: true
 
 		# Handle exit
-		@child.on 'exit:code', (code) =>
+		@child.on "exit:code", (code) =>
 
 			log.warn "#{@server.config.title} - Forever stopped with code: #{code}" if code
 

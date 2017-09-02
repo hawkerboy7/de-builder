@@ -1,18 +1,17 @@
 # NPM
-path = require 'path'
+path = require "path"
 
-# My Modules
-Copy       = require './copy'
-Less       = require './less'
-Clean      = require './clean'
-Watch      = require './watch'
-Coffee     = require './coffee'
-Logger     = require './logger'
-Forever    = require './forever'
-Project    = require './project'
-Browserify = require './browserify'
-BrowserSync = require './browser-sync'
-
+# Modules
+Copy        = require "./copy"
+Less        = require "./less"
+Clean       = require "./clean"
+Watch       = require "./watch"
+Coffee      = require "./coffee"
+Logger      = require "./logger"
+Forever     = require "./forever"
+Project     = require "./project"
+Browserify  = require "./browserify"
+BrowserSync = require "./browser-sync"
 
 
 
@@ -28,6 +27,7 @@ class Tasks
 		# Setup project folders
 		@folders()
 
+		# Load all tasks
 		new Copy @server
 		new Less @server
 		new Clean @server
@@ -39,7 +39,8 @@ class Tasks
 		new Browserify @server
 		new BrowserSync @server
 
-		@server.vent.emit 'builder:start'
+		# Send the start command
+		@server.vent.emit "builder:start"
 
 
 	folders: ->

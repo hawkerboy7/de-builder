@@ -1,45 +1,46 @@
 config =
 
-	# Socket.io server for listening to de-builder events
-	io:
-		port    : 8009
-		enabled : false
-
 	# Source and build directory
-	src   : 'src'
-	build : 'build'
+	src   : "src"
+	build : "build"
 
 	# Client and server directory
-	client: 'client'
-	server: 'server'
+	client: "client"
+	server: "server"
 
 	# Less directory and entry file
 	less:
-		file   : 'app.css'
-		entry  : 'app.less'
-		folder : 'styles'
+		file   : "app.css"
+		entry  : "app.less"
+		folder : "styles"
 
 	# Browserify directory and entry file
 	browserify:
 
 		# Used for single build
 		single:
-			entry  : 'app.coffee'
-			bundle : 'app.bundle.js'
+			entry  : "app.coffee"
+			bundle : "app.bundle.js"
 
-		# Used for multi build
-		multi : 'bundle.js'
+		# Name used for multi bundle builds
+		multi : "bundle.js"
 
-		# Used in both cases
-		# Show or hide source maps that allow you to debug your files separately.
-		debug  : true
+		# Use pugify instead of jadeify
+		pugify : true
 
-		# Folder to js files
-		folder : 'js'
+		# Show or hide source maps
+		debug : true
+
+		# Folder containing all js/coffee files
+		folder : "js"
 
 	# Server path/file to be started by forever
 	forever:
-		entry   : 'app.js'
+
+		# File to start
+		entry   : "app.js"
+
+		# Use it, or not
 		enabled : true
 
 	# Use browser-sync options
@@ -54,8 +55,8 @@ config =
 		# server port
 		server  : 9001
 
-		# Provide names of the multi bundle(s) that should contain the browser-sync code
-		multi   : ['vendor']
+		# The multi bundle(s) which should contain the browser-sync code
+		multi   : ["vendor"]
 
 	# LDE environments
 	# 1 Server+Client

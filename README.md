@@ -25,7 +25,7 @@
 `de-builder` creates a __Live Development Environment__ (LDE).<br>
 In this environment you can write `.coffee`, `.less`, `.css` and `.jade` and your code will be compiled on save.<br>
 The corresponding part of you program will be either injected or restarted.<br>
-This is achieved by using various [modules](https://github.com/hawkerboy7/de-builder#modules).
+This is achieved by using various [modules](#modules).
 
 
 ## Getting Started
@@ -45,13 +45,14 @@ The following languages are supported:
 - .coffee
 - .less
 - .jade
+- .pug
 
 The following types of LDE are supported:
 - Server + Client
-- Server [ 0.4.0+ is requried ]
-- Client [ 0.5.0+ is requried ]
+- Server
+- Client
 
-**Starting from version 0.7.0+ you can also create multiple browserify and less bundles!**
+You can create [multiple browserify and less bundles](#multiple-bundles)
 
 ## LDE's
 Which LDE should I use?<br>
@@ -72,7 +73,7 @@ In multi mode it will check all child folders of the `js` and/or `styles` (.less
 
 ## Structure
 Ok so how should I structre my project?
-You can use the structre described below but you are free to choose, however make sure you provide the correct entry folder and file in the build.js folder if you choose a custom structure. You could also check [de-base](https://github.com/hawkerboy7/de-base) as an example project or better yet use it, since it's created as a basis to start other projects from.
+You can use the structre described below but you are free to choose, however make sure you provide the correct entry folder and file in the build.js folder if you choose a custom structure.
 
 
 #### Server + Client (LDE type 1)
@@ -149,13 +150,14 @@ In `multi` mode folder(s) are to be provided telling `de-builder` in which bundl
 ## Modules
 The main modules used to create this __LDE__:
 - [Browser-sync](https://github.com/BrowserSync/browser-sync)
-- [Browserify](https://github.com/substack/node-browserify) + [Watchify](https://github.com/substack/watchify)
+- [Browserify](https://github.com/substack/node-browserify)
 - [Chokidar](https://github.com/paulmillr/chokidar)
 - [Coffee-script](https://github.com/jashkenas/coffeescript)
 - [De-logger](https://github.com/hawkerboy7/de-logger)
 - [Forever-monitor](https://github.com/foreverjs/forever-monitor)
 - [Jadeify](https://github.com/domenic/jadeify)
 - [Less](https://github.com/less/less.js)
+- [Pugify](https://github.com/sidorares/pugify)
 
 
 ## Config
@@ -164,40 +166,46 @@ The main modules used to create this __LDE__:
 config =
 
 	# Source and build directory
-	src   : 'src'
-	build : 'build'
+	src   : "src"
+	build : "build"
 
 	# Client and server directory
-	client: 'client'
-	server: 'server'
+	client: "client"
+	server: "server"
 
 	# Less directory and entry file
 	less:
-		file   : 'app.css'
-		entry  : 'app.less'
-		folder : 'styles'
+		file   : "app.css"
+		entry  : "app.less"
+		folder : "styles"
 
 	# Browserify directory and entry file
 	browserify:
 
 		# Used for single build
 		single:
-			entry  : 'app.coffee'
-			bundle : 'app.bundle.js'
+			entry  : "app.coffee"
+			bundle : "app.bundle.js"
 
-		# Used for multi build
-		multi : 'bundle.js'
+		# Name used for multi bundle builds
+		multi : "bundle.js"
 
-		# Used in both cases
-		# Show or hide source maps that allow you to debug your files separately.
-		debug  : true
+		# Use pugify instead of jadeify
+		pugify : true
 
-		# Folder to js files
-		folder : 'js'
+		# Show or hide source maps
+		debug : true
+
+		# Folder containing all js/coffee files
+		folder : "js"
 
 	# Server path/file to be started by forever
 	forever:
-		entry   : 'app.js'
+
+		# File to start
+		entry   : "app.js"
+
+		# Use it, or not
 		enabled : true
 
 	# Use browser-sync options
@@ -212,17 +220,14 @@ config =
 		# server port
 		server  : 9001
 
-		# Provide names of the multi bundle(s) that should contain the browser-sync code
-		multi   : ['vendor']
+		# The multi bundle(s) which should contain the browser-sync code
+		multi   : ["vendor"]
 
 	# LDE environments
 	# 1 Server+Client
 	# 2 Server
 	# 3 Client
 	type: 1
-
-	# Socket.io server for listening to de-builder events
-	io : 8009
 
 	# Show de-builder debug events
 	debug: false

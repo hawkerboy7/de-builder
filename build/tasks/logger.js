@@ -1,6 +1,6 @@
 var Logger, log;
 
-log = require('de-logger');
+log = require("de-logger");
 
 Logger = (function() {
   function Logger(server) {
@@ -9,12 +9,12 @@ Logger = (function() {
   }
 
   Logger.prototype.listeners = function() {
-    return this.server.vent.on('compiled:file', this.log);
+    return this.server.vent.on("compiled:file", this.log);
   };
 
   Logger.prototype.log = function(arg) {
-    var file, message, title;
-    title = arg.title, message = arg.message, file = arg.file;
+    var message, title;
+    title = arg.title, message = arg.message;
     return log.info(title, message);
   };
 
