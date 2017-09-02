@@ -17,6 +17,7 @@
     "jadeify": "^4.7.0",
     "less": "^2.7.2",
     "mkdirp": "^0.5.1",
+    "node-notifier": "^5.1.2",
     "pugify": "^2.2.0",
     "rmdir": "^1.2.0",
     "socket.io-client": "^2.0.3"

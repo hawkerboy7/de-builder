@@ -6,6 +6,7 @@ path = require "path"
 log        = require "de-logger"
 pugify     = require "pugify"
 jadeify    = require "jadeify"
+notifier   = require "node-notifier"
 browserify = require "browserify"
 
 
@@ -58,12 +59,16 @@ class Browserify
 
 	determin: ->
 
-		log.debug "#{@server.config.title} - Browserify", "Entry file not found: #{@sFile}"
-
 		# Read all files in entry folder
 		fs.readdir @sFolder, (e, files) =>
 
-			return log.error "#{@server.config.title} - Browserify", e if e
+			if e
+
+				@notify msg = "Entry file not found: #{@sFile}"
+
+				log.error "#{@server.config.title} - Browserify", "#{msg}\n", e
+
+				return
 
 			# Loop over all results
 			for file in files
@@ -118,6 +123,12 @@ class Browserify
 				# Stream the bundle to a file write stream
 				.on "bundle", bundle
 
+				# Handle error
+				.on "error", ->
+
+					console.log "\nDexter"
+					console.log arguments
+
 			# Allow for .pug and .jade files to be added into the bundle (v2.x)
 			@b.transform pugify.pug pretty: false, runtimePath: runtimePath, compileDebug: @server.env isnt "production" if @config.pugify
 
@@ -129,6 +140,7 @@ class Browserify
 
 			# Create bundle
 			@b.bundle()
+
 
 		if @type is "multi"
 
@@ -169,14 +181,17 @@ class Browserify
 					# Stream the bundle to a file write stream
 					.on "bundle", @_bundle[name]
 
+					# Handle error
+					.on "error", ->
+
+						console.log "\nDexter multi"
+						console.log arguments
+
 				# Allow for .pug and .jade files to be added into the bundle (v2.x)
 				@b[name].transform pugify.pug pretty: false, runtimePath: runtimePath, compileDebug: @server.env isnt "production" if @config.pugify
 
 				# Allow for .jade files to be added into the bundle (v1.x)
 				@b[name].transform jadeify, runtimePath: runtimePath if not @config.pugify
-
-				# Minify and uglyify the bundle
-				# @b[name].transform uglifyify, global: true
 
 				# Create bundle
 				@b[name].bundle()
@@ -229,11 +244,18 @@ class Browserify
 		bundle = (stream) =>
 
 			message = ""
-			message = "#{name}: " if name
+			message = "Bundle '#{name}' - " if name
 
 			# Notify if mkdirp failed
 			stream.on "error", (err) =>
-				return log.error "#{@server.config.title} - Browserify", "#{message}Unable to creat bundle \n\n", err if err
+
+				if err
+
+					@notify "Unable to creat bundle\n#{err.message}", name
+
+					log.error "#{@server.config.title} - Browserify", "\n#{message}Unable to creat bundle\n#{err.message}\n"
+
+				return
 
 			# Notify succes
 			stream.on "end", =>
@@ -270,8 +292,16 @@ class Browserify
 
 	error: ->
 
-		log.error "#{@server.config.title} - Browserify", "No folders are found for a multi setup"
+		@notify msg = "No folders are found for a multi setup"
 
+		log.error "#{@server.config.title} - Browserify", "\n#{msg}"
+
+
+	notify: (message, name) ->
+
+		notifier.notify
+			title   : "#{@server.config.title} - Browserify - #{name}"
+			message : message
 
 
 

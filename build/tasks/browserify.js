@@ -1,4 +1,4 @@
-var Browserify, browserify, fs, jadeify, log, path, pugify,
+var Browserify, browserify, fs, jadeify, log, notifier, path, pugify,
   bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
 
 fs = require("fs");
@@ -10,6 +10,8 @@ log = require("de-logger");
 pugify = require("pugify");
 
 jadeify = require("jadeify");
+
+notifier = require("node-notifier");
 
 browserify = require("browserify");
 
@@ -54,12 +56,13 @@ Browserify = (function() {
   };
 
   Browserify.prototype.determin = function() {
-    log.debug(this.server.config.title + " - Browserify", "Entry file not found: " + this.sFile);
     return fs.readdir(this.sFolder, (function(_this) {
       return function(e, files) {
-        var file, folder, i, len;
+        var file, folder, i, len, msg;
         if (e) {
-          return log.error(_this.server.config.title + " - Browserify", e);
+          _this.notify(msg = "Entry file not found: " + _this.sFile);
+          log.error(_this.server.config.title + " - Browserify", msg + "\n", e);
+          return;
         }
         for (i = 0, len = files.length; i < len; i++) {
           file = files[i];
@@ -95,7 +98,10 @@ Browserify = (function() {
     if (this.type === "single") {
       bundle = this.createBundle();
       this.dFile = this.bFolder + path.sep + this.config.single.bundle;
-      this.b = browserify(options).add(this.bFile).on("bundle", bundle);
+      this.b = browserify(options).add(this.bFile).on("bundle", bundle).on("error", function() {
+        console.log("\nDexter");
+        return console.log(arguments);
+      });
       if (this.config.pugify) {
         this.b.transform(pugify.pug({
           pretty: false,
@@ -125,7 +131,10 @@ Browserify = (function() {
         this.t[name] = (new Date).getTime();
         this._bundle[name] = this.createBundle(name);
         this.dFile[name] = this.bFolder + path.sep + name + path.sep + this.config.multi;
-        this.b[name] = browserify(options).add(this.bFolder + path.sep + folder.name + path.sep + "index.js").on("bundle", this._bundle[name]);
+        this.b[name] = browserify(options).add(this.bFolder + path.sep + folder.name + path.sep + "index.js").on("bundle", this._bundle[name]).on("error", function() {
+          console.log("\nDexter multi");
+          return console.log(arguments);
+        });
         if (this.config.pugify) {
           this.b[name].transform(pugify.pug({
             pretty: false,
@@ -196,11 +205,12 @@ Browserify = (function() {
         var f, message;
         message = "";
         if (name) {
-          message = name + ": ";
+          message = "Bundle '" + name + "' - ";
         }
         stream.on("error", function(err) {
           if (err) {
-            return log.error(_this.server.config.title + " - Browserify", message + "Unable to creat bundle \n\n", err);
+            _this.notify("Unable to creat bundle\n" + err.message, name);
+            log.error(_this.server.config.title + " - Browserify", "\n" + message + "Unable to creat bundle\n" + err.message + "\n");
           }
         });
         stream.on("end", function() {
@@ -229,7 +239,16 @@ Browserify = (function() {
   };
 
   Browserify.prototype.error = function() {
-    return log.error(this.server.config.title + " - Browserify", "No folders are found for a multi setup");
+    var msg;
+    this.notify(msg = "No folders are found for a multi setup");
+    return log.error(this.server.config.title + " - Browserify", "\n" + msg);
+  };
+
+  Browserify.prototype.notify = function(message, name) {
+    return notifier.notify({
+      title: this.server.config.title + " - Browserify - " + name,
+      message: message
+    });
   };
 
   return Browserify;

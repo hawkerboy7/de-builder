@@ -3,9 +3,10 @@ fs   = require "fs"
 path = require "path"
 
 # NPM
-log    = require "de-logger"
-less   = require "less"
-mkdirp = require "mkdirp"
+log      = require "de-logger"
+less     = require "less"
+mkdirp   = require "mkdirp"
+notifier = require "node-notifier"
 
 
 
@@ -79,7 +80,11 @@ class Less
 					bare  : folder.replace @server.root+path.sep, ""
 					name  : file
 
-			log.error "#{@server.config.title} - Less", "No folders are found for a multi setup" if @folders.length is 0
+			if @folders.length is 0
+
+				@notify msg = "No folders are found for a multi setup"
+
+				log.error "#{@server.config.title} - Less", msg
 
 
 	less: (file, init) =>
@@ -105,7 +110,7 @@ class Less
 
 	multi: (file) ->
 
-		return @notify() if @folders.length is 0
+		return @increase() if @folders.length is 0
 
 		for folder in @folders
 
@@ -123,8 +128,10 @@ class Less
 		fs.readFile sFile, "utf8", (e, res) =>
 
 			if e
+				@notify e.message
+
 				log.error "#{@server.config.title} - Less", "#{e}"
-				return @notify()
+				return @increase()
 
 			# Create folder structure for the .css file
 			mkdirp @map, =>
@@ -134,12 +141,18 @@ class Less
 
 					# In case of an error in the .less file
 					if e
-						log.error "#{@server.config.title} - Less", e.type, " error", e.message+"\nLine: ", e.line, " | ", e.extract # <-- check this info
-						return @notify()
+						@notify "#{e.filename}\nLine: #{e.line}\n#{e.type} error - #{e.message}"
+
+						log.error "#{@server.config.title} - Less", "\n", "#{e.filename}\nLine: #{e.line}\nColumn: #{e.column}\n#{e.type} error\n#{e.message}\nExtract:", e.extract
+
+						return @increase()
 
 					if not (css = output?.css) and (css isnt "")
+
+						@notify "No css output, check terminal"
+
 						log.error "#{@server.config.title} - Less", "No css output: #{output}"
-						return @notify()
+						return @increase()
 
 					# Write css file to destination
 					fs.writeFile dFile, css, (e) =>
@@ -147,7 +160,7 @@ class Less
 						# In case of an error in the .less file
 						if e
 							log.error "#{@server.config.title} - Less", e
-							return @notify()
+							return @increase()
 
 						# Define prefix
 						if name then prefix = "#{name}: " else prefix = ""
@@ -157,10 +170,10 @@ class Less
 							title   : "#{@server.config.title} - Less"
 							message : prefix+dFile.replace @server.root+path.sep, ""
 
-						@notify()
+						@increase()
 
 
-	notify: ->
+	increase: ->
 
 		return if @done
 
@@ -169,6 +182,13 @@ class Less
 
 		# Notify watcher for the initialized trigger
 		@server.vent.emit "watch:increase", @count
+
+
+	notify: (message, name) ->
+
+		notifier.notify
+			title   : "#{@server.config.title} - Less - #{name}"
+			message : message
 
 
 
