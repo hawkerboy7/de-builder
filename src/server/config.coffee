@@ -22,7 +22,7 @@ config =
 			entry  : "app.coffee"
 			bundle : "app.bundle.js"
 
-		# Used for multi bundle build
+		# Name used for multi bundle builds
 		multi : "bundle.js"
 
 		# Use pugify instead of jadeify
