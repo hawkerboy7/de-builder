@@ -92,7 +92,7 @@ Browserify = (function() {
     this.init = true;
     runtimePath = require.resolve((this.config.pugify ? "pug-runtime" : "jade/runtime"));
     options = {
-      debug: this.config.debug,
+      debug: this.server.env !== "production" && this.config.debug,
       fullPaths: false
     };
     if (this.type === "single") {

@@ -101,8 +101,8 @@ class Browserify
 
 		options =
 
-			# Add source map
-			debug: @config.debug
+			# Add source map on envs other than production
+			debug: @server.env isnt "production" and @config.debug
 
 			# Do not show paths to files in the app.bundle.js
 			fullPaths: false
