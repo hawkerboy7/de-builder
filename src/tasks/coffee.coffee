@@ -1,11 +1,12 @@
 # Node
-fs   = require 'fs'
-path = require 'path'
+fs   = require "fs"
+path = require "path"
 
 # NPM
-log    = require 'de-logger'
-mkdirp = require 'mkdirp'
-coffee = require 'coffee-script'
+log      = require "de-logger"
+mkdirp   = require "mkdirp"
+coffee   = require "coffee-script"
+notifier = require "node-notifier"
 
 
 
@@ -18,18 +19,23 @@ class Coffee
 
 	listeners: ->
 
-		@server.vent.on 'coffee:file', @coffee
+		@server.vent.on "coffee:file", @coffee
 
 
 	coffee: (file, init) =>
 
 		# Create destination path for compiled file
-		build = @server.toBuild(file).replace '.coffee', '.js'
+		build = @server.toBuild(file).replace ".coffee", ".js"
 
 		# Read coffee file
-		fs.readFile @server.root+path.sep+file, encoding: 'utf-8' , (err, data) =>
+		fs.readFile @server.root+path.sep+file, encoding: "utf-8" , (err, data) =>
 
-			return log.error err if err
+			if err
+
+				@notify err.message
+
+				return log.error err
+
 
 			# Make sure path to destination exists
 			mkdirp path.dirname(build), =>
@@ -38,20 +44,34 @@ class Coffee
 					coffeeScript = coffee.compile(data, bare: true)
 				catch e
 					coffeeScript = ""
-					log.error "#{@server.config.title} - Coffee", file, e.message, e.location
+
+					@notify msg = "#{file}\nLine: #{e.location.first_line}\n#{e.message}"
+
+					log.error "#{@server.config.title} - Coffee", "\n#{msg}","\n",e.code
 
 				# Write compiled coffee file to its destination
 				fs.writeFile name = @server.root+path.sep+build, coffeeScript , (err) =>
 
-					return log.error err if err
+					if err
 
-					@server.vent.emit 'compiled:file',
+						@notify err.message
+
+						return log.error err
+
+					@server.vent.emit "compiled:file",
 						file    : name
 						title   : "#{@server.config.title} - Coffee"
 						message : "#{build}"
 
-					# Notify the watch in case the init hassn't been triggered
-					@server.vent.emit 'watch:increase' if not init
+					# Notify the watch in case the init has not been triggered
+					@server.vent.emit "watch:increase" if not init
+
+
+	notify: (message) ->
+
+		notifier.notify
+			title   : "#{@server.config.title} - Coffee"
+			message : message
 
 
 

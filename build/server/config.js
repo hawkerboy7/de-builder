@@ -1,37 +1,34 @@
 var config;
 
 config = {
-  io: {
-    port: 8009,
-    enabled: false
-  },
-  src: 'src',
-  build: 'build',
-  client: 'client',
-  server: 'server',
+  src: "src",
+  build: "build",
+  client: "client",
+  server: "server",
   less: {
-    file: 'app.css',
-    entry: 'app.less',
-    folder: 'styles'
+    file: "app.css",
+    entry: "app.less",
+    folder: "styles"
   },
   browserify: {
     single: {
-      entry: 'app.coffee',
-      bundle: 'app.bundle.js'
+      entry: "app.coffee",
+      bundle: "app.bundle.js"
     },
-    multi: 'bundle.js',
+    multi: "bundle.js",
+    pugify: true,
     debug: true,
-    folder: 'js'
+    folder: "js"
   },
   forever: {
-    entry: 'app.js',
+    entry: "app.js",
     enabled: true
   },
   browserSync: {
     enabled: true,
     ui: 9000,
     server: 9001,
-    multi: ['vendor']
+    multi: ["vendor"]
   },
   type: 1,
   debug: false

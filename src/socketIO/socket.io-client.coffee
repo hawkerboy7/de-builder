@@ -1,1 +1,1 @@
-window.io = require 'socket.io-client'
+window.io = require "socket.io-client"

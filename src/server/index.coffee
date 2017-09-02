@@ -1,14 +1,14 @@
 # Node
-path             = require 'path'
-{ EventEmitter } = require 'events'
+path             = require "path"
+{ EventEmitter } = require "events"
 
 # NPM
-log    = require 'de-logger'
-extend = require 'deep-extend'
+log    = require "de-logger"
+extend = require "deep-extend"
 
 # Config
-cfg = require './config'
-pkg = require '../../package.json'
+cfg = require "./config"
+pkg = require "../../package.json"
 
 
 
@@ -22,17 +22,17 @@ class Server
 		# Extend config with provided config
 		@config = extend cfg, config
 
-		# Project
-		@config.title     = 'LDE'
-		@config.fullTitle = 'Live Development Environment'
+		# Set project info
+		@config.title     = "LDE"
+		@config.fullTitle = "Live Development Environment"
 
 		# Set title of the process
 		process.title = @pkg.name
 
 		# Determin application environment
-		@env = process.env.NODE_ENV || 'development'
+		@env = if process.argv[2] is "-prod" then "production" else "development"
 
-		# Set debug
+		# Set the value of debug messages logged
 		log.set debug: display: @config.debug
 
 		# Notify start of project
@@ -47,14 +47,14 @@ class Server
 
 		# Store symbols
 		@symbols =
-			start    : '•'
-			finished : '✔'
+			start    : "•"
+			finished : "✔"
 
 		# Set the root folder of the project that de-builder is working for
-		@root = path.resolve './'
+		@root = path.resolve "./"
 
 		# Root of de-builder
-		@myRoot = path.resolve __dirname, '../../'
+		@myRoot = path.resolve __dirname, "../../"
 
 		# Set an event emitter
 		@vent = new EventEmitter

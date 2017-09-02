@@ -1,11 +1,11 @@
 var Forever, Monitor, log, path,
   bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
 
-path = require('path');
+path = require("path");
 
-log = require('de-logger');
+log = require("de-logger");
 
-Monitor = require('forever-monitor').Monitor;
+Monitor = require("forever-monitor").Monitor;
 
 Forever = (function() {
   function Forever(server) {
@@ -19,9 +19,9 @@ Forever = (function() {
   }
 
   Forever.prototype.listeners = function() {
-    this.server.vent.on('terminate:child', this.terminate);
-    this.server.vent.on('compiled:file', this.forever);
-    return this.server.vent.on('watch:initialized', this.initialized);
+    this.server.vent.on("terminate:child", this.terminate);
+    this.server.vent.on("compiled:file", this.forever);
+    return this.server.vent.on("watch:initialized", this.initialized);
   };
 
   Forever.prototype.initialized = function() {
@@ -42,7 +42,7 @@ Forever = (function() {
     if (this.server.config.type === 2) {
       build = this.server.folders.build.index;
     }
-    if (path.extname(file) === '.jade' || -1 === file.indexOf(build)) {
+    if (path.extname(file) === ".jade" || -1 === file.indexOf(build)) {
       return;
     }
     return this.start();
@@ -60,7 +60,7 @@ Forever = (function() {
       max: 1,
       killTree: true
     });
-    this.child.on('exit:code', (function(_this) {
+    this.child.on("exit:code", (function(_this) {
       return function(code) {
         if (code) {
           return log.warn(_this.server.config.title + " - Forever stopped with code: " + code);

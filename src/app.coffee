@@ -3,7 +3,7 @@
 # --------------------------------------------------
 
 # Modules
-Manager = require './manager'
+Manager = require "./manager"
 
 # Exports a function that provides options for the manager
 module.exports = (config) -> new Manager config

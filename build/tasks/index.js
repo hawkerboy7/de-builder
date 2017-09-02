@@ -1,26 +1,26 @@
 var BrowserSync, Browserify, Clean, Coffee, Copy, Forever, Less, Logger, Project, Tasks, Watch, path;
 
-path = require('path');
+path = require("path");
 
-Copy = require('./copy');
+Copy = require("./copy");
 
-Less = require('./less');
+Less = require("./less");
 
-Clean = require('./clean');
+Clean = require("./clean");
 
-Watch = require('./watch');
+Watch = require("./watch");
 
-Coffee = require('./coffee');
+Coffee = require("./coffee");
 
-Logger = require('./logger');
+Logger = require("./logger");
 
-Forever = require('./forever');
+Forever = require("./forever");
 
-Project = require('./project');
+Project = require("./project");
 
-Browserify = require('./browserify');
+Browserify = require("./browserify");
 
-BrowserSync = require('./browser-sync');
+BrowserSync = require("./browser-sync");
 
 Tasks = (function() {
   function Tasks(server) {
@@ -40,7 +40,7 @@ Tasks = (function() {
     new Project(this.server);
     new Browserify(this.server);
     new BrowserSync(this.server);
-    return this.server.vent.emit('builder:start');
+    return this.server.vent.emit("builder:start");
   };
 
   Tasks.prototype.folders = function() {

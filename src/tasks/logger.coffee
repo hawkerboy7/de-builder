@@ -1,5 +1,5 @@
 # NPM
-log    = require 'de-logger'
+log = require "de-logger"
 
 
 
@@ -12,13 +12,12 @@ class Logger
 
 	listeners: ->
 
-		@server.vent.on 'compiled:file', @log
+		@server.vent.on "compiled:file", @log
 
 
-	log: ({title, message, file}) ->
+	log: ({title, message}) ->
 
 		log.info title, message
-
 
 
 

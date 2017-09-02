@@ -1,14 +1,12 @@
-var Exit, Manager, Server, SocketIO, Tasks, log;
+var Exit, Manager, Server, Tasks, log;
 
-log = require('de-logger');
+log = require("de-logger");
 
-Exit = require('./exit');
+Exit = require("./exit");
 
-Tasks = require('./tasks');
+Tasks = require("./tasks");
 
-Server = require('./server');
-
-SocketIO = require('./socketIO');
+Server = require("./server");
 
 Manager = (function() {
   function Manager(config) {
@@ -16,7 +14,6 @@ Manager = (function() {
     log.clear();
     server = new Server(config);
     new Exit(server);
-    new SocketIO(server);
     new Tasks(server);
   }
 
