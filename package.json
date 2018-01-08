@@ -23,7 +23,7 @@
     "socket.io-client": "^2.0.3"
   },
   "devDependencies": {
-    "de-builder": "^0.7.5"
+    "de-builder": "^0.8.0"
   },
   "repository": {
     "type": "git",
