@@ -136,6 +136,16 @@ class Less
 			# Create folder structure for the .css file
 			mkdirp @map, =>
 
+				# --------------------------------------------------
+				# Workaround for Less
+				# --------------------------------------------------
+				less = require "less"
+				fileManagers = less.environment && less.environment.fileManagers || [];
+
+				fileManagers.forEach (fileManager) ->
+
+					fileManager.contents = {} if fileManager.contents
+
 				# Create less file
 				less.render res, {paths: [sFolder], compress: @server.env is "production"}, (e, output) =>
 
