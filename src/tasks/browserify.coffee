@@ -5,7 +5,6 @@ path = require "path"
 # NPM
 log        = require "de-logger"
 pugify     = require "pugify"
-jadeify    = require "jadeify"
 notifier   = require "node-notifier"
 browserify = require "browserify"
 
@@ -96,8 +95,8 @@ class Browserify
 
 		@init = true
 
-		# Tell the bundle where to find the pug or jade runtime
-		runtimePath = require.resolve (if @config.pugify then "pug-runtime" else "jade/runtime")
+		# Tell the bundle where to find the pug runtime
+		runtimePath = require.resolve "pug-runtime"
 
 		options =
 
@@ -129,11 +128,8 @@ class Browserify
 					console.log "\nDexter"
 					console.log arguments
 
-			# Allow for .pug and .jade files to be added into the bundle (v2.x)
-			@b.transform pugify.pug pretty: false, runtimePath: runtimePath, compileDebug: @server.env isnt "production" if @config.pugify
-
-			# Allow for .jade files to be added into the bundle (v1.x)
-			@b.transform jadeify, runtimePath: runtimePath if not @config.pugify
+			# Allow for .pug files to be added into the bundle
+			@b.transform pugify.pug pretty: false, runtimePath: runtimePath, compileDebug: @server.env isnt "production"
 
 			# Store starting time
 			@t = (new Date).getTime()
@@ -187,11 +183,8 @@ class Browserify
 						console.log "\nDexter multi"
 						console.log arguments
 
-				# Allow for .pug and .jade files to be added into the bundle (v2.x)
-				@b[name].transform pugify.pug pretty: false, runtimePath: runtimePath, compileDebug: @server.env isnt "production" if @config.pugify
-
-				# Allow for .jade files to be added into the bundle (v1.x)
-				@b[name].transform jadeify, runtimePath: runtimePath if not @config.pugify
+				# Allow for .pug files to be added into the bundle
+				@b[name].transform pugify.pug pretty: false, runtimePath: runtimePath, compileDebug: @server.env isnt "production"
 
 				# Create bundle
 				@b[name].bundle()

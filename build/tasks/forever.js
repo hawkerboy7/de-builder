@@ -42,7 +42,7 @@ Forever = (function() {
     if (this.server.config.type === 2) {
       build = this.server.folders.build.index;
     }
-    if (path.extname(file) === ".jade" || -1 === file.indexOf(build)) {
+    if (-1 === file.indexOf(build)) {
       return;
     }
     return this.start();

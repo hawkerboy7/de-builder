@@ -1,4 +1,4 @@
-var Browserify, browserify, fs, jadeify, log, notifier, path, pugify,
+var Browserify, browserify, fs, log, notifier, path, pugify,
   bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
 
 fs = require("fs");
@@ -8,8 +8,6 @@ path = require("path");
 log = require("de-logger");
 
 pugify = require("pugify");
-
-jadeify = require("jadeify");
 
 notifier = require("node-notifier");
 
@@ -90,7 +88,7 @@ Browserify = (function() {
   Browserify.prototype.initialized = function() {
     var bundle, folder, i, len, name, options, ref, runtimePath;
     this.init = true;
-    runtimePath = require.resolve((this.config.pugify ? "pug-runtime" : "jade/runtime"));
+    runtimePath = require.resolve("pug-runtime");
     options = {
       debug: this.server.env !== "production" && this.config.debug,
       fullPaths: false
@@ -102,18 +100,11 @@ Browserify = (function() {
         console.log("\nDexter");
         return console.log(arguments);
       });
-      if (this.config.pugify) {
-        this.b.transform(pugify.pug({
-          pretty: false,
-          runtimePath: runtimePath,
-          compileDebug: this.server.env !== "production"
-        }));
-      }
-      if (!this.config.pugify) {
-        this.b.transform(jadeify, {
-          runtimePath: runtimePath
-        });
-      }
+      this.b.transform(pugify.pug({
+        pretty: false,
+        runtimePath: runtimePath,
+        compileDebug: this.server.env !== "production"
+      }));
       this.t = (new Date).getTime();
       this.b.bundle();
     }
@@ -135,18 +126,11 @@ Browserify = (function() {
           console.log("\nDexter multi");
           return console.log(arguments);
         });
-        if (this.config.pugify) {
-          this.b[name].transform(pugify.pug({
-            pretty: false,
-            runtimePath: runtimePath,
-            compileDebug: this.server.env !== "production"
-          }));
-        }
-        if (!this.config.pugify) {
-          this.b[name].transform(jadeify, {
-            runtimePath: runtimePath
-          });
-        }
+        this.b[name].transform(pugify.pug({
+          pretty: false,
+          runtimePath: runtimePath,
+          compileDebug: this.server.env !== "production"
+        }));
         this.b[name].bundle();
       }
     }

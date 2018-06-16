@@ -138,6 +138,14 @@ Less = (function() {
           return _this.increase();
         }
         return mkdirp(_this.map, function() {
+          var fileManagers;
+          less = require("less");
+          fileManagers = less.environment && less.environment.fileManagers || [];
+          fileManagers.forEach(function(fileManager) {
+            if (fileManager.contents) {
+              return fileManager.contents = {};
+            }
+          });
           return less.render(res, {
             paths: [sFolder],
             compress: _this.server.env === "production"

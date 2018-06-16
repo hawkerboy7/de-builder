@@ -43,7 +43,7 @@ class Forever
 		build = @server.folders.build.index if @server.config.type is 2
 
 		# Restart the server on any file change in the src
-		return if path.extname(file) is ".jade" or -1 is file.indexOf build
+		return if -1 is file.indexOf build
 
 		@start()
 
