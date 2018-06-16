@@ -25,9 +25,6 @@ config =
 		# Name used for multi bundle builds
 		multi : "bundle.js"
 
-		# Use pugify instead of jadeify
-		pugify : true
-
 		# Show or hide source maps
 		debug : true
 
