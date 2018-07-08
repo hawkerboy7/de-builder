@@ -9,7 +9,7 @@ log = require("de-logger");
 
 mkdirp = require("mkdirp");
 
-coffee = require("coffee-script");
+coffee = require("coffeescript");
 
 notifier = require("node-notifier");
 

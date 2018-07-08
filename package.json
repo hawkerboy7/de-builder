@@ -1,6 +1,6 @@
 {
   "name": "de-builder",
-  "version": "0.9.0",
+  "version": "0.9.1",
   "description": "A Live Development Environment",
   "main": "build/app.js",
   "author": "Dexter Esajas <dexter.esajas@gmail.com>",
@@ -8,12 +8,12 @@
   "dependencies": {
     "browser-sync": "^2.24.4",
     "browserify": "^16.2.2",
-    "chokidar": "^2.0.3",
-    "coffee-script": "^1.12.7",
+    "chokidar": "^2.0.4",
+    "coffeescript": "^1.12.7",
     "de-logger": "^0.4.0",
     "deep-extend": "^0.6.0",
     "forever-monitor": "^1.7.1",
-    "less": "^3.0.4",
+    "less": "^3.5.3",
     "mkdirp": "^0.5.1",
     "node-notifier": "^5.2.1",
     "pugify": "^2.2.0",
@@ -21,7 +21,7 @@
     "socket.io-client": "^2.1.1"
   },
   "devDependencies": {
-    "de-builder": "^0.8.3"
+    "de-builder": "^0.9.0"
   },
   "repository": {
     "type": "git",
