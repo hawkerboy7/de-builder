@@ -1,6 +1,6 @@
 {
   "name": "de-builder",
-  "version": "0.9.3",
+  "version": "0.9.4",
   "description": "A Live Development Environment",
   "main": "build/app.js",
   "author": "Dexter Esajas <dexter.esajas@gmail.com>",
@@ -21,7 +21,7 @@
     "socket.io-client": "^2.3.0"
   },
   "devDependencies": {
-    "de-builder": "^0.9.2"
+    "de-builder": "^0.9.3"
   },
   "repository": {
     "type": "git",
