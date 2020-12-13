@@ -89,6 +89,7 @@ Browserify = (function() {
     var bundle, folder, i, len, name, options, ref, runtimePath;
     this.init = true;
     runtimePath = require.resolve("pug-runtime");
+    runtimePath = runtimePath.replace(/\\/g, "\\\\");
     options = {
       debug: this.server.env !== "production" && this.config.debug,
       fullPaths: false
