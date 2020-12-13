@@ -98,6 +98,9 @@ class Browserify
 		# Tell the bundle where to find the pug runtime
 		runtimePath = require.resolve "pug-runtime"
 
+		# On window the path with single line \ is not interpreted correctly
+		runtimePath = runtimePath.replace /\\/g, "\\\\"
+
 		options =
 
 			# Add source map on envs other than production
