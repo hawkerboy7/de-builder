@@ -29,7 +29,7 @@ class Copy
 		read = fs.createReadStream @server.root+path.sep+file
 
 		# Ensure destination folders exist
-		mkdirp path.dirname(build), =>
+		mkdirp(path.dirname(build)).then =>
 
 			# Create write stream
 			write = fs.createWriteStream name = @server.root+path.sep+build

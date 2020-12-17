@@ -137,7 +137,7 @@ Less = (function() {
           log.error(_this.server.config.title + " - Less", "" + e);
           return _this.increase();
         }
-        return mkdirp(_this.map, function() {
+        return mkdirp(_this.map).then(function() {
           return less.render(res, {
             paths: [sFolder],
             compress: _this.server.env === "production"

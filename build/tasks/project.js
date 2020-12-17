@@ -28,15 +28,15 @@ Project = (function() {
   };
 
   Project.prototype.typeOne = function() {
-    mkdirp(this.server.folders.src.client, this.handle);
-    mkdirp(this.server.folders.src.server, this.handle);
-    mkdirp(this.server.folders.build.client, this.handle);
-    return mkdirp(this.server.folders.build.server, this.handle);
+    mkdirp(this.server.folders.src.client).then(this.handle);
+    mkdirp(this.server.folders.src.server).then(this.handle);
+    mkdirp(this.server.folders.build.client).then(this.handle);
+    return mkdirp(this.server.folders.build.server).then(this.handle);
   };
 
   Project.prototype.typeTwo = function() {
-    mkdirp(this.server.folders.src.index, this.handle);
-    return mkdirp(this.server.folders.build.index, this.handle);
+    mkdirp(this.server.folders.src.index).then(this.handle);
+    return mkdirp(this.server.folders.build.index).then(this.handle);
   };
 
   Project.prototype.handle = function() {

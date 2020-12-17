@@ -38,7 +38,7 @@ class Coffee
 
 
 			# Make sure path to destination exists
-			mkdirp path.dirname(build), =>
+			mkdirp(path.dirname(build)).then =>
 
 				try
 					coffeeScript = coffee.compile(data, bare: true)

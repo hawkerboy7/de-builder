@@ -26,7 +26,7 @@ class Clean
 		rmdir @server.folders.build.index, =>
 
 			# Create build folder
-			mkdirp @server.folders.build.index, =>
+			mkdirp(@server.folders.build.index).then =>
 
 				log.info "LDE - Clean", @server.symbols.finished
 

@@ -35,7 +35,7 @@ Coffee = (function() {
           _this.notify(err.message);
           return log.error(err);
         }
-        return mkdirp(path.dirname(build), function() {
+        return mkdirp(path.dirname(build)).then(function() {
           var coffeeScript, e, msg, name;
           try {
             coffeeScript = coffee.compile(data, {

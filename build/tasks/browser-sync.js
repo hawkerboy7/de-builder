@@ -101,7 +101,7 @@ BrowserSync = (function() {
   };
 
   BrowserSync.prototype.download = function(url, cb) {
-    return mkdirp(path.dirname(this.filePath), (function(_this) {
+    return mkdirp(path.dirname(this.filePath)).then((function(_this) {
       return function() {
         _this.file = fs.createWriteStream(_this.filePath);
         return http.get(url, function(response) {

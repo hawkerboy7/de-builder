@@ -24,7 +24,7 @@ Copy = (function() {
     var build, read;
     build = this.server.toBuild(file);
     read = fs.createReadStream(this.server.root + path.sep + file);
-    return mkdirp(path.dirname(build), (function(_this) {
+    return mkdirp(path.dirname(build)).then((function(_this) {
       return function() {
         var name, write;
         write = fs.createWriteStream(name = _this.server.root + path.sep + build);

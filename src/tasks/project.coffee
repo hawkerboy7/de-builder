@@ -30,16 +30,16 @@ class Project
 
 	typeOne: ->
 
-		mkdirp @server.folders.src.client,   @handle
-		mkdirp @server.folders.src.server,   @handle
-		mkdirp @server.folders.build.client, @handle
-		mkdirp @server.folders.build.server, @handle
+		mkdirp(@server.folders.src.client).then @handle
+		mkdirp(@server.folders.src.server).then @handle
+		mkdirp(@server.folders.build.client).then @handle
+		mkdirp(@server.folders.build.server).then @handle
 
 
 	typeTwo: ->
 
-		mkdirp @server.folders.src.index,   @handle
-		mkdirp @server.folders.build.index, @handle
+		mkdirp(@server.folders.src.index).then @handle
+		mkdirp(@server.folders.build.index).then @handle
 
 
 	handle: =>
