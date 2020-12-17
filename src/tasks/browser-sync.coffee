@@ -114,7 +114,7 @@ class BrowserSync
 
 	download: (url, cb) ->
 
-		mkdirp path.dirname(@filePath), =>
+		mkdirp(path.dirname(@filePath)).then =>
 
 			# Store in a file
 			@file = fs.createWriteStream @filePath

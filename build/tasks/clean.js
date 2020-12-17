@@ -23,7 +23,7 @@ Clean = (function() {
   Clean.prototype.start = function() {
     return rmdir(this.server.folders.build.index, (function(_this) {
       return function() {
-        return mkdirp(_this.server.folders.build.index, function() {
+        return mkdirp(_this.server.folders.build.index).then(function() {
           log.info("LDE - Clean", _this.server.symbols.finished);
           return _this.server.vent.emit("clean:done");
         });

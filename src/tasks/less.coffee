@@ -134,7 +134,7 @@ class Less
 				return @increase()
 
 			# Create folder structure for the .css file
-			mkdirp @map, =>
+			mkdirp(@map).then =>
 
 				# Create less file
 				less.render res, {paths: [sFolder], compress: @server.env is "production"}, (e, output) =>
