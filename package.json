@@ -1,27 +1,28 @@
 {
   "name": "de-builder",
-  "version": "0.9.7",
+  "version": "0.9.8",
   "description": "A Live Development Environment",
   "main": "build/app.js",
   "author": "Dexter Esajas <dexter.esajas@gmail.com>",
   "license": "MIT",
   "dependencies": {
-    "browser-sync": "^2.26.12",
-    "browserify": "^16.5.1",
-    "chokidar": "^3.4.1",
+    "browser-sync": "^2.26.13",
+    "browserify": "^17.0.0",
+    "chokidar": "^3.4.3",
     "coffeescript": "^1.12.7",
     "de-logger": "^0.4.0",
     "deep-extend": "^0.6.0",
-    "forever-monitor": "^3.0.1",
-    "less": "^3.12.2",
-    "mkdirp": "^0.5.4",
-    "node-notifier": "^7.0.2",
+    "forever-monitor": "^3.0.3",
+    "less": "^3.13.0",
+    "mkdirp": "^1.0.4",
+    "node-notifier": "^9.0.0",
     "pugify": "^2.2.0",
     "rmdir": "^1.2.0",
-    "socket.io-client": "^2.3.0"
+    "socket.io-client": "^3.0.4"
   },
   "devDependencies": {
-    "de-builder": "^0.9.6"
+    "de-builder": "^0.9.7",
+    "mocha": "^8.2.1"
   },
   "repository": {
     "type": "git",
@@ -29,7 +30,8 @@
   },
   "bugs": "https://github.com/hawkerboy7/de-builder/issues",
   "scripts": {
-    "postinstall": "node install.js"
+    "postinstall": "node install.js",
+    "test": "mocha"
   },
   "homepage": "https://github.com/hawkerboy7/de-builder#readme"
 }
