@@ -8,9 +8,9 @@
 	<a target="_blank" href="https://www.npmjs.com/package/de-builder">
 		<img src="https://img.shields.io/npm/dm/de-builder.svg">
 	</a>
-	<a target="_blank" href="https://www.codacy.com/app/dunk_king7/de-builder/dashboard">
-		<img src="https://img.shields.io/codacy/59e450c5937442c6bd2772810ff55fdd.svg">
-	</a>
+	<!--<a target="_blank" href="https://www.codacy.com/app/dunk_king7/de-builder/dashboard">
+		<img src="https://img.shields.io/codacy/grade/59e450c5937442c6bd2772810ff55fdd.svg">
+	</a>-->
 	<a target="_blank" href="https://gitter.im/hawkerboy7/de-builder">
 		<img src="https://img.shields.io/badge/Gitter-JOIN%20CHAT%20%E2%86%92-1dce73.svg">
 	</a>
