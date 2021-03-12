@@ -8,9 +8,9 @@
 	<a target="_blank" href="https://www.npmjs.com/package/de-builder">
 		<img src="https://img.shields.io/npm/dm/de-builder.svg">
 	</a>
-	<a target="_blank" href="https://www.codacy.com/app/dunk_king7/de-builder/dashboard">
-		<img src="https://img.shields.io/codacy/59e450c5937442c6bd2772810ff55fdd.svg">
-	</a>
+	<!--<a target="_blank" href="https://www.codacy.com/app/dunk_king7/de-builder/dashboard">
+		<img src="https://img.shields.io/codacy/grade/59e450c5937442c6bd2772810ff55fdd.svg">
+	</a>-->
 	<a target="_blank" href="https://gitter.im/hawkerboy7/de-builder">
 		<img src="https://img.shields.io/badge/Gitter-JOIN%20CHAT%20%E2%86%92-1dce73.svg">
 	</a>
@@ -23,7 +23,7 @@
 
 ## What is it?
 `de-builder` creates a __Live Development Environment__ (LDE).<br>
-In this environment you can write `.coffee`, `.less`, `.css` and `.jade` and your code will be compiled on save.<br>
+In this environment you can write `.coffee`, `.less`, `.css` and `.pug` and your code will be compiled on save.<br>
 The corresponding part of you program will be either injected or restarted.<br>
 This is achieved by using various [modules](#modules).
 
@@ -44,7 +44,6 @@ NOTE: If you've keept all default settings and started `node build.js` in an emp
 The following languages are supported:
 - .coffee
 - .less
-- .jade
 - .pug
 
 The following types of LDE are supported:
@@ -93,7 +92,7 @@ src/
 src/
 	express/
 		views/
-			index.jade
+			index.pug
 		index.coffee
 	server/
 		db/
@@ -126,7 +125,7 @@ src/
 			elements/
 				header.coffee
 			templates/
-				header.jade
+				header.pug
 			index.coffee
 			main.coffee
 			router.coffee
@@ -155,7 +154,6 @@ The main modules used to create this __LDE__:
 - [Coffee-script](https://github.com/jashkenas/coffeescript)
 - [De-logger](https://github.com/hawkerboy7/de-logger)
 - [Forever-monitor](https://github.com/foreverjs/forever-monitor)
-- [Jadeify](https://github.com/domenic/jadeify)
 - [Less](https://github.com/less/less.js)
 - [Pugify](https://github.com/sidorares/pugify)
 
@@ -189,9 +187,6 @@ config =
 
 		# Name used for multi bundle builds
 		multi : "bundle.js"
-
-		# Use pugify instead of jadeify
-		pugify : true
 
 		# Show or hide source maps
 		debug : true

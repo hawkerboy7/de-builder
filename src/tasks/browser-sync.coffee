@@ -75,7 +75,7 @@ class BrowserSync
 				added = true
 
 				# Make socket.io-client require'able
-				bundle.require "socket.io-client", expose: "socket.io-client"
+				bundle.require "./node_modules/de-builder/node_modules/socket.io-client/lib/index.js", expose: "socket.io-client"
 
 				# Add socket.io-client trough a file
 				bundle.add path.resolve __dirname, "../socketIO/socket.io-client"
@@ -88,7 +88,7 @@ class BrowserSync
 		else
 
 			# Make socket.io-client require"able
-			w.require "socket.io-client", expose: "socket.io-client"
+			w.require "./node_modules/de-builder/node_modules/socket.io-client/lib/index.js", expose: "socket.io-client"
 
 			# Add socket.io-client trough a file
 			w.add path.resolve __dirname, "../socketIO/socket.io-client"
