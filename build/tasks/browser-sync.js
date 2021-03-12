@@ -70,6 +70,9 @@ BrowserSync = (function() {
           continue;
         }
         added = true;
+        bundle.require("./node_modules/de-builder/node_modules/socket.io-client/lib/index.js", {
+          expose: "socket.io-client"
+        });
         bundle.add(path.resolve(__dirname, "../socketIO/socket.io-client"));
         bundle.add(this.filePath);
       }
@@ -77,6 +80,9 @@ BrowserSync = (function() {
         return log.warn(this.server.config.title + " - Browser-sync", "browser-sync was not added");
       }
     } else {
+      w.require("./node_modules/de-builder/node_modules/socket.io-client/lib/index.js", {
+        expose: "socket.io-client"
+      });
       w.add(path.resolve(__dirname, "../socketIO/socket.io-client"));
       return w.add(this.filePath);
     }
