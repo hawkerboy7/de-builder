@@ -70,9 +70,6 @@ BrowserSync = (function() {
           continue;
         }
         added = true;
-        bundle.require("socket.io-client", {
-          expose: "socket.io-client"
-        });
         bundle.add(path.resolve(__dirname, "../socketIO/socket.io-client"));
         bundle.add(this.filePath);
       }
@@ -80,9 +77,6 @@ BrowserSync = (function() {
         return log.warn(this.server.config.title + " - Browser-sync", "browser-sync was not added");
       }
     } else {
-      w.require("socket.io-client", {
-        expose: "socket.io-client"
-      });
       w.add(path.resolve(__dirname, "../socketIO/socket.io-client"));
       return w.add(this.filePath);
     }
