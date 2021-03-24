@@ -9,7 +9,7 @@
     "browser-sync": "^2.26.14",
     "browserify": "^17.0.0",
     "chokidar": "^3.4.3",
-    "coffeescript": "^1.12.7",
+    "coffeescript": "^2.5.1",
     "de-logger": "^0.4.0",
     "deep-extend": "^0.6.0",
     "forever-monitor": "^3.0.3",
