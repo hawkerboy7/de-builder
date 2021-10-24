@@ -1,39 +1,43 @@
-var Forever, Monitor, log, path,
-  bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
+// Node
+var Forever, log, nodemon, path;
 
 path = require("path");
 
+// NPM
 log = require("de-logger");
 
-Monitor = require("forever-monitor").Monitor;
+nodemon = require("nodemon");
 
-Forever = (function() {
-  function Forever(server) {
+Forever = class Forever {
+  constructor(server) {
+    this.initialized = this.initialized.bind(this);
+    this.forever = this.forever.bind(this);
+    this.terminate = this.terminate.bind(this);
     this.server = server;
-    this.terminate = bind(this.terminate, this);
-    this.forever = bind(this.forever, this);
-    this.initialized = bind(this.initialized, this);
     if (this.server.config.forever.enabled && this.server.config.type !== 3) {
       this.listeners();
     }
   }
 
-  Forever.prototype.listeners = function() {
+  listeners() {
     this.server.vent.on("terminate:child", this.terminate);
     this.server.vent.on("compiled:file", this.forever);
     return this.server.vent.on("watch:initialized", this.initialized);
-  };
+  }
 
-  Forever.prototype.initialized = function() {
+  initialized() {
+    // Indicate that the application is initialized
     this.init = true;
+    // Start forever
     return this.forever();
-  };
+  }
 
-  Forever.prototype.forever = function(args) {
+  forever(args) {
     var build, file;
     if (!this.init) {
       return;
     }
+    // Get file if it exists
     file = args != null ? args.file : void 0;
     if (!file) {
       return this.start();
@@ -42,42 +46,39 @@ Forever = (function() {
     if (this.server.config.type === 2) {
       build = this.server.folders.build.index;
     }
+    // Restart the server on any file change in the src
     if (-1 === file.indexOf(build)) {
       return;
     }
     return this.start();
-  };
+  }
 
-  Forever.prototype.start = function() {
+  start() {
     var entry, src;
+    // Determin the src directory
     src = this.server.folders.build.server;
     if (this.server.config.type === 2) {
       src = this.server.folders.build.index;
     }
+    // Create file path
     entry = src + path.sep + this.server.config.forever.entry;
+    // Ensure no previous instance is runnning
     this.terminate();
-    this.child = new Monitor(entry, {
-      max: 1,
-      killTree: true
+    // Ensure we work with a clean slate of nodemon
+    nodemon.reset();
+    // Start running the application
+    return nodemon({
+      script: entry,
+      ext: "js",
+      ignore: ["*"]
     });
-    this.child.on("exit:code", (function(_this) {
-      return function(code) {
-        if (code) {
-          return log.warn(_this.server.config.title + " - Forever stopped with code: " + code);
-        }
-      };
-    })(this));
-    return this.child.start();
-  };
+  }
 
-  Forever.prototype.terminate = function() {
-    if (this.child && this.child.running) {
-      return this.child.kill();
-    }
-  };
+  terminate() {
+    // Close the currently running app in case it is running
+    return nodemon.emit("quit");
+  }
 
-  return Forever;
-
-})();
+};
 
 module.exports = Forever;
