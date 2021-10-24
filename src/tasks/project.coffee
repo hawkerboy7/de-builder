@@ -2,8 +2,8 @@
 path = require "path"
 
 # NPM
-log    = require "de-logger"
-mkdirp = require "mkdirp"
+fs  = require "fs-extra"
+log = require "de-logger"
 
 
 
@@ -30,16 +30,16 @@ class Project
 
 	typeOne: ->
 
-		mkdirp(@server.folders.src.client).then @handle
-		mkdirp(@server.folders.src.server).then @handle
-		mkdirp(@server.folders.build.client).then @handle
-		mkdirp(@server.folders.build.server).then @handle
+		fs.mkdirp(@server.folders.src.client).then @handle
+		fs.mkdirp(@server.folders.src.server).then @handle
+		fs.mkdirp(@server.folders.build.client).then @handle
+		fs.mkdirp(@server.folders.build.server).then @handle
 
 
 	typeTwo: ->
 
-		mkdirp(@server.folders.src.index).then @handle
-		mkdirp(@server.folders.build.index).then @handle
+		fs.mkdirp(@server.folders.src.index).then @handle
+		fs.mkdirp(@server.folders.build.index).then @handle
 
 
 	handle: =>

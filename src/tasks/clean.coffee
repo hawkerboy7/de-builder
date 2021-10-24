@@ -1,10 +1,6 @@
-# Node
-fs = require "fs"
-
 # NPM
-log    = require "de-logger"
-rmdir  = require "rmdir"
-mkdirp = require "mkdirp"
+fs  = require "fs-extra"
+log = require "de-logger"
 
 
 
@@ -23,10 +19,10 @@ class Clean
 	start: =>
 
 		# Remove build folder
-		rmdir @server.folders.build.index, =>
+		fs.remove @server.folders.build.index, =>
 
 			# Create build folder
-			mkdirp(@server.folders.build.index).then =>
+			fs.mkdirp(@server.folders.build.index).then =>
 
 				log.info "LDE - Clean", @server.symbols.finished
 
