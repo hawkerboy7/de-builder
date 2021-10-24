@@ -2,8 +2,8 @@
 path = require "path"
 
 # NPM
-log         = require "de-logger"
-{ Monitor } = require "forever-monitor"
+log     = require "de-logger"
+nodemon = require "nodemon"
 
 
 
@@ -57,24 +57,23 @@ class Forever
 		# Create file path
 		entry = src+path.sep+@server.config.forever.entry
 
-		# Kill previous child if it exists
+		# Ensure no previous instance is runnning
 		@terminate()
 
-		# Create a monitor for starting a child process
-		@child = new Monitor entry, max: 1, killTree: true
+		# Ensure we work with a clean slate of nodemon
+		nodemon.reset()
 
-		# Handle exit
-		@child.on "exit:code", (code) =>
-
-			log.warn "#{@server.config.title} - Forever stopped with code: #{code}" if code
-
-		# Start child process
-		@child.start()
+		# Start running the application
+		nodemon
+			script: entry,
+			ext: "js"
+			ignore: ["*"]
 
 
 	terminate: =>
 
-		@child.kill() if @child and @child.running
+		# Close the currently running app in case it is running
+		nodemon.emit "quit"
 
 
 
