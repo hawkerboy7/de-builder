@@ -215,7 +215,8 @@ class Browserify
 
 		for folder in @folders
 
-			(continue if -1 is file.indexOf folder.build) if file
+			if file
+				continue if -1 is file.indexOf folder.build
 
 			@make folder.name
 
