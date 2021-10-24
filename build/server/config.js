@@ -11,7 +11,7 @@ config = {
   less: {
     file: "app.css",
     entry: "app.less",
-    folder: "styles"
+    folder: "css"
   },
   // Browserify directory and entry file
   browserify: {
