@@ -1,50 +1,51 @@
-var Copy, fs, log, mkdirp, path,
-  bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
-
-fs = require("fs");
+// Node
+var Copy, fs, log, path;
 
 path = require("path");
 
+// NPM
+fs = require("fs-extra");
+
 log = require("de-logger");
 
-mkdirp = require("mkdirp");
-
-Copy = (function() {
-  function Copy(server) {
+Copy = class Copy {
+  constructor(server) {
+    this.copy = this.copy.bind(this);
     this.server = server;
-    this.copy = bind(this.copy, this);
     this.listeners();
   }
 
-  Copy.prototype.listeners = function() {
+  listeners() {
     return this.server.vent.on("copy:file", this.copy);
-  };
+  }
 
-  Copy.prototype.copy = function(file, init) {
+  copy(file, init) {
     var build, read;
+    // Create path to destination
     build = this.server.toBuild(file);
+    // Create a read stream
     read = fs.createReadStream(this.server.root + path.sep + file);
-    return mkdirp(path.dirname(build)).then((function(_this) {
-      return function() {
-        var name, write;
-        write = fs.createWriteStream(name = _this.server.root + path.sep + build);
-        write.on("finish", function() {
-          _this.server.vent.emit("compiled:file", {
-            file: name,
-            title: _this.server.config.title + " - Copy",
-            message: "" + build
-          });
-          if (!init) {
-            return _this.server.vent.emit("watch:increase");
-          }
+    // Ensure destination folders exist
+    return fs.mkdirp(path.dirname(build)).then(() => {
+      var name, write;
+      // Create write stream
+      write = fs.createWriteStream(name = this.server.root + path.sep + build);
+      write.on("finish", () => {
+        this.server.vent.emit("compiled:file", {
+          file: name,
+          title: `${this.server.config.title} - Copy`,
+          message: `${build}`
         });
-        return read.pipe(write);
-      };
-    })(this));
-  };
+        if (!init) {
+          // Notify the watch in case the init has not been triggered
+          return this.server.vent.emit("watch:increase");
+        }
+      });
+      // Read file and write to destination
+      return read.pipe(write);
+    });
+  }
 
-  return Copy;
-
-})();
+};
 
 module.exports = Copy;

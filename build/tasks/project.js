@@ -1,53 +1,56 @@
-var Project, log, mkdirp, path,
-  bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
+// Node
+var Project, fs, log, path;
 
 path = require("path");
 
+// NPM
+fs = require("fs-extra");
+
 log = require("de-logger");
 
-mkdirp = require("mkdirp");
-
-Project = (function() {
-  function Project(server) {
+Project = class Project {
+  constructor(server) {
+    this.setup = this.setup.bind(this);
+    this.handle = this.handle.bind(this);
     this.server = server;
-    this.handle = bind(this.handle, this);
-    this.setup = bind(this.setup, this);
     this.listeners();
   }
 
-  Project.prototype.listeners = function() {
+  listeners() {
     return this.server.vent.on("clean:done", this.setup);
-  };
+  }
 
-  Project.prototype.setup = function() {
+  setup() {
     this.i = 0;
     if (this.server.config.type === 1) {
       return this.typeOne();
     }
     return this.typeTwo();
-  };
+  }
 
-  Project.prototype.typeOne = function() {
-    mkdirp(this.server.folders.src.client).then(this.handle);
-    mkdirp(this.server.folders.src.server).then(this.handle);
-    mkdirp(this.server.folders.build.client).then(this.handle);
-    return mkdirp(this.server.folders.build.server).then(this.handle);
-  };
+  typeOne() {
+    fs.mkdirp(this.server.folders.src.client).then(this.handle);
+    fs.mkdirp(this.server.folders.src.server).then(this.handle);
+    fs.mkdirp(this.server.folders.build.client).then(this.handle);
+    return fs.mkdirp(this.server.folders.build.server).then(this.handle);
+  }
 
-  Project.prototype.typeTwo = function() {
-    mkdirp(this.server.folders.src.index).then(this.handle);
-    return mkdirp(this.server.folders.build.index).then(this.handle);
-  };
+  typeTwo() {
+    fs.mkdirp(this.server.folders.src.index).then(this.handle);
+    return fs.mkdirp(this.server.folders.build.index).then(this.handle);
+  }
 
-  Project.prototype.handle = function() {
+  handle() {
     this.i++;
     if ((this.server.config.type === 1 && this.i === 4) || ((this.server.config.type === 2 || this.server.config.type === 3) && this.i === 2)) {
+      // Notify project type
       log.info("LDE - Project", this.explaination());
+      // Send event
       return this.server.vent.emit("project:done");
     }
-  };
+  }
 
-  Project.prototype.explaination = function() {
+  explaination() {
     var message, type;
     type = this.server.config.type;
     message = "Project type \"";
@@ -61,10 +64,8 @@ Project = (function() {
       message += "Client";
     }
     return message += "\" is used";
-  };
+  }
 
-  return Project;
-
-})();
+};
 
 module.exports = Project;

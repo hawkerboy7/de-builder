@@ -1,26 +1,25 @@
-var BrowserSync, browserSync, fs, http, log, mkdirp, path, version,
-  bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
-
-fs = require("fs");
+// Node
+var BrowserSync, browserSync, fs, http, log, path, version;
 
 http = require("http");
 
 path = require("path");
 
-log = require("de-logger");
+// NPM
+fs = require("fs-extra");
 
-mkdirp = require("mkdirp");
+log = require("de-logger");
 
 browserSync = require("browser-sync");
 
-version = require("browser-sync/package.json").version;
+({version} = require("browser-sync/package.json"));
 
-BrowserSync = (function() {
-  function BrowserSync(server) {
+BrowserSync = class BrowserSync {
+  constructor(server) {
+    this.initialized = this.initialized.bind(this);
+    this.reload = this.reload.bind(this);
+    this.bundle = this.bundle.bind(this);
     this.server = server;
-    this.bundle = bind(this.bundle, this);
-    this.reload = bind(this.reload, this);
-    this.initialized = bind(this.initialized, this);
     if (false || !this.server.config.browserSync.enabled || this.server.config.type === 2 || this.server.env === "production") {
       return;
     }
@@ -28,11 +27,14 @@ BrowserSync = (function() {
     this.listeners();
   }
 
-  BrowserSync.prototype.load = function() {
+  load() {
     var config;
     this.config = this.server.config.browserSync;
+    // Create path to gf browser-sync file
     this.filePath = this.server.myRoot + path.sep + "build" + path.sep + "browser-sync.js";
+    // Create browsersync server
     this.bs = browserSync.create();
+    // Set browsersync config
     config = {
       ui: {
         port: this.config.ui
@@ -42,25 +44,27 @@ BrowserSync = (function() {
       ghostMode: false,
       logFileChanges: false
     };
-    return this.bs.init(config, (function(_this) {
-      return function(err) {
-        if (err) {
-          return log.error(_this.server.config.title + " - Browser-sync", "Could not start \n\n", err);
-        }
-        return _this.code();
-      };
-    })(this));
-  };
+    // Initialize server
+    return this.bs.init(config, (err) => {
+      if (err) {
+        // Notify error
+        return log.error(`${this.server.config.title} - Browser-sync`, "Could not start \n\n", err);
+      }
+      // Retreive browserify code
+      return this.code();
+    });
+  }
 
-  BrowserSync.prototype.listeners = function() {
+  listeners() {
     this.server.vent.on("browserify:initialized", this.initialized);
     this.server.vent.on("browserify:bundle", this.bundle);
     return this.server.vent.on("compiled:file", this.reload);
-  };
+  }
 
-  BrowserSync.prototype.initialized = function(w) {
+  initialized(w) {
     var added, bundle, folder, i, len, ref;
     this.init = true;
+    // Check if multi or single
     if (w._browserSyncIndicator) {
       added = false;
       ref = this.config.multi;
@@ -70,74 +74,80 @@ BrowserSync = (function() {
           continue;
         }
         added = true;
+        // Make socket.io-client require'able
         bundle.require("socket.io-client", {
           expose: "socket.io-client"
         });
+        // Add socket.io-client trough a file
         bundle.add(path.resolve(__dirname, "../socketIO/socket.io-client"));
+        // Add Browser-sync to the bundle
         bundle.add(this.filePath);
       }
       if (!added) {
-        return log.warn(this.server.config.title + " - Browser-sync", "browser-sync was not added");
+        return log.warn(`${this.server.config.title} - Browser-sync`, "browser-sync was not added");
       }
     } else {
+      // Make socket.io-client require"able
       w.require("socket.io-client", {
         expose: "socket.io-client"
       });
+      // Add socket.io-client trough a file
       w.add(path.resolve(__dirname, "../socketIO/socket.io-client"));
+      // Add Browser-sync to the bundle
       return w.add(this.filePath);
     }
-  };
+  }
 
-  BrowserSync.prototype.code = function() {
-    log.info(this.server.config.title + " - Browser-sync", "Browser-sync server started");
-    return this.download("http://localhost:" + this.config.server + "/browser-sync/browser-sync-client.js?v=" + version, (function(_this) {
-      return function(err) {
-        if (err) {
-          return log.error(_this.server.config.title + " - Browser-sync", "Unable to get browser-sync .js file", err);
-        }
-        return log.info(_this.server.config.title + " - Browser-sync", "UI ready at localhost:" + _this.config.ui);
-      };
-    })(this));
-  };
+  code() {
+    // Notify start
+    log.info(`${this.server.config.title} - Browser-sync`, "Browser-sync server started");
+    // Download file
+    return this.download(`http://localhost:${this.config.server}/browser-sync/browser-sync-client.js?v=${version}`, (err) => {
+      if (err) {
+        // Notify start
+        return log.error(`${this.server.config.title} - Browser-sync`, "Unable to get browser-sync .js file", err);
+      }
+      // Notify ready
+      return log.info(`${this.server.config.title} - Browser-sync`, `UI ready at localhost:${this.config.ui}`);
+    });
+  }
 
-  BrowserSync.prototype.download = function(url, cb) {
-    return mkdirp(path.dirname(this.filePath)).then((function(_this) {
-      return function() {
-        _this.file = fs.createWriteStream(_this.filePath);
-        return http.get(url, function(response) {
-          return response.pipe(_this.file).on("error", function(err) {
-            fs.unlink(_this.file);
-            return cb(err);
-          }).on("finish", function() {
-            return _this.file.close(cb);
-          });
+  download(url, cb) {
+    return fs.mkdirp(path.dirname(this.filePath)).then(() => {
+      // Store in a file
+      this.file = fs.createWriteStream(this.filePath);
+      // Download file with http
+      return http.get(url, (response) => {
+        return response.pipe(this.file).on("error", (err) => {
+          fs.unlink(this.file);
+          return cb(err);
+        }).on("finish", () => {
+          return this.file.close(cb);
         });
-      };
-    })(this));
-  };
+      });
+    });
+  }
 
-  BrowserSync.prototype.reload = function(arg) {
-    var file;
-    file = arg.file;
+  reload({file}) {
     if (!this.init) {
       return;
     }
     if (".css" === path.extname(file)) {
       return this._reload(file);
     }
-  };
+  }
 
-  BrowserSync.prototype.bundle = function(file) {
+  bundle(file) {
     return this._reload(file);
-  };
+  }
 
-  BrowserSync.prototype._reload = function(file) {
-    log.info(this.server.config.title + " - Browser-sync", "Reload", file.replace(this.server.root + "/", ""));
+  _reload(file) {
+    // Notify start
+    log.info(`${this.server.config.title} - Browser-sync`, "Reload", file.replace(`${this.server.root}/`, ""));
+    // Reload based on file path
     return this.bs.reload(file);
-  };
+  }
 
-  return BrowserSync;
-
-})();
+};
 
 module.exports = BrowserSync;

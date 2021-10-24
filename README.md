@@ -2,9 +2,9 @@
 	<a target="_blank" href="https://travis-ci.org/hawkerboy7/de-builder">
 		<img src="https://img.shields.io/travis/hawkerboy7/de-builder.svg">
 	</a>
-	<a target="_blank" href="https://david-dm.org/hawkerboy7/de-builder">
+	<!-- <a target="_blank" href="https://david-dm.org/hawkerboy7/de-builder">
 		<img src="https://img.shields.io/david/hawkerboy7/de-builder.svg">
-	</a>
+	</a> -->
 	<a target="_blank" href="https://www.npmjs.com/package/de-builder">
 		<img src="https://img.shields.io/npm/dm/de-builder.svg">
 	</a>
@@ -23,7 +23,7 @@
 
 ## What is it?
 `de-builder` creates a __Live Development Environment__ (LDE).<br>
-In this environment you can write `.coffee`, `.less`, `.css` and `.pug` and your code will be compiled on save.<br>
+In this environment you can write `.coffee`, `.less` and `.pug` and your code will be compiled on save.<br>
 The corresponding part of you program will be either injected or restarted.<br>
 This is achieved by using various [modules](#modules).
 
@@ -37,7 +37,7 @@ This is achieved by using various [modules](#modules).
 - You can adjust the config in the `build.js` file according to your specifications (all default options are shown but not required).
 - Now run `node build.js` and your __LDE__ will run and you can start working on your project.
 
-NOTE: If you've keept all default settings and started `node build.js` in an empty project you will encounter two error's `LDE - Less` and `LDE - Browserify`. That's because by default an entry file for `less` and `browserify` is expected. You can disable `less`and `browserify` or create the entry files to solve the error.
+NOTE: If you've kept all default settings and started `node build.js` in an empty project you will encounter two error's `LDE - Less` and `LDE - Browserify`. That's because by default an entry file for `less` and `browserify` is expected. You can disable `less`and `browserify` or create the entry files to solve the error.
 
 
 ## Support
@@ -80,10 +80,10 @@ Without the `src/` folders shown in type 2 and 3
 ```
 src/
 	client/
-		Client (LDE type 3)
+		Client (LDE type 3, excluding its "src/" folder)
 
 	server/
-		Server (LDE type 2)
+		Server (LDE type 2, excluding its "src/" folder)
 ```
 
 
@@ -112,6 +112,12 @@ src/
 #### Client (LDE type 3)
 ```
 src/
+	css/
+		elements/
+			header.less
+			main.less
+		app.less
+		variables.less
 	fonts/
 		font-file.ttf
 		font-file2.ttf
@@ -131,12 +137,6 @@ src/
 			router.coffee
 		vendor/
 			index.coffee
-	styles/
-		elements/
-			header.less
-			main.less
-		app.less
-		variables.less
 ```
 
 

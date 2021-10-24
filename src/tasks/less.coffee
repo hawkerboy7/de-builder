@@ -1,11 +1,10 @@
 # Node
-fs   = require "fs"
 path = require "path"
 
 # NPM
+fs       = require "fs-extra"
 log      = require "de-logger"
 less     = require "less"
-mkdirp   = require "mkdirp"
 notifier = require "node-notifier"
 
 
@@ -114,7 +113,8 @@ class Less
 
 		for folder in @folders
 
-			(continue if -1 is file.indexOf folder.bare) if file
+			if file
+				continue if -1 is file.indexOf folder.bare
 
 			@single
 				sFile   : folder.src+path.sep+"index.less"
@@ -134,7 +134,7 @@ class Less
 				return @increase()
 
 			# Create folder structure for the .css file
-			mkdirp(@map).then =>
+			fs.mkdirp(@map).then =>
 
 				# Create less file
 				less.render res, {paths: [sFolder], compress: @server.env is "production"}, (e, output) =>

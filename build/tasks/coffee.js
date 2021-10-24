@@ -1,80 +1,80 @@
-var Coffee, coffee, fs, log, mkdirp, notifier, path,
-  bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
-
-fs = require("fs");
+// Node
+var Coffee, coffee, fs, log, notifier, path;
 
 path = require("path");
 
-log = require("de-logger");
+// NPM
+fs = require("fs-extra");
 
-mkdirp = require("mkdirp");
+log = require("de-logger");
 
 coffee = require("coffeescript");
 
 notifier = require("node-notifier");
 
-Coffee = (function() {
-  function Coffee(server) {
+Coffee = class Coffee {
+  constructor(server) {
+    this.coffee = this.coffee.bind(this);
     this.server = server;
-    this.coffee = bind(this.coffee, this);
     this.listeners();
   }
 
-  Coffee.prototype.listeners = function() {
+  listeners() {
     return this.server.vent.on("coffee:file", this.coffee);
-  };
+  }
 
-  Coffee.prototype.coffee = function(file, init) {
+  coffee(file, init) {
     var build;
+    // Create destination path for compiled file
     build = this.server.toBuild(file).replace(".coffee", ".js");
+    // Read coffee file
     return fs.readFile(this.server.root + path.sep + file, {
       encoding: "utf-8"
-    }, (function(_this) {
-      return function(err, data) {
-        if (err) {
-          _this.notify(err.message);
-          return log.error(err);
-        }
-        return mkdirp(path.dirname(build)).then(function() {
-          var coffeeScript, e, msg, name;
-          try {
-            coffeeScript = coffee.compile(data, {
-              bare: true
-            });
-          } catch (error) {
-            e = error;
-            coffeeScript = "";
-            _this.notify(msg = file + "\nLine: " + e.location.first_line + "\n" + e.message);
-            log.error(_this.server.config.title + " - Coffee", "\n" + msg, "\n", e.code);
-          }
-          return fs.writeFile(name = _this.server.root + path.sep + build, coffeeScript, function(err) {
-            if (err) {
-              _this.notify(err.message);
-              return log.error(err);
-            }
-            _this.server.vent.emit("compiled:file", {
-              file: name,
-              title: _this.server.config.title + " - Coffee",
-              message: "" + build
-            });
-            if (!init) {
-              return _this.server.vent.emit("watch:increase");
-            }
+    }, (err, data) => {
+      if (err) {
+        this.notify(err.message);
+        return log.error(err);
+      }
+      // Make sure path to destination exists
+      return fs.mkdirp(path.dirname(build)).then(() => {
+        var coffeeScript, e, msg, name;
+        try {
+          coffeeScript = coffee.compile(data, {
+            bare: true
           });
+        } catch (error) {
+          e = error;
+          coffeeScript = "";
+          this.notify(msg = `${file}\nLine: ${e.location.first_line}\n${e.message}`);
+          log.error(`${this.server.config.title} - Coffee`, `\n${msg}`, "\n", e.code);
+        }
+        // Write compiled coffee file to its destination
+        return fs.writeFile(name = this.server.root + path.sep + build, coffeeScript, (err) => {
+          if (err) {
+            this.notify(err.message);
+            return log.error(err);
+          }
+          this.server.vent.emit("compiled:file", {
+            file: name,
+            title: `${this.server.config.title} - Coffee`,
+            message: `${build}`
+          });
+          if (!init) {
+            // Notify the watch in case the init has not been triggered
+            return this.server.vent.emit("watch:increase");
+          }
         });
-      };
-    })(this));
-  };
+      });
+    });
+  }
 
-  Coffee.prototype.notify = function(message) {
+  notify(message) {
     return notifier.notify({
-      title: this.server.config.title + " - Coffee",
+      title: `${this.server.config.title} - Coffee`,
       message: message
     });
-  };
+  }
 
-  return Coffee;
-
-})();
+};
 
 module.exports = Coffee;

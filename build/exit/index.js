@@ -1,64 +1,68 @@
-var Exit, log,
-  bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
+// NPM
+var Exit, log;
 
 log = require("de-logger");
 
-Exit = (function() {
-  function Exit(server) {
+Exit = class Exit {
+  constructor(server) {
+    this.exit = this.exit.bind(this);
+    this.uncaughtException = this.uncaughtException.bind(this);
+    this.sigint = this.sigint.bind(this);
+    this.sigterm = this.sigterm.bind(this);
     this.server = server;
-    this.sigterm = bind(this.sigterm, this);
-    this.sigint = bind(this.sigint, this);
-    this.uncaughtException = bind(this.uncaughtException, this);
-    this.exit = bind(this.exit, this);
     this.listeners();
   }
 
-  Exit.prototype.listeners = function() {
+  listeners() {
     this.readInput();
     process.on("exit", this.exit);
     process.on("SIGINT", this.sigint);
     process.on("SIGTERM", this.sigterm);
     process.on("command", this.command);
     return process.on("uncaughtException", this.uncaughtException);
-  };
+  }
 
-  Exit.prototype.readInput = function() {
+  readInput() {
+    // Set encoding
     process.stdin.setEncoding("utf8");
+    // Listen for terminal user input (leaves the process running too)
     return process.stdin.on("data", function(command) {
+      // Send terminal command through the application - Remove the \n from the command
       return process.emit("command", command.slice(0, -1));
     });
-  };
+  }
 
-  Exit.prototype.exit = function(code) {
+  exit(code) {
     this.server.vent.emit("terminate:child");
     return log.info(this.server.config.title, "Exit:", code);
-  };
+  }
 
-  Exit.prototype.uncaughtException = function(e) {
+  uncaughtException(e) {
     console.log("");
     return log.warn(this.server.config.title, "Uncaught Exception Found\n\n", e.stack);
-  };
+  }
 
-  Exit.prototype.sigint = function() {
+  sigint() {
     console.log("");
     log.info(this.server.config.title, "Application Interrupted");
     return process.exit(130);
-  };
+  }
 
-  Exit.prototype.sigterm = function() {
+  sigterm() {
     console.log("");
     log.info(this.server.config.title, "Application Terminated");
     return process.exit(143);
-  };
+  }
 
-  Exit.prototype.command = function(command) {
+  command(command) {
     if (command === "exit") {
+      // Exit process
       return process.exit();
     }
-  };
+  }
 
-  return Exit;
+};
 
-})();
-
+// Log command
+// log.event "command", command
 module.exports = Exit;

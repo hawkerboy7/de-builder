@@ -1,7 +1,9 @@
+// NPM
 var BrowserSync, Browserify, Clean, Coffee, Copy, Forever, Less, Logger, Project, Tasks, Watch, path;
 
 path = require("path");
 
+// Modules
 Copy = require("./copy");
 
 Less = require("./less");
@@ -22,14 +24,16 @@ Browserify = require("./browserify");
 
 BrowserSync = require("./browser-sync");
 
-Tasks = (function() {
-  function Tasks(server) {
+Tasks = class Tasks {
+  constructor(server) {
     this.server = server;
     this.load();
   }
 
-  Tasks.prototype.load = function() {
+  load() {
+    // Setup project folders
     this.folders();
+    // Load all tasks
     new Copy(this.server);
     new Less(this.server);
     new Clean(this.server);
@@ -40,27 +44,26 @@ Tasks = (function() {
     new Project(this.server);
     new Browserify(this.server);
     new BrowserSync(this.server);
+    // Send the start command
     return this.server.vent.emit("builder:start");
-  };
+  }
 
-  Tasks.prototype.folders = function() {
+  folders() {
     var build, src;
     return this.server.folders = {
       src: {
-        index: src = "" + this.server.root + path.sep + this.server.config.src,
-        server: "" + src + path.sep + this.server.config.server,
-        client: "" + src + path.sep + this.server.config.client
+        index: src = `${this.server.root}${path.sep}${this.server.config.src}`,
+        server: `${src}${path.sep}${this.server.config.server}`,
+        client: `${src}${path.sep}${this.server.config.client}`
       },
       build: {
-        index: build = "" + this.server.root + path.sep + this.server.config.build,
-        server: "" + build + path.sep + this.server.config.server,
-        client: "" + build + path.sep + this.server.config.client
+        index: build = `${this.server.root}${path.sep}${this.server.config.build}`,
+        server: `${build}${path.sep}${this.server.config.server}`,
+        client: `${build}${path.sep}${this.server.config.client}`
       }
     };
-  };
+  }
 
-  return Tasks;
-
-})();
+};
 
 module.exports = Tasks;
