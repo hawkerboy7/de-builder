@@ -1,10 +1,9 @@
 # Node
-fs   = require "fs"
 path = require "path"
 
 # NPM
+fs       = require "fs-extra"
 log      = require "de-logger"
-mkdirp   = require "mkdirp"
 coffee   = require "coffeescript"
 notifier = require "node-notifier"
 
@@ -38,7 +37,7 @@ class Coffee
 
 
 			# Make sure path to destination exists
-			mkdirp(path.dirname(build)).then =>
+			fs.mkdirp(path.dirname(build)).then =>
 
 				try
 					coffeeScript = coffee.compile(data, bare: true)

@@ -1,10 +1,9 @@
 # Node
-fs   = require "fs"
 path = require "path"
 
 # NPM
-log    = require "de-logger"
-mkdirp = require "mkdirp"
+fs  = require "fs-extra"
+log = require "de-logger"
 
 
 
@@ -29,7 +28,7 @@ class Copy
 		read = fs.createReadStream @server.root+path.sep+file
 
 		# Ensure destination folders exist
-		mkdirp(path.dirname(build)).then =>
+		fs.mkdirp(path.dirname(build)).then =>
 
 			# Create write stream
 			write = fs.createWriteStream name = @server.root+path.sep+build

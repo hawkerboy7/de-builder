@@ -1,38 +1,33 @@
-var Clean, fs, log, mkdirp, rmdir,
-  bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
+// NPM
+var Clean, fs, log;
 
-fs = require("fs");
+fs = require("fs-extra");
 
 log = require("de-logger");
 
-rmdir = require("rmdir");
-
-mkdirp = require("mkdirp");
-
-Clean = (function() {
-  function Clean(server) {
+Clean = class Clean {
+  constructor(server) {
+    this.start = this.start.bind(this);
     this.server = server;
-    this.start = bind(this.start, this);
     this.listeners();
   }
 
-  Clean.prototype.listeners = function() {
+  listeners() {
     return this.server.vent.on("builder:start", this.start);
-  };
+  }
 
-  Clean.prototype.start = function() {
-    return rmdir(this.server.folders.build.index, (function(_this) {
-      return function() {
-        return mkdirp(_this.server.folders.build.index).then(function() {
-          log.info("LDE - Clean", _this.server.symbols.finished);
-          return _this.server.vent.emit("clean:done");
-        });
-      };
-    })(this));
-  };
+  start() {
+    // Remove build folder
+    return fs.remove(this.server.folders.build.index, () => {
+      // Create build folder
+      return fs.mkdirp(this.server.folders.build.index).then(() => {
+        log.info("LDE - Clean", this.server.symbols.finished);
+        // Notify application
+        return this.server.vent.emit("clean:done");
+      });
+    });
+  }
 
-  return Clean;
-
-})();
+};
 
 module.exports = Clean;

@@ -1,11 +1,10 @@
 # Node
-fs          = require "fs"
 http        = require "http"
 path        = require "path"
 
 # NPM
+fs          = require "fs-extra"
 log         = require "de-logger"
-mkdirp      = require "mkdirp"
 browserSync = require "browser-sync"
 { version } = require "browser-sync/package.json"
 
@@ -114,7 +113,7 @@ class BrowserSync
 
 	download: (url, cb) ->
 
-		mkdirp(path.dirname(@filePath)).then =>
+		fs.mkdirp(path.dirname(@filePath)).then =>
 
 			# Store in a file
 			@file = fs.createWriteStream @filePath

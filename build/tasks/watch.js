@@ -1,98 +1,120 @@
-var Watch, chokidar, fs, log, path,
-  bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
+// Node
+var Watch, chokidar, fs, log, path;
 
 fs = require("fs");
 
 path = require("path");
 
+// NPM
 log = require("de-logger");
 
 chokidar = require("chokidar");
 
-Watch = (function() {
-  function Watch(server) {
+Watch = class Watch {
+  constructor(server) {
+    this.watchSrc = this.watchSrc.bind(this);
+    this.add = this.add.bind(this);
+    this.change = this.change.bind(this);
+    this.unlink = this.unlink.bind(this);
+    // Catch error but do not do anything with it in case the file is not there for some reason
+    this.ready = this.ready.bind(this);
+    this.increase = this.increase.bind(this);
     this.server = server;
-    this.increase = bind(this.increase, this);
-    this.ready = bind(this.ready, this);
-    this.unlink = bind(this.unlink, this);
-    this.change = bind(this.change, this);
-    this.add = bind(this.add, this);
-    this.watchSrc = bind(this.watchSrc, this);
     this.listeners();
   }
 
-  Watch.prototype.listeners = function() {
+  listeners() {
     this.server.vent.on("project:done", this.watchSrc);
     return this.server.vent.on("watch:increase", this.increase);
-  };
+  }
 
-  Watch.prototype.watchSrc = function() {
+  watchSrc() {
+    // Count the files being added before the ready trigger
     this.init = false;
     this.count = {
       first: 0,
       second: 0
     };
-    log.info(this.server.config.title + " - Watch", "~ Night gathers, and now my watch begins ~");
+    // Start watch
+    log.info(`${this.server.config.title} - Watch`, "~ Night gathers, and now my watch begins ~");
+    // Start the chokidar the file wachter
     return chokidar.watch(this.server.config.src, {
       ignored: /[\/\\]\./
     }).on("add", this.add).on("change", this.change).on("unlink", this.unlink).on("ready", this.ready);
-  };
+  }
 
-  Watch.prototype.add = function(file) {
+  add(file) {
     if (!this.init) {
+      // Increase counter if not initialized
       this.count.first++;
     }
+    // Add handler
     return this.addChange("Add", file);
-  };
+  }
 
-  Watch.prototype.change = function(file) {
+  change(file) {
+    // Change handler
     return this.addChange("Change", file);
-  };
+  }
 
-  Watch.prototype.addChange = function(type, file) {
+  addChange(type, file) {
     var extention;
-    log.debug(this.server.config.title + " - Watch", type + ": " + file);
+    // Notify
+    log.debug(`${this.server.config.title} - Watch`, `${type}: ${file}`);
+    // Get extention
     extention = path.extname(file);
     if (extention === ".less") {
+      // Compile specific extentions
       return this.server.vent.emit("less:file", file, this.init);
     }
     if (extention === ".coffee") {
       return this.server.vent.emit("coffee:file", file, this.init);
     }
+    // Copy file in case extention is not supported
     return this.server.vent.emit("copy:file", file, this.init);
-  };
+  }
 
-  Watch.prototype.unlink = function(file) {
+  unlink(file) {
     var remove, seperated;
+    // Seperate path
     seperated = file.split(path.sep);
+    // Remove first entry (src folder)
     seperated.shift();
+    // File to remove in the build folder
     remove = this.server.config.build + path.sep + seperated.join(path.sep);
-    log.info(this.server.config.title + " - Watch", "Unlink: " + remove);
+    // Notify
+    log.info(`${this.server.config.title} - Watch`, `Unlink: ${remove}`);
+    // Try to remove the file in the build folder
     return fs.unlink(this.server.root + path.sep + remove, function(e) {});
-  };
+  }
 
-  Watch.prototype.ready = function() {
+  ready() {
     this.init = true;
-    log.info(this.server.config.title + " - Watch", "Ready: " + this.count.first + " files initially added");
+    // Notify
+    log.info(`${this.server.config.title} - Watch`, `Ready: ${this.count.first} files initially added`);
+    // Watch has found all files
     return this.server.vent.emit("watch:init");
-  };
+  }
 
-  Watch.prototype.increase = function(count) {
+  increase(count) {
+    // Count init file builds (due to less it also accepts multiple counts)
     if (count) {
       this.count.second += count;
     } else {
       this.count.second++;
     }
+    // Guard: Do not do anything until ready trigger is fired and counts are the same
     if (!(this.init && this.count.second === this.count.first)) {
       return;
     }
+    // Watch has fully been initialized
     this.initialized = true;
-    log.debug(this.server.config.title + " - Watch", "Ready: " + this.count.second + " files have initially been created");
+    // Notify
+    log.debug(`${this.server.config.title} - Watch`, `Ready: ${this.count.second} files have initially been created`);
+    // Notify the initial addition of files trough watch has been finished
     return this.server.vent.emit("watch:initialized");
-  };
+  }
 
-  return Watch;
-
-})();
+};
 
 module.exports = Watch;
