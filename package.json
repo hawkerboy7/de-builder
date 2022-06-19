@@ -1,9 +1,9 @@
 {
   "name": "de-builder",
-  "version": "2.1.1",
+  "version": "2.1.2",
   "description": "A Live Development Environment",
   "main": "build/app.js",
-  "author": "Dexter Esajas <dexter.esajas@gmail.com>",
+  "author": "Dexter Esajas <dexter@dexterous-solutions.io>",
   "license": "MIT",
   "dependencies": {
     "browser-sync": "^2.27.5",
@@ -16,12 +16,12 @@
     "less": "^4.1.2",
     "node-notifier": "^10.0.0",
     "nodemon": "^2.0.14",
-    "pugify": "^2.2.0",
+    "pugify": "github:hawkerboy7/pugify",
     "socket.io-client": "^2.4.0"
   },
   "devDependencies": {
     "de-builder": "^2.1.0",
-    "mocha": "^8.2.1"
+    "mocha": "^10.0.0"
   },
   "repository": {
     "type": "git",
