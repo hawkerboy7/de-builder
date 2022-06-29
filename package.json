@@ -6,22 +6,21 @@
   "author": "Dexter Esajas <dexter@dexterous-solutions.io>",
   "license": "MIT",
   "dependencies": {
-    "browser-sync": "^2.27.5",
+    "browser-sync": "^2.27.10",
     "browserify": "^17.0.0",
-    "chokidar": "^3.5.2",
-    "coffeescript": "^2.6.1",
+    "chokidar": "^3.5.3",
+    "coffeescript": "^2.7.0",
     "de-logger": "^0.4.0",
     "deep-extend": "^0.6.0",
-    "fs-extra": "^10.0.0",
-    "less": "^4.1.2",
-    "node-notifier": "^10.0.0",
-    "nodemon": "^2.0.14",
+    "fs-extra": "^10.1.0",
+    "less": "^4.1.3",
+    "node-notifier": "^10.0.1",
+    "nodemon": "^2.0.18",
     "pugify": "github:hawkerboy7/pugify",
     "socket.io-client": "^2.4.0"
   },
   "devDependencies": {
-    "de-builder": "^2.1.0",
-    "mocha": "^10.0.0"
+    "de-builder": "^2.1.2"
   },
   "repository": {
     "type": "git",
@@ -29,8 +28,7 @@
   },
   "bugs": "https://github.com/hawkerboy7/de-builder/issues",
   "scripts": {
-    "postinstall": "node install.js",
-    "test": "mocha"
+    "postinstall": "node install.js"
   },
   "homepage": "https://github.com/hawkerboy7/de-builder#readme"
 }
