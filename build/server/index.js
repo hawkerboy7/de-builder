@@ -26,8 +26,8 @@ Server = class Server {
     this.config.fullTitle = "Live Development Environment";
     // Set title of the process
     process.title = this.pkg.name;
-    // Determin application environment
-    this.env = process.argv[2] === "-prod" ? "production" : "development";
+    // Check all provided arguments
+    this.argv();
     // Set the value of debug messages logged
     log.set({
       debug: {
@@ -63,6 +63,33 @@ Server = class Server {
       // File to remove in the build folder
       return this.config.build + path.sep + seperated.join(path.sep);
     };
+  }
+
+  argv() {
+    var arg, i, len, ref, run;
+    // Default values
+    this.env = "development";
+    this.run = true;
+    ref = process.argv;
+    for (i = 0, len = ref.length; i < len; i++) {
+      arg = ref[i];
+      if (!arg[0] === "-") {
+        continue;
+      }
+      console.log("arg", arg);
+      if (arg === "-prod") {
+        this.env = "production";
+        this.run = false;
+        continue;
+      }
+      if (arg === "-run") {
+        run = true;
+      }
+    }
+    if (run) {
+      // Ensure the order of -prod and -run does not matter
+      return this.run = true;
+    }
   }
 
 };
