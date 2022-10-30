@@ -144,8 +144,7 @@ src/
 
 
 ## Browser-sync
-Once `de-builder` is running the `browser-sync` `ui` can by default be found at [localhost:9000](http://localhost:9000). But if you run multiple instances of `de-builder` it will try to use `9000 + 2x` instead, so running 3 instances of `de-builder` will have `browser-sync` running at `9000`, `9002` and `9004`.<br><br>
-
+Once `de-builder` is running the `browser-sync` `ui` can by default be found at [localhost:9000](http://localhost:9000). But if you run multiple instances of `de-builder` it will try to use `9000 + 2x` instead, so running 3 instances of `de-builder` will have `browser-sync` running at `9000`, `9002` and `9004`.<br>
 The required `browser-sync` code-snippet has been added to the bundle already by `de-builder` so `browser-sync` will work out of the box on all your pages and devices =D!
 In `multi` mode folder(s) are to be provided telling `de-builder` in which bundle(s) to add the browser-sync snippet. By default `vendor` is used. See `config.browserSync.multi`
 
