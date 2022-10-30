@@ -67,7 +67,7 @@ In the console it will notify you which type is being used e.g.
 info  LDE - Less       →  Type: single
 info  LDE - Browserify →  Type: multi
 ```
-In multi mode it will check all child folders of the `js` and/or `styles` (.less) folder and used them as the entry points. This means that a folder in multi mode must contain an `index(.coffee/.less)` file.
+In multi mode it will check all child folders of the `js` and/or `css` (.less) folder and used them as the entry points. This means that a folder in multi mode must contain an `index(.coffee/.less)` file.
 
 
 ## Structure
@@ -90,21 +90,18 @@ src/
 #### Server (LDE type 2)
 ```
 src/
-	express/
-		views/
-			index.pug
+	db/
+		connection.coffee
+		index.coffee
+	email/
+		handler.coffee
 		index.coffee
 	server/
-		db/
-			users.coffee
-			index.coffee
-		config.coffee
 		index.coffee
-	socketIO/
-		handler/
-			index.coffee
+	networking/
 		index.coffee
 	app.coffee
+	config.coffee
 	manager.coffee
 ```
 
@@ -113,11 +110,17 @@ src/
 ```
 src/
 	css/
-		elements/
-			header.less
-			main.less
-		app.less
-		variables.less
+		app/
+			elements/
+				header.less
+				main.less
+			pages/
+				home.less
+			fonts.less
+			index.less
+			variables.less
+		pdf/
+			index.less
 	fonts/
 		font-file.ttf
 		font-file2.ttf
@@ -141,9 +144,9 @@ src/
 
 
 ## Browser-sync
-Once `de-builder` is running the `browser-sync` `ui` can by default be found at [localhost:9000](http://localhost:9000).
+Once `de-builder` is running the `browser-sync` `ui` can by default be found at [localhost:9000](http://localhost:9000). But if you run multiple instances of `de-builder` it will try to use `9000 + 2x` instead, so running 3 instances of `de-builder` will have `browser-sync` running at `9000`, `9002` and `9004`.<br>
 The required `browser-sync` code-snippet has been added to the bundle already by `de-builder` so `browser-sync` will work out of the box on all your pages and devices =D!
-In `multi` mode folder(s) are to be provided telling `de-builder` in which bundle(s) to add the browser-sync snippet. By default `vendor` is used.
+In `multi` mode folder(s) are to be provided telling `de-builder` in which bundle(s) to add the browser-sync snippet. By default `vendor` is used. See `config.browserSync.multi`
 
 
 ## Modules
@@ -175,7 +178,7 @@ config =
 	less:
 		file   : "app.css"
 		entry  : "app.less"
-		folder : "styles"
+		folder : "css"
 
 	# Browserify directory and entry file
 	browserify:
@@ -215,7 +218,7 @@ config =
 		# server port
 		server  : 9001
 
-		# The multi bundle(s) which should contain the browser-sync code
+		# The bundle(s) which should contain the browser-sync code
 		multi   : ["vendor"]
 
 	# LDE environments
