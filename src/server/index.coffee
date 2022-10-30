@@ -80,9 +80,7 @@ class Server
 
 		for arg in process.argv
 
-			continue if not arg[0] is "-"
-
-			console.log "arg", arg
+			continue if arg[0] isnt "-"
 
 			if arg is "-prod"
 				@env = "production"

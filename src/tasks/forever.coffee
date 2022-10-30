@@ -50,7 +50,7 @@ class Forever
 
 	start: ->
 
-		# Prevent running the script when
+		# Prevent running the script so the process can close when finished
 		return if not @server.run
 
 		# Determin the src directory

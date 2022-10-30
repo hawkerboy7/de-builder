@@ -55,7 +55,7 @@ Forever = class Forever {
 
   start() {
     var entry, src;
-    // Prevent running the script when
+    // Prevent running the script so the process can close when finished
     if (!this.server.run) {
       return;
     }

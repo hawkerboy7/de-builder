@@ -73,10 +73,9 @@ Server = class Server {
     ref = process.argv;
     for (i = 0, len = ref.length; i < len; i++) {
       arg = ref[i];
-      if (!arg[0] === "-") {
+      if (arg[0] !== "-") {
         continue;
       }
-      console.log("arg", arg);
       if (arg === "-prod") {
         this.env = "production";
         this.run = false;

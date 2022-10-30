@@ -14,22 +14,11 @@ Exit = class Exit {
   }
 
   listeners() {
-    this.readInput();
     process.on("exit", this.exit);
     process.on("SIGINT", this.sigint);
     process.on("SIGTERM", this.sigterm);
     process.on("command", this.command);
     return process.on("uncaughtException", this.uncaughtException);
-  }
-
-  readInput() {
-    // Set encoding
-    process.stdin.setEncoding("utf8");
-    // Listen for terminal user input (leaves the process running too)
-    return process.stdin.on("data", function(command) {
-      // Send terminal command through the application - Remove the \n from the command
-      return process.emit("command", command.slice(0, -1));
-    });
   }
 
   exit(code) {
