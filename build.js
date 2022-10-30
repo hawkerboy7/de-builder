@@ -1,4 +1,4 @@
-require('de-builder')({
+require("de-builder")({
 	forever:{
 		enabled: false
 	},
