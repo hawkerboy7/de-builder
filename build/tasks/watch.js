@@ -38,9 +38,10 @@ Watch = class Watch {
     // Start watch
     log.info(`${this.server.config.title} - Watch`, "~ Night gathers, and now my watch begins ~");
     // Start the chokidar the file wachter
-    return chokidar.watch(this.server.config.src, {
+    this.watcher = chokidar.watch(this.server.config.src, {
       ignored: /[\/\\]\./
-    }).on("add", this.add).on("change", this.change).on("unlink", this.unlink).on("ready", this.ready);
+    });
+    return this.watcher.on("add", this.add).on("change", this.change).on("unlink", this.unlink).on("ready", this.ready);
   }
 
   add(file) {
@@ -88,12 +89,20 @@ Watch = class Watch {
     return fs.unlink(this.server.root + path.sep + remove, function(e) {});
   }
 
-  ready() {
+  async ready() {
     this.init = true;
     // Notify
     log.info(`${this.server.config.title} - Watch`, `Ready: ${this.count.first} files initially added`);
     // Watch has found all files
-    return this.server.vent.emit("watch:init");
+    this.server.vent.emit("watch:init");
+    // When NOT running do no conitnue watching for file changes either
+    if (this.server.run) {
+      return;
+    }
+    // Close all file watching
+    await this.watcher.close();
+    // Notify
+    return log.info(`${this.server.config.title} - Watch`, "And Now My Watch Is Ended");
   }
 
   increase(count) {

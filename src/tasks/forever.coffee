@@ -50,6 +50,9 @@ class Forever
 
 	start: ->
 
+		# Prevent running the script so the process can close when finished
+		return if not @server.run
+
 		# Determin the src directory
 		src = @server.folders.build.server
 		src = @server.folders.build.index if @server.config.type is 2

@@ -33,8 +33,9 @@ class Watch
 		log.info "#{@server.config.title} - Watch", "~ Night gathers, and now my watch begins ~"
 
 		# Start the chokidar the file wachter
-		chokidar
-			.watch @server.config.src, ignored: /[\/\\]\./
+		@watcher = chokidar.watch @server.config.src, ignored: /[\/\\]\./
+
+		@watcher
 			.on "add", @add
 			.on "change", @change
 			.on "unlink", @unlink
@@ -101,6 +102,15 @@ class Watch
 
 		# Watch has found all files
 		@server.vent.emit "watch:init"
+
+		# When NOT running do no conitnue watching for file changes either
+		return if @server.run
+
+		# Close all file watching
+		await @watcher.close()
+
+		# Notify
+		log.info "#{@server.config.title} - Watch", "And Now My Watch Is Ended"
 
 
 	increase: (count) =>
