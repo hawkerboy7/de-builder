@@ -55,6 +55,10 @@ Forever = class Forever {
 
   start() {
     var entry, src;
+    // Prevent running the script so the process can close when finished
+    if (!this.server.run) {
+      return;
+    }
     // Determin the src directory
     src = this.server.folders.build.server;
     if (this.server.config.type === 2) {

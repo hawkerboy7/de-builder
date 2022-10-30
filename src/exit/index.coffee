@@ -12,25 +12,11 @@ class Exit
 
 	listeners: ->
 
-		@readInput()
-
 		process.on "exit", @exit
 		process.on "SIGINT", @sigint
 		process.on "SIGTERM", @sigterm
 		process.on "command", @command
 		process.on "uncaughtException", @uncaughtException
-
-
-	readInput: ->
-
-		# Set encoding
-		process.stdin.setEncoding "utf8"
-
-		# Listen for terminal user input (leaves the process running too)
-		process.stdin.on "data", (command) ->
-
-			# Send terminal command through the application - Remove the \n from the command
-			process.emit "command", command.slice 0, -1
 
 
 	exit: (code) =>

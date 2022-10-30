@@ -29,8 +29,8 @@ class Server
 		# Set title of the process
 		process.title = @pkg.name
 
-		# Determin application environment
-		@env = if process.argv[2] is "-prod" then "production" else "development"
+		# Check all provided arguments
+		@argv()
 
 		# Set the value of debug messages logged
 		log.set debug: display: @config.debug
@@ -70,6 +70,27 @@ class Server
 
 			# File to remove in the build folder
 			@config.build+path.sep+seperated.join path.sep
+
+
+	argv: ->
+
+		# Default values
+		@env = "development"
+		@run = true
+
+		for arg in process.argv
+
+			continue if arg[0] isnt "-"
+
+			if arg is "-prod"
+				@env = "production"
+				@run = false
+				continue
+
+			run = true if arg is "-run"
+
+		# Ensure the order of -prod and -run does not matter
+		@run = true if run
 
 
 
