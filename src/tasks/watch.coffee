@@ -1,5 +1,5 @@
 # Node
-fs   = require "fs"
+fs   = require "fs-extra"
 path = require "path"
 
 # NPM
@@ -12,126 +12,128 @@ class Watch
 
 	constructor: (@server) ->
 
-		@listeners()
+		@server.watch = close : @close
+
+		@timeouts = {}
 
 
-	listeners: ->
+	init: ->
 
-		@server.vent.on "project:done", @watchSrc
-		@server.vent.on "watch:increase", @increase
+		new Promise (resolve) =>
 
+			files = await @gather()
 
-	watchSrc: =>
+			await @handle files
 
-		# Count the files being added before the ready trigger
-		@init  = false
-		@count =
-			first  : 0
-			second : 0
-
-		# Start watch
-		log.info "#{@server.config.title} - Watch", "~ Night gathers, and now my watch begins ~"
-
-		# Start the chokidar the file wachter
-		@watcher = chokidar.watch @server.config.src, ignored: /[\/\\]\./
-
-		@watcher
-			.on "add", @add
-			.on "change", @change
-			.on "unlink", @unlink
-			.on "ready", @ready
+			resolve()
 
 
-	add: (file) =>
+	gather: ->
 
-		# Increase counter if not initialized
-		@count.first++ if not @init
+		new Promise (resolve) =>
 
-		# Add handler
-		@addChange "Add", file
+			log.info "#{@server.config.title} - Watch", "~ Night gathers, and now my watch begins ~"
+
+			files = {}
+
+			@watcher = chokidar.watch @server.config.src, ignored: /[\/\\]\./
+			@watcher
+				.on "add", (file) => files[file] = true
+				.on "change", @change
+				.on "ready", =>
+					log.info "#{@server.config.title} - Watch", "Found #{Object.keys(files).length} initial files"
+					resolve files
+
+
+	handle: (files) ->
+
+		new Promise (resolve) =>
+			list = {}
+			list[file] = @process file for file of files
+			await promise for name, promise of list
+			resolve()
+
+
+	process: (file, extention) ->
+
+		new Promise (resolve) =>
+
+			log.debug "#{@server.config.title} - Process", file
+
+			extention or= path.extname file
+
+			return resolve await @server.coffee.process file if extention is ".coffee"
+			return resolve() if extention is ".less"
+
+			await @server.copy.process file
+
+			resolve()
+
+
+	close: =>
+
+		@watcher.close()
 
 
 	change: (file) =>
 
-		# Change handler
-		@addChange "Change", file
+		return if not @server.phaseOneDone
+
+		# To allow most of the changes in case of a branch switch to run first
+		setTimeout(=>
+			@nextTick file
+		, 10)
 
 
-	addChange: (type, file) ->
+	nextTick: (file) ->
 
-		# Notify
-		log.debug "#{@server.config.title} - Watch", "#{type}: #{file}"
-
-		# Get extention
 		extention = path.extname file
 
-		# Compile specific extentions
-		return @server.vent.emit "less:file", file, @init if extention is ".less"
-		return @server.vent.emit "coffee:file", file, @init if extention is ".coffee"
+		await @process file, extention
 
-		# Copy file in case extention is not supported
-		@server.vent.emit "copy:file", file, @init
+		return if not (extention is ".coffee" or extention is ".pug" or extention is ".less")
 
+		# Determine if the file is located in the client-side code or server-side
+		serverFolder = file.split("/")[1]
 
-	unlink: (file) =>
+		server = @server.config.type is 2 or serverFolder is @server.config.server
 
-		# Seperate path
-		seperated = file.split path.sep
+		# Prevents multiple change triggers (when switching branches for example) from creating bundles
+		clearTimeout @timeouts[server+extention]
 
-		# Remove first entry (src folder)
-		seperated.shift()
-
-		# File to remove in the build folder
-		remove = @server.config.build+path.sep+seperated.join path.sep
-
-		# Notify
-		log.info "#{@server.config.title} - Watch", "Unlink: #{remove}"
-
-		# Try to remove the file in the build folder
-		fs.unlink @server.root+path.sep+remove, (e) ->
-
-			# Catch error but do not do anything with it in case the file is not there for some reason
+		@timeouts[server+extention] = setTimeout(=>
+			if server
+				@server.forever.run() if extention is ".coffee"
+			else
+				if extention is ".coffee" or extention is ".pug"
+					await @server.browserify.process file
+					@server.browserSync.process file
+				else if extention is ".less"
+					dFiles = await @server.less.process file
+					@server.browserSync.process dFile for dFile in dFiles
+		, 250)
 
 
-	ready: =>
+	# unlink: (file) =>
 
-		@init = true
+	# 	console.log "check this: unlink", file
 
-		# Notify
-		log.info "#{@server.config.title} - Watch", "Ready: #{@count.first} files initially added"
+	# 	# # Seperate path
+	# 	# seperated = file.split path.sep
 
-		# Watch has found all files
-		@server.vent.emit "watch:init"
+	# 	# # Remove first entry (src folder)
+	# 	# seperated.shift()
 
-		# When NOT running do no conitnue watching for file changes either
-		return if @server.run
+	# 	# # File to remove in the build folder
+	# 	# remove = @server.config.temp+path.sep+seperated.join path.sep
 
-		# Close all file watching
-		await @watcher.close()
+	# 	# # Notify
+	# 	# log.info "#{@server.config.title} - Watch", "Unlink: #{remove}"
 
-		# Notify
-		log.info "#{@server.config.title} - Watch", "And Now My Watch Is Ended"
+	# 	# # Try to remove the file in the build folder
+	# 	# fs.unlink @server.root+path.sep+remove, (e) ->
 
-
-	increase: (count) =>
-
-		# Count init file builds (due to less it also accepts multiple counts)
-		if count
-			@count.second += count
-		else
-			@count.second++
-
-		# Guard: Do not do anything until ready trigger is fired and counts are the same
-		return if not (@init and @count.second is @count.first)
-
-		# Watch has fully been initialized
-		@initialized = true
-
-		# Notify
-		log.debug "#{@server.config.title} - Watch", "Ready: #{@count.second} files have initially been created"
-
-		# Notify the initial addition of files trough watch has been finished
-		@server.vent.emit "watch:initialized"
+	# 	# 	# Catch error but do not do anything with it in case the file is not there for some reason
 
 
 

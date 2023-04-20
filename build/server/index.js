@@ -26,14 +26,14 @@ Server = class Server {
     this.config.fullTitle = "Live Development Environment";
     // Set title of the process
     process.title = this.pkg.name;
-    // Check all provided arguments
-    this.argv();
     // Set the value of debug messages logged
     log.set({
       debug: {
         display: this.config.debug
       }
     });
+    // Check all provided arguments
+    this.argv();
     // Notify start of project
     log.info(this.config.title, `${this.config.fullTitle} (${this.config.title}) started in: ${this.env}`);
     log.info(this.config.title, `Process title: ${this.pkg.name}`);
@@ -53,20 +53,20 @@ Server = class Server {
     this.myRoot = path.resolve(__dirname, "../../");
     // Set an event emitter
     this.vent = new EventEmitter();
-    // Turn src path to build path
-    return this.toBuild = (file) => {
+    // From src to temp or build foler
+    return this.toDestination = (file) => {
       var seperated;
       // Seperate path
       seperated = file.split(path.sep);
       // Remove first entry (src folder)
       seperated.shift();
       // File to remove in the build folder
-      return this.config.build + path.sep + seperated.join(path.sep);
+      return this.config[this.initialized ? "build" : "temp"] + path.sep + seperated.join(path.sep);
     };
   }
 
   argv() {
-    var arg, i, len, ref, run;
+    var arg, i, len, ref, run, uglify;
     // Default values
     this.env = "development";
     this.run = true;
@@ -79,6 +79,23 @@ Server = class Server {
       if (arg === "-prod") {
         this.env = "production";
         this.run = false;
+        this.uglify = true;
+        continue;
+      }
+      if (arg === "-debug") {
+        log.set({
+          debug: {
+            display: true
+          }
+        });
+        continue;
+      }
+      if (arg === "-uglify") {
+        uglify = true;
+        continue;
+      }
+      if (arg === "-no-uglify") {
+        uglify = false;
         continue;
       }
       if (arg === "-run") {
@@ -87,7 +104,11 @@ Server = class Server {
     }
     if (run) {
       // Ensure the order of -prod and -run does not matter
-      return this.run = true;
+      this.run = true;
+    }
+    if (uglify != null) {
+      // Allow for overwriting the uglify setting when running in any environment
+      return this.uglify = uglify;
     }
   }
 

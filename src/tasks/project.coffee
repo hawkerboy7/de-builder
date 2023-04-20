@@ -11,48 +11,71 @@ class Project
 
 	constructor: (@server) ->
 
-		@listeners()
+
+	init: ->
+
+		log.info "#{@server.config.title} - Project", "Setup project folders"
+
+		new Promise (resolve) =>
+
+			@folders()
+
+			await @clean()
+
+			await @type()
+
+			resolve()
 
 
-	listeners: ->
+	folders: ->
 
-		@server.vent.on "clean:done", @setup
-
-
-	setup: =>
-
-		@i = 0
-
-		return @typeOne() if @server.config.type is 1
-
-		@typeTwo()
-
-
-	typeOne: ->
-
-		fs.mkdirp(@server.folders.src.client).then @handle
-		fs.mkdirp(@server.folders.src.server).then @handle
-		fs.mkdirp(@server.folders.build.client).then @handle
-		fs.mkdirp(@server.folders.build.server).then @handle
+		@server.folders =
+			src:
+				index: src = "#{@server.root}#{path.sep}#{@server.config.src}"
+				server: "#{src}#{path.sep}#{@server.config.server}"
+				client: "#{src}#{path.sep}#{@server.config.client}"
+			temp:
+				index: temp = "#{@server.root}#{path.sep}#{@server.config.temp}"
+				server: "#{temp}#{path.sep}#{@server.config.server}"
+				client: "#{temp}#{path.sep}#{@server.config.client}"
+			build:
+				index: build = "#{@server.root}#{path.sep}#{@server.config.build}"
+				server: "#{build}#{path.sep}#{@server.config.server}"
+				client: "#{build}#{path.sep}#{@server.config.client}"
 
 
-	typeTwo: ->
+	clean: =>
 
-		fs.mkdirp(@server.folders.src.index).then @handle
-		fs.mkdirp(@server.folders.build.index).then @handle
+		new Promise (resolve) =>
+			try
+				await fs.remove @server.folders.temp.index
+				if not @server.initialized
+					await fs.mkdirp @server.folders.temp.index
+				log.info "#{@server.config.title} - Clean", @server.symbols.finished
+				resolve()
+			catch e
+				log.error "#{@server.config.title} - Clean - Error", e.stack
 
 
-	handle: =>
+	type: =>
 
-		@i++
+		new Promise (resolve) =>
 
-		if (@server.config.type is 1 and @i is 4) or ((@server.config.type is 2 or @server.config.type is 3) and @i is 2)
+			if @server.config.type is 1
+				await fs.mkdirp @server.folders.src.client
+				await fs.mkdirp @server.folders.src.server
+				if not @server.initialized
+					await fs.mkdirp @server.folders.temp.client
+					await fs.mkdirp @server.folders.temp.server
+			else
+				await fs.mkdirp @server.folders.src.index
+				if not @server.initialized
+					await fs.mkdirp @server.folders.temp.index
 
 			# Notify project type
 			log.info "LDE - Project", @explaination()
 
-			# Send event
-			@server.vent.emit "project:done"
+			resolve()
 
 
 	explaination: ->

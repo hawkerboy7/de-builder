@@ -14,47 +14,48 @@ notifier = require("node-notifier");
 
 Less = class Less {
   constructor(server) {
-    this.less = this.less.bind(this);
+    this.process = this.process.bind(this);
     this.server = server;
-    if (this.server.config.type === 2) {
-      return;
-    }
+    this.server.less = {
+      process: this.process
+    };
     this.setup();
-    this.listeners();
-  }
-
-  listeners() {
-    this.server.vent.on("less:file", this.less);
-    return this.server.vent.on("watch:init", this.less);
   }
 
   setup() {
-    this.done = false;
-    this.count = 0;
+    var e, stats;
     // Short refrence to less config
     this.config = this.server.config.less;
     // Create path to less entry file and folder
-    this.folder = this.server.folders.src.client + path.sep + this.config.folder;
     if (this.server.config.type === 3) {
-      this.folder = this.server.folders.src.index + path.sep + this.config.folder;
+      this.folder = this.server.folders.src.index;
+    } else {
+      this.folder = this.server.folders.src.client;
     }
+    this.folder += path.sep + this.config.folder;
+    this.folder = this.folder.replace(this.server.root + path.sep, "");
     this.entry = this.folder + path.sep + this.config.entry;
     // Create path to destination file and folder
-    this.map = this.server.folders.build.client + path.sep + this.config.folder;
     if (this.server.config.type === 3) {
-      this.map = this.server.folders.build.index + path.sep + this.config.folder;
+      this.map = this.server.folders.temp.index;
+    } else {
+      this.map = this.server.folders.temp.client;
     }
+    this.map += path.sep + this.config.folder;
+    this.map = this.map.replace(this.server.root + path.sep, "");
     this.destination = this.map + path.sep + this.config.file;
-    // Check if entry file exists
-    return fs.stat(this.entry, (e) => {
-      if (!e) {
-        this.type = "single";
-      } else {
-        this.type = "multi";
-        this.determin();
-      }
-      return log.info(`${this.server.config.title} - Less`, `Type: ${this.type}`);
-    });
+    try {
+      stats = fs.statSync(this.entry);
+    } catch (error) {
+      e = error;
+    }
+    if (e) {
+      this.type = "multi";
+      this.determin();
+    } else {
+      this.type = "single";
+    }
+    return log.info(`${this.server.config.title} - Less`, `Type: ${this.type}`);
   }
 
   determin() {
@@ -62,144 +63,126 @@ Less = class Less {
     // Store multi setup folders
     this.folders = [];
     // Read all files in entry folder
-    return fs.readdir(this.folder, (e, files) => {
-      var file, folder, i, len, msg;
+    return fs.readdir(this.server.root + path.sep + this.folder, (e, files) => {
+      var file, folder, i, len;
       if (e) {
         return log.error(`${this.server.config.title} - Less`, e);
       }
 // Loop over all results
       for (i = 0, len = files.length; i < len; i++) {
         file = files[i];
-        if (!fs.statSync(folder = this.folder + path.sep + file).isDirectory()) {
+        if (!fs.statSync(this.server.root + path.sep + (folder = this.folder + path.sep + file)).isDirectory()) {
           // Read the results in sync otherwise the link between file and response is lost in async (due to the loop)
           continue;
         }
         // Add less bundle folders
         this.folders.push({
-          src: folder,
-          bare: folder.replace(this.server.root + path.sep, ""),
+          path: folder,
           name: file
         });
       }
       if (this.folders.length === 0) {
-        this.notify(msg = "No folders are found for a multi setup");
-        return log.error(`${this.server.config.title} - Less`, msg);
+        return log.error(`${this.server.config.title} - Less`, "No folders are found for a multi setup");
       }
     });
   }
 
-  less(file, init) {
-    if (file && !init) {
-      // Guard: don"t build .css if the watch issn"t ready
-      return this.count++;
-    }
-    if (file) {
-      log.debug(`${this.server.config.title} - Less`, `Change: ${file}`);
-    }
-    // Comple a single bundle if multiple bundles are not required
-    if (this.type === "single") {
-      this.single({
-        sFile: this.entry,
-        sFolder: this.folder,
-        dFile: this.destination
-      });
-    }
-    // Compile one (or all) of the multiple bundles
-    if (this.type === "multi") {
-      return this.multi(file);
-    }
+  process(file) {
+    return new Promise(async(resolve) => {
+      var dFile, dFiles;
+      if (this.server.config.type === 2) {
+        return resolve();
+      }
+      if (file) {
+        log.info(`${this.server.config.title} - Less`, "Init");
+      }
+      if (this.type === "multi") {
+        dFiles = (await this.multi(file));
+      } else if (this.type === "single") {
+        dFile = (await this.single({
+          sFile: this.entry,
+          sFolder: this.folder,
+          dFile: this.destination
+        }));
+        dFiles = [dFile];
+      }
+      return resolve(dFiles);
+    });
   }
 
   multi(file) {
-    var folder, i, len, ref, results;
-    if (this.folders.length === 0) {
-      return this.increase();
-    }
-    ref = this.folders;
-    results = [];
-    for (i = 0, len = ref.length; i < len; i++) {
-      folder = ref[i];
-      if (file) {
-        if (-1 === file.indexOf(folder.bare)) {
+    return new Promise(async(resolve) => {
+      var dFiles, folder, i, key, len, list, promise, ref, sFile;
+      if (this.folders.length === 0) {
+        return resolve();
+      }
+      list = {};
+      ref = this.folders;
+      for (i = 0, len = ref.length; i < len; i++) {
+        folder = ref[i];
+        if (file && -1 === file.indexOf(folder.path)) {
           continue;
         }
-      }
-      results.push(this.single({
-        sFile: folder.src + path.sep + "index.less",
-        sFolder: folder.src,
-        dFile: this.map + path.sep + folder.name + ".css",
-        name: folder.name
-      }));
-    }
-    return results;
-  }
-
-  single({sFile, sFolder, dFile, name}) {
-    return fs.readFile(sFile, "utf8", (e, res) => {
-      if (e) {
-        this.notify(e.message);
-        log.error(`${this.server.config.title} - Less`, `${e}`);
-        return this.increase();
-      }
-      // Create folder structure for the .css file
-      return fs.mkdirp(this.map).then(() => {
-        // Create less file
-        return less.render(res, {
-          paths: [sFolder],
-          compress: this.server.env === "production"
-        }, (e, output) => {
-          var css;
-          // In case of an error in the .less file
-          if (e) {
-            this.notify(`${e.filename}\nLine: ${e.line}\n${e.type} error - ${e.message}`);
-            log.error(`${this.server.config.title} - Less`, "\n", `${e.filename}\nLine: ${e.line}\nColumn: ${e.column}\n${e.type} error\n${e.message}\nExtract:`, e.extract);
-            return this.increase();
-          }
-          if (!(css = output != null ? output.css : void 0) && (css !== "")) {
-            this.notify("No css output, check terminal");
-            log.error(`${this.server.config.title} - Less`, `No css output: ${output}`);
-            return this.increase();
-          }
-          // Write css file to destination
-          return fs.writeFile(dFile, css, (e) => {
-            var prefix;
-            // In case of an error in the .less file
-            if (e) {
-              log.error(`${this.server.config.title} - Less`, e);
-              return this.increase();
-            }
-            // Define prefix
-            if (name) {
-              prefix = `${name}: `;
-            } else {
-              prefix = "";
-            }
-            this.server.vent.emit("compiled:file", {
-              file: dFile,
-              title: `${this.server.config.title} - Less`,
-              message: prefix + dFile.replace(this.server.root + path.sep, "")
-            });
-            return this.increase();
-          });
+        list[sFile = folder.path + path.sep + "index.less"] = this.single({
+          sFile: sFile,
+          sFolder: folder.path,
+          dFile: this.map + path.sep + folder.name + ".css",
+          dFolder: folder.name
         });
-      });
+      }
+      dFiles = [];
+      for (key in list) {
+        promise = list[key];
+        dFiles.push((await promise));
+      }
+      return resolve(dFiles);
     });
   }
 
-  increase() {
-    if (this.done) {
-      return;
-    }
-    // Set bool
-    this.done = true;
-    // Notify watcher for the initialized trigger
-    return this.server.vent.emit("watch:increase", this.count);
-  }
-
-  notify(message, name) {
-    return notifier.notify({
-      title: `${this.server.config.title} - Less - ${name}`,
-      message: message
+  single({sFile, sFolder, dFile, dFolder}) {
+    var map;
+    dFile = this.server.toDestination(dFile);
+    map = this.server.toDestination(this.map);
+    return new Promise(async(resolve) => {
+      var e, res;
+      try {
+        res = (await fs.readFile(this.server.root + path.sep + sFile, "utf8"));
+      } catch (error) {
+        e = error;
+        log.error(`${this.server.config.title} - Less`, e.stack);
+        return resolve();
+      }
+      try {
+        await fs.mkdirp(this.server.root + path.sep + map);
+      } catch (error) {
+        e = error;
+        log.error(`${this.server.config.title} - Less`, e.stack);
+        return resolve();
+      }
+      return less.render(res, {
+        paths: [this.server.root + path.sep + sFolder],
+        compress: this.server.env === "production"
+      }, async(e, output) => {
+        var css, prefix;
+        if (e) {
+          log.error(`${this.server.config.title} - Less`, "\n", `${e.filename}\nLine: ${e.line}\nColumn: ${e.column}\n${e.type} error\n${e.message}\nExtract:`, e.extract);
+          return resolve();
+        }
+        if (!(css = output != null ? output.css : void 0) && (css !== "")) {
+          log.error(`${this.server.config.title} - Less`, `No css output: ${output}`);
+          return resolve();
+        }
+        try {
+          await fs.writeFile(this.server.root + path.sep + dFile, css);
+        } catch (error) {
+          e = error;
+          log.error(`${this.server.config.title} - Less`, e.stack);
+          return resolve();
+        }
+        prefix = dFolder ? `${dFolder}: ` : "";
+        log.info(`${this.server.config.title} - Less`, prefix + dFile);
+        return resolve(dFile);
+      });
     });
   }
 

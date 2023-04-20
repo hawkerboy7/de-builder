@@ -1,13 +1,12 @@
 # NPM
-path = require "path"
+log = require "de-logger"
 
 # Modules
 Copy        = require "./copy"
 Less        = require "./less"
-Clean       = require "./clean"
+Move        = require "./move"
 Watch       = require "./watch"
 Coffee      = require "./coffee"
-Logger      = require "./logger"
 Forever     = require "./forever"
 Project     = require "./project"
 Browserify  = require "./browserify"
@@ -24,36 +23,38 @@ class Tasks
 
 	load: ->
 
-		# Setup project folders
-		@folders()
+		log.info "#{@server.config.title} - Tasks", "Initialize phase"
 
-		# Load all tasks
+		# Only when running node build -prod do we need to create a temp folder
+		@server.initialized = true if @server.run
+
+		await new Project(@server).init()
+
 		new Copy @server
 		new Less @server
-		new Clean @server
-		new Watch @server
+		new Move @server
 		new Coffee @server
-		new Logger @server
 		new Forever @server
-		new Project @server
-		new Browserify @server
-		new BrowserSync @server
+		await (new Browserify @server).init()
+		await (new BrowserSync @server).init()
+		await (new Watch @server).init()
 
-		# Send the start command
-		@server.vent.emit "builder:start"
+		a = @server.less.process()
+		b = @server.browserify.process()
+		await a
+		await b
 
+		return if not await @server.move.process()
 
-	folders: ->
+		if not (@server.run and @server.config.forever.enabled and @server.config.type isnt 3)
+			return await @server.watch.close()
 
-		@server.folders =
-			src:
-				index: src = "#{@server.root}#{path.sep}#{@server.config.src}"
-				server: "#{src}#{path.sep}#{@server.config.server}"
-				client: "#{src}#{path.sep}#{@server.config.client}"
-			build:
-				index: build = "#{@server.root}#{path.sep}#{@server.config.build}"
-				server: "#{build}#{path.sep}#{@server.config.server}"
-				client: "#{build}#{path.sep}#{@server.config.client}"
+		@server.initialized = true
+		@server.phaseOneDone = true
+
+		log.info "#{@server.config.title} - Tasks", "Running phase"
+
+		@server.forever.run()
 
 
 
