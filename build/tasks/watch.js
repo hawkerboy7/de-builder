@@ -1,7 +1,7 @@
 // Node
 var Watch, chokidar, fs, log, path;
 
-fs = require("fs");
+fs = require("fs-extra");
 
 path = require("path");
 
@@ -11,119 +11,141 @@ log = require("de-logger");
 chokidar = require("chokidar");
 
 Watch = class Watch {
-  constructor(server) {
-    this.watchSrc = this.watchSrc.bind(this);
-    this.add = this.add.bind(this);
+  constructor(server1) {
+    this.close = this.close.bind(this);
     this.change = this.change.bind(this);
-    this.unlink = this.unlink.bind(this);
-    // Catch error but do not do anything with it in case the file is not there for some reason
-    this.ready = this.ready.bind(this);
-    this.increase = this.increase.bind(this);
-    this.server = server;
-    this.listeners();
-  }
-
-  listeners() {
-    this.server.vent.on("project:done", this.watchSrc);
-    return this.server.vent.on("watch:increase", this.increase);
-  }
-
-  watchSrc() {
-    // Count the files being added before the ready trigger
-    this.init = false;
-    this.count = {
-      first: 0,
-      second: 0
+    this.server = server1;
+    this.server.watch = {
+      close: this.close
     };
-    // Start watch
-    log.info(`${this.server.config.title} - Watch`, "~ Night gathers, and now my watch begins ~");
-    // Start the chokidar the file wachter
-    this.watcher = chokidar.watch(this.server.config.src, {
-      ignored: /[\/\\]\./
-    });
-    return this.watcher.on("add", this.add).on("change", this.change).on("unlink", this.unlink).on("ready", this.ready);
+    this.timeouts = {};
   }
 
-  add(file) {
-    if (!this.init) {
-      // Increase counter if not initialized
-      this.count.first++;
-    }
-    // Add handler
-    return this.addChange("Add", file);
+  init() {
+    return new Promise(async(resolve) => {
+      var files;
+      files = (await this.gather());
+      await this.handle(files);
+      return resolve();
+    });
+  }
+
+  gather() {
+    return new Promise((resolve) => {
+      var files;
+      log.info(`${this.server.config.title} - Watch`, "~ Night gathers, and now my watch begins ~");
+      files = {};
+      this.watcher = chokidar.watch(this.server.config.src, {
+        ignored: /[\/\\]\./
+      });
+      return this.watcher.on("add", (file) => {
+        return files[file] = true;
+      }).on("change", this.change).on("ready", () => {
+        log.info(`${this.server.config.title} - Watch`, `Found ${Object.keys(files).length} initial files`);
+        return resolve(files);
+      });
+    });
+  }
+
+  handle(files) {
+    return new Promise(async(resolve) => {
+      var file, list, name, promise;
+      list = {};
+      for (file in files) {
+        list[file] = this.process(file);
+      }
+      for (name in list) {
+        promise = list[name];
+        await promise;
+      }
+      return resolve();
+    });
+  }
+
+  process(file, extention) {
+    return new Promise(async(resolve) => {
+      log.debug(`${this.server.config.title} - Process`, file);
+      extention || (extention = path.extname(file));
+      if (extention === ".coffee") {
+        return resolve((await this.server.coffee.process(file)));
+      }
+      if (extention === ".less") {
+        return resolve();
+      }
+      await this.server.copy.process(file);
+      return resolve();
+    });
+  }
+
+  close() {
+    return this.watcher.close();
   }
 
   change(file) {
-    // Change handler
-    return this.addChange("Change", file);
+    if (!this.server.phaseOneDone) {
+      return;
+    }
+    // To allow most of the changes in case of a branch switch to run first
+    return setTimeout(() => {
+      return this.nextTick(file);
+    }, 10);
   }
 
-  addChange(type, file) {
-    var extention;
-    // Notify
-    log.debug(`${this.server.config.title} - Watch`, `${type}: ${file}`);
-    // Get extention
+  async nextTick(file) {
+    var extention, server, serverFolder;
     extention = path.extname(file);
-    if (extention === ".less") {
-      // Compile specific extentions
-      return this.server.vent.emit("less:file", file, this.init);
-    }
-    if (extention === ".coffee") {
-      return this.server.vent.emit("coffee:file", file, this.init);
-    }
-    // Copy file in case extention is not supported
-    return this.server.vent.emit("copy:file", file, this.init);
-  }
-
-  unlink(file) {
-    var remove, seperated;
-    // Seperate path
-    seperated = file.split(path.sep);
-    // Remove first entry (src folder)
-    seperated.shift();
-    // File to remove in the build folder
-    remove = this.server.config.build + path.sep + seperated.join(path.sep);
-    // Notify
-    log.info(`${this.server.config.title} - Watch`, `Unlink: ${remove}`);
-    // Try to remove the file in the build folder
-    return fs.unlink(this.server.root + path.sep + remove, function(e) {});
-  }
-
-  async ready() {
-    this.init = true;
-    // Notify
-    log.info(`${this.server.config.title} - Watch`, `Ready: ${this.count.first} files initially added`);
-    // Watch has found all files
-    this.server.vent.emit("watch:init");
-    // When NOT running do no conitnue watching for file changes either
-    if (this.server.run) {
+    await this.process(file, extention);
+    if (!(extention === ".coffee" || extention === ".pug" || extention === ".less")) {
       return;
     }
-    // Close all file watching
-    await this.watcher.close();
-    // Notify
-    return log.info(`${this.server.config.title} - Watch`, "And Now My Watch Is Ended");
-  }
-
-  increase(count) {
-    // Count init file builds (due to less it also accepts multiple counts)
-    if (count) {
-      this.count.second += count;
-    } else {
-      this.count.second++;
-    }
-    // Guard: Do not do anything until ready trigger is fired and counts are the same
-    if (!(this.init && this.count.second === this.count.first)) {
-      return;
-    }
-    // Watch has fully been initialized
-    this.initialized = true;
-    // Notify
-    log.debug(`${this.server.config.title} - Watch`, `Ready: ${this.count.second} files have initially been created`);
-    // Notify the initial addition of files trough watch has been finished
-    return this.server.vent.emit("watch:initialized");
+    // Determine if the file is located in the client-side code or server-side
+    serverFolder = file.split("/")[1];
+    server = this.server.config.type === 2 || serverFolder === this.server.config.server;
+    // Prevents multiple change triggers (when switching branches for example) from creating bundles
+    clearTimeout(this.timeouts[server + extention]);
+    return this.timeouts[server + extention] = setTimeout(async() => {
+      var dFile, dFiles, i, len, results;
+      if (server) {
+        if (extention === ".coffee") {
+          return this.server.forever.run();
+        }
+      } else {
+        if (extention === ".coffee" || extention === ".pug") {
+          await this.server.browserify.process(file);
+          return this.server.browserSync.process(file);
+        } else if (extention === ".less") {
+          dFiles = (await this.server.less.process(file));
+          results = [];
+          for (i = 0, len = dFiles.length; i < len; i++) {
+            dFile = dFiles[i];
+            results.push(this.server.browserSync.process(dFile));
+          }
+          return results;
+        }
+      }
+    }, 250);
   }
 
 };
 
+// unlink: (file) =>
+
+// 	console.log "check this: unlink", file
+
+// 	# # Seperate path
+// 	# seperated = file.split path.sep
+
+// 	# # Remove first entry (src folder)
+// 	# seperated.shift()
+
+// 	# # File to remove in the build folder
+// 	# remove = @server.config.temp+path.sep+seperated.join path.sep
+
+// 	# # Notify
+// 	# log.info "#{@server.config.title} - Watch", "Unlink: #{remove}"
+
+// 	# # Try to remove the file in the build folder
+// 	# fs.unlink @server.root+path.sep+remove, (e) ->
+
+// 	# 	# Catch error but do not do anything with it in case the file is not there for some reason
 module.exports = Watch;

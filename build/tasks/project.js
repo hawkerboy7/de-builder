@@ -10,44 +10,78 @@ log = require("de-logger");
 
 Project = class Project {
   constructor(server) {
-    this.setup = this.setup.bind(this);
-    this.handle = this.handle.bind(this);
+    this.clean = this.clean.bind(this);
+    this.type = this.type.bind(this);
     this.server = server;
-    this.listeners();
   }
 
-  listeners() {
-    return this.server.vent.on("clean:done", this.setup);
+  init() {
+    log.info(`${this.server.config.title} - Project`, "Setup project folders");
+    return new Promise(async(resolve) => {
+      this.folders();
+      await this.clean();
+      await this.type();
+      return resolve();
+    });
   }
 
-  setup() {
-    this.i = 0;
-    if (this.server.config.type === 1) {
-      return this.typeOne();
-    }
-    return this.typeTwo();
+  folders() {
+    var build, src, temp;
+    return this.server.folders = {
+      src: {
+        index: src = `${this.server.root}${path.sep}${this.server.config.src}`,
+        server: `${src}${path.sep}${this.server.config.server}`,
+        client: `${src}${path.sep}${this.server.config.client}`
+      },
+      temp: {
+        index: temp = `${this.server.root}${path.sep}${this.server.config.temp}`,
+        server: `${temp}${path.sep}${this.server.config.server}`,
+        client: `${temp}${path.sep}${this.server.config.client}`
+      },
+      build: {
+        index: build = `${this.server.root}${path.sep}${this.server.config.build}`,
+        server: `${build}${path.sep}${this.server.config.server}`,
+        client: `${build}${path.sep}${this.server.config.client}`
+      }
+    };
   }
 
-  typeOne() {
-    fs.mkdirp(this.server.folders.src.client).then(this.handle);
-    fs.mkdirp(this.server.folders.src.server).then(this.handle);
-    fs.mkdirp(this.server.folders.build.client).then(this.handle);
-    return fs.mkdirp(this.server.folders.build.server).then(this.handle);
+  clean() {
+    return new Promise(async(resolve) => {
+      var e;
+      try {
+        await fs.remove(this.server.folders.temp.index);
+        if (!this.server.initialized) {
+          await fs.mkdirp(this.server.folders.temp.index);
+        }
+        log.info(`${this.server.config.title} - Clean`, this.server.symbols.finished);
+        return resolve();
+      } catch (error) {
+        e = error;
+        return log.error(`${this.server.config.title} - Clean - Error`, e.stack);
+      }
+    });
   }
 
-  typeTwo() {
-    fs.mkdirp(this.server.folders.src.index).then(this.handle);
-    return fs.mkdirp(this.server.folders.build.index).then(this.handle);
-  }
-
-  handle() {
-    this.i++;
-    if ((this.server.config.type === 1 && this.i === 4) || ((this.server.config.type === 2 || this.server.config.type === 3) && this.i === 2)) {
+  type() {
+    return new Promise(async(resolve) => {
+      if (this.server.config.type === 1) {
+        await fs.mkdirp(this.server.folders.src.client);
+        await fs.mkdirp(this.server.folders.src.server);
+        if (!this.server.initialized) {
+          await fs.mkdirp(this.server.folders.temp.client);
+          await fs.mkdirp(this.server.folders.temp.server);
+        }
+      } else {
+        await fs.mkdirp(this.server.folders.src.index);
+        if (!this.server.initialized) {
+          await fs.mkdirp(this.server.folders.temp.index);
+        }
+      }
       // Notify project type
       log.info("LDE - Project", this.explaination());
-      // Send event
-      return this.server.vent.emit("project:done");
-    }
+      return resolve();
+    });
   }
 
   explaination() {

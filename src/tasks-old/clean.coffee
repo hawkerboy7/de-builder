@@ -18,11 +18,11 @@ class Clean
 
 	start: =>
 
-		# Remove build folder
-		fs.remove @server.folders.build.index, =>
+		# Remove temp folder
+		fs.remove @server.folders.temp.index, =>
 
-			# Create build folder
-			fs.mkdirp(@server.folders.build.index).then =>
+			# Create temp folder
+			fs.mkdirp(@server.folders.temp.index).then =>
 
 				log.info "LDE - Clean", @server.symbols.finished
 

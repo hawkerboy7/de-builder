@@ -10,39 +10,33 @@ log = require("de-logger");
 
 Copy = class Copy {
   constructor(server) {
-    this.copy = this.copy.bind(this);
+    this.process = this.process.bind(this);
     this.server = server;
-    this.listeners();
+    this.server.copy = {
+      process: this.process
+    };
   }
 
-  listeners() {
-    return this.server.vent.on("copy:file", this.copy);
-  }
-
-  copy(file, init) {
-    var build, read;
-    // Create path to destination
-    build = this.server.toBuild(file);
-    // Create a read stream
-    read = fs.createReadStream(this.server.root + path.sep + file);
-    // Ensure destination folders exist
-    return fs.mkdirp(path.dirname(build)).then(() => {
-      var name, write;
-      // Create write stream
-      write = fs.createWriteStream(name = this.server.root + path.sep + build);
-      write.on("finish", () => {
-        this.server.vent.emit("compiled:file", {
-          file: name,
-          title: `${this.server.config.title} - Copy`,
-          message: `${build}`
+  process(file) {
+    return new Promise(async(resolve) => {
+      var destination, e, name, read, write;
+      // Create path to destination
+      destination = this.server.toDestination(file);
+      // Create a read stream
+      read = fs.createReadStream(this.server.root + path.sep + file);
+      try {
+        await fs.mkdirp(path.dirname(destination));
+        write = fs.createWriteStream(name = this.server.root + path.sep + destination);
+        write.on("finish", () => {
+          log.info(`${this.server.config.title} - Copy`, `${destination}`);
+          return resolve();
         });
-        if (!init) {
-          // Notify the watch in case the init has not been triggered
-          return this.server.vent.emit("watch:increase");
-        }
-      });
-      // Read file and write to destination
-      return read.pipe(write);
+        // Read file and write to destination
+        return read.pipe(write);
+      } catch (error) {
+        e = error;
+        return log.error(`${this.server.config.title} - Copy`, e.stack);
+      }
     });
   }
 

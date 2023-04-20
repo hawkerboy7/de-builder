@@ -17,10 +17,10 @@ Clean = class Clean {
   }
 
   start() {
-    // Remove build folder
-    return fs.remove(this.server.folders.build.index, () => {
-      // Create build folder
-      return fs.mkdirp(this.server.folders.build.index).then(() => {
+    // Remove temp folder
+    return fs.remove(this.server.folders.temp.index, () => {
+      // Create temp folder
+      return fs.mkdirp(this.server.folders.temp.index).then(() => {
         log.info("LDE - Clean", this.server.symbols.finished);
         // Notify application
         return this.server.vent.emit("clean:done");
