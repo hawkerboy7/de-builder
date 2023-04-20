@@ -11,40 +11,36 @@ class Copy
 
 	constructor: (@server) ->
 
-		@listeners()
+		@server.copy = process: @process
 
 
-	listeners: ->
+	process: (file) =>
 
-		@server.vent.on "copy:file", @copy
+		new Promise (resolve) =>
 
+			# Create path to destination
+			destination = @server.toDestination file
 
-	copy: (file, init) =>
+			# Create a read stream
+			read = fs.createReadStream @server.root + path.sep + file
 
-		# Create path to destination
-		build = @server.toBuild file
+			try
+				await fs.mkdirp path.dirname destination
 
-		# Create a read stream
-		read = fs.createReadStream @server.root+path.sep+file
+				write = fs.createWriteStream name = @server.root + path.sep + destination
 
-		# Ensure destination folders exist
-		fs.mkdirp(path.dirname(build)).then =>
+				write.on "finish", =>
 
-			# Create write stream
-			write = fs.createWriteStream name = @server.root+path.sep+build
+					log.info "#{@server.config.title} - Copy", "#{destination}"
 
-			write.on "finish", =>
+					resolve()
 
-				@server.vent.emit "compiled:file",
-					file    : name
-					title   : "#{@server.config.title} - Copy"
-					message : "#{build}"
+				# Read file and write to destination
+				read.pipe write
 
-				# Notify the watch in case the init has not been triggered
-				@server.vent.emit "watch:increase" if not init
+			catch e
 
-			# Read file and write to destination
-			read.pipe write
+				log.error "#{@server.config.title} - Copy", e.stack
 
 
 

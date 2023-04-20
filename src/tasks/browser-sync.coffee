@@ -1,12 +1,12 @@
 # Node
-http        = require "http"
-path        = require "path"
+http = require "http"
+path = require "path"
 
 # NPM
 fs          = require "fs-extra"
 log         = require "de-logger"
+{version}   = require "browser-sync/package.json"
 browserSync = require "browser-sync"
-{ version } = require "browser-sync/package.json"
 
 
 
@@ -14,62 +14,76 @@ class BrowserSync
 
 	constructor: (@server) ->
 
-		return if false or
-			not @server.config.browserSync.enabled or
-			@server.config.type is 2 or
-			@server.env is "production"
+		@server.browserSync = process: @process
 
-		@load()
-		@listeners()
+
+	init: ->
+
+		new Promise (resolve) =>
+
+			return resolve() if (not @server.config.browserSync.enabled) or
+				@server.config.type is 2 or
+				@server.env is "production"
+
+			await @load()
+			await @code()
+			await @add()
+			resolve()
 
 
 	load: ->
 
-		@config = @server.config.browserSync
+		new Promise (resolve) =>
 
-		# Create path to gf browser-sync file
-		@filePath = @server.myRoot+path.sep+"build"+path.sep+"browser-sync.js"
+			@config = @server.config.browserSync
 
-		# Create browsersync server
-		@bs = browserSync.create()
+			# Create path to gf browser-sync file
+			@filePath = @server.myRoot + path.sep + "build" + path.sep + "browser-sync.js"
 
-		# Set browsersync config
-		config =
-			ui: port       : @config.ui
-			port           : @config.server
-			logLevel       : "silent"
-			ghostMode      : false
-			logFileChanges : false
+			# Create browsersync server
+			@bs = browserSync.create()
 
-		# Initialize server
-		@bs.init config, (err) =>
+			# Set browsersync config
+			config =
+				ui: port       : @config.ui
+				port           : @config.server
+				logLevel       : "silent"
+				ghostMode      : false
+				logFileChanges : false
 
-			# Notify error
-			return log.error "#{@server.config.title} - Browser-sync", "Could not start \n\n", err if err
+			@bs.init config, (err) =>
 
-			# Retreive browserify code
-			@code()
+				log.error "#{@server.config.title} - Browser-sync", "Could not start \n\n", err if err
 
-
-	listeners: ->
-
-		@server.vent.on "browserify:initialized", @initialized
-		@server.vent.on "browserify:bundle", @bundle
-		@server.vent.on "compiled:file", @reload
+				resolve()
 
 
-	initialized: (w) =>
+	code: ->
 
-		@init = true
+		new Promise (resolve) =>
+
+			log.info "#{@server.config.title} - Browser-sync", "Browser-sync server started"
+
+			@download "http://localhost:#{@config.server}/browser-sync/browser-sync-client.js?v=#{version}", (err) =>
+
+				if err
+					log.error "#{@server.config.title} - Browser-sync", "Unable to get browser-sync .js file", err
+				else
+					log.info "#{@server.config.title} - Browser-sync", "UI ready at localhost:#{@config.ui}"
+
+				resolve()
+
+
+	add: =>
 
 		# Check if multi or single
-		if w._browserSyncIndicator
+		if @server.browserify.w._browserSyncIndicator
 
 			added = false
 
 			for folder in @config.multi
 
-				continue if not bundle = w[folder]
+				continue if not bundle = @server.browserify.w[folder]
 
 				added = true
 
@@ -87,28 +101,13 @@ class BrowserSync
 		else
 
 			# Make socket.io-client require"able
-			w.require "socket.io-client", expose: "socket.io-client"
+			@server.browserify.w.require "socket.io-client", expose: "socket.io-client"
 
 			# Add socket.io-client trough a file
-			w.add path.resolve __dirname, "../socketIO/socket.io-client"
+			@server.browserify.w.add path.resolve __dirname, "../socketIO/socket.io-client"
 
 			# Add Browser-sync to the bundle
-			w.add @filePath
-
-
-	code: ->
-
-		# Notify start
-		log.info "#{@server.config.title} - Browser-sync", "Browser-sync server started"
-
-		# Download file
-		@download "http://localhost:#{@config.server}/browser-sync/browser-sync-client.js?v=#{version}", (err) =>
-
-			# Notify start
-			return log.error "#{@server.config.title} - Browser-sync", "Unable to get browser-sync .js file", err if err
-
-			# Notify ready
-			log.info "#{@server.config.title} - Browser-sync", "UI ready at localhost:#{@config.ui}"
+			@server.browserify.w.add @filePath
 
 
 	download: (url, cb) ->
@@ -130,22 +129,10 @@ class BrowserSync
 						@file.close cb
 
 
-	reload: ({file}) =>
-
-		return if not @init
-
-		@_reload file if ".css" is path.extname file
-
-
-	bundle: (file) =>
-
-		@_reload file
-
-
-	_reload : (file) ->
+	process : (file) =>
 
 		# Notify start
-		log.info "#{@server.config.title} - Browser-sync", "Reload", file.replace "#{@server.root}/", ""
+		log.info "#{@server.config.title} - Browser-sync", "Reload", file
 
 		# Reload based on file path
 		@bs.reload file

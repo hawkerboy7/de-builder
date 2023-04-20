@@ -1,20 +1,18 @@
 // NPM
-var BrowserSync, Browserify, Clean, Coffee, Copy, Forever, Less, Logger, Project, Tasks, Watch, path;
+var BrowserSync, Browserify, Coffee, Copy, Forever, Less, Move, Project, Tasks, Watch, log;
 
-path = require("path");
+log = require("de-logger");
 
 // Modules
 Copy = require("./copy");
 
 Less = require("./less");
 
-Clean = require("./clean");
+Move = require("./move");
 
 Watch = require("./watch");
 
 Coffee = require("./coffee");
-
-Logger = require("./logger");
 
 Forever = require("./forever");
 
@@ -30,38 +28,36 @@ Tasks = class Tasks {
     this.load();
   }
 
-  load() {
-    // Setup project folders
-    this.folders();
-    // Load all tasks
+  async load() {
+    var a, b;
+    log.info(`${this.server.config.title} - Tasks`, "Initialize phase");
+    if (this.server.run) {
+      // Only when running node build -prod do we need to create a temp folder
+      this.server.initialized = true;
+    }
+    await new Project(this.server).init();
     new Copy(this.server);
     new Less(this.server);
-    new Clean(this.server);
-    new Watch(this.server);
+    new Move(this.server);
     new Coffee(this.server);
-    new Logger(this.server);
     new Forever(this.server);
-    new Project(this.server);
-    new Browserify(this.server);
-    new BrowserSync(this.server);
-    // Send the start command
-    return this.server.vent.emit("builder:start");
-  }
-
-  folders() {
-    var build, src;
-    return this.server.folders = {
-      src: {
-        index: src = `${this.server.root}${path.sep}${this.server.config.src}`,
-        server: `${src}${path.sep}${this.server.config.server}`,
-        client: `${src}${path.sep}${this.server.config.client}`
-      },
-      build: {
-        index: build = `${this.server.root}${path.sep}${this.server.config.build}`,
-        server: `${build}${path.sep}${this.server.config.server}`,
-        client: `${build}${path.sep}${this.server.config.client}`
-      }
-    };
+    await (new Browserify(this.server)).init();
+    await (new BrowserSync(this.server)).init();
+    await (new Watch(this.server)).init();
+    a = this.server.less.process();
+    b = this.server.browserify.process();
+    await a;
+    await b;
+    if (!(await this.server.move.process())) {
+      return;
+    }
+    if (!(this.server.run && this.server.config.forever.enabled && this.server.config.type !== 3)) {
+      return (await this.server.watch.close());
+    }
+    this.server.initialized = true;
+    this.server.phaseOneDone = true;
+    log.info(`${this.server.config.title} - Tasks`, "Running phase");
+    return this.server.forever.run();
   }
 
 };

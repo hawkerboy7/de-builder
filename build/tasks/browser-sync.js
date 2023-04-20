@@ -10,67 +10,82 @@ fs = require("fs-extra");
 
 log = require("de-logger");
 
-browserSync = require("browser-sync");
-
 ({version} = require("browser-sync/package.json"));
+
+browserSync = require("browser-sync");
 
 BrowserSync = class BrowserSync {
   constructor(server) {
-    this.initialized = this.initialized.bind(this);
-    this.reload = this.reload.bind(this);
-    this.bundle = this.bundle.bind(this);
+    this.add = this.add.bind(this);
+    this.process = this.process.bind(this);
     this.server = server;
-    if (false || !this.server.config.browserSync.enabled || this.server.config.type === 2 || this.server.env === "production") {
-      return;
-    }
-    this.load();
-    this.listeners();
+    this.server.browserSync = {
+      process: this.process
+    };
   }
 
-  load() {
-    var config;
-    this.config = this.server.config.browserSync;
-    // Create path to gf browser-sync file
-    this.filePath = this.server.myRoot + path.sep + "build" + path.sep + "browser-sync.js";
-    // Create browsersync server
-    this.bs = browserSync.create();
-    // Set browsersync config
-    config = {
-      ui: {
-        port: this.config.ui
-      },
-      port: this.config.server,
-      logLevel: "silent",
-      ghostMode: false,
-      logFileChanges: false
-    };
-    // Initialize server
-    return this.bs.init(config, (err) => {
-      if (err) {
-        // Notify error
-        return log.error(`${this.server.config.title} - Browser-sync`, "Could not start \n\n", err);
+  init() {
+    return new Promise(async(resolve) => {
+      if ((!this.server.config.browserSync.enabled) || this.server.config.type === 2 || this.server.env === "production") {
+        return resolve();
       }
-      // Retreive browserify code
-      return this.code();
+      await this.load();
+      await this.code();
+      await this.add();
+      return resolve();
     });
   }
 
-  listeners() {
-    this.server.vent.on("browserify:initialized", this.initialized);
-    this.server.vent.on("browserify:bundle", this.bundle);
-    return this.server.vent.on("compiled:file", this.reload);
+  load() {
+    return new Promise((resolve) => {
+      var config;
+      this.config = this.server.config.browserSync;
+      // Create path to gf browser-sync file
+      this.filePath = this.server.myRoot + path.sep + "build" + path.sep + "browser-sync.js";
+      // Create browsersync server
+      this.bs = browserSync.create();
+      // Set browsersync config
+      config = {
+        ui: {
+          port: this.config.ui
+        },
+        port: this.config.server,
+        logLevel: "silent",
+        ghostMode: false,
+        logFileChanges: false
+      };
+      return this.bs.init(config, (err) => {
+        if (err) {
+          log.error(`${this.server.config.title} - Browser-sync`, "Could not start \n\n", err);
+        }
+        return resolve();
+      });
+    });
   }
 
-  initialized(w) {
+  code() {
+    return new Promise((resolve) => {
+      log.info(`${this.server.config.title} - Browser-sync`, "Browser-sync server started");
+      return this.download(`http://localhost:${this.config.server}/browser-sync/browser-sync-client.js?v=${version}`, (err) => {
+        if (err) {
+          log.error(`${this.server.config.title} - Browser-sync`, "Unable to get browser-sync .js file", err);
+        } else {
+          log.info(`${this.server.config.title} - Browser-sync`, `UI ready at localhost:${this.config.ui}`);
+        }
+        return resolve();
+      });
+    });
+  }
+
+  add() {
     var added, bundle, folder, i, len, ref;
-    this.init = true;
     // Check if multi or single
-    if (w._browserSyncIndicator) {
+    if (this.server.browserify.w._browserSyncIndicator) {
       added = false;
       ref = this.config.multi;
       for (i = 0, len = ref.length; i < len; i++) {
         folder = ref[i];
-        if (!(bundle = w[folder])) {
+        if (!(bundle = this.server.browserify.w[folder])) {
           continue;
         }
         added = true;
@@ -88,28 +103,14 @@ BrowserSync = class BrowserSync {
       }
     } else {
       // Make socket.io-client require"able
-      w.require("socket.io-client", {
+      this.server.browserify.w.require("socket.io-client", {
         expose: "socket.io-client"
       });
       // Add socket.io-client trough a file
-      w.add(path.resolve(__dirname, "../socketIO/socket.io-client"));
+      this.server.browserify.w.add(path.resolve(__dirname, "../socketIO/socket.io-client"));
       // Add Browser-sync to the bundle
-      return w.add(this.filePath);
+      return this.server.browserify.w.add(this.filePath);
     }
-  }
-
-  code() {
-    // Notify start
-    log.info(`${this.server.config.title} - Browser-sync`, "Browser-sync server started");
-    // Download file
-    return this.download(`http://localhost:${this.config.server}/browser-sync/browser-sync-client.js?v=${version}`, (err) => {
-      if (err) {
-        // Notify start
-        return log.error(`${this.server.config.title} - Browser-sync`, "Unable to get browser-sync .js file", err);
-      }
-      // Notify ready
-      return log.info(`${this.server.config.title} - Browser-sync`, `UI ready at localhost:${this.config.ui}`);
-    });
   }
 
   download(url, cb) {
@@ -128,22 +129,9 @@ BrowserSync = class BrowserSync {
     });
   }
 
-  reload({file}) {
-    if (!this.init) {
-      return;
-    }
-    if (".css" === path.extname(file)) {
-      return this._reload(file);
-    }
-  }
-
-  bundle(file) {
-    return this._reload(file);
-  }
-
-  _reload(file) {
+  process(file) {
     // Notify start
-    log.info(`${this.server.config.title} - Browser-sync`, "Reload", file.replace(`${this.server.root}/`, ""));
+    log.info(`${this.server.config.title} - Browser-sync`, "Reload", file);
     // Reload based on file path
     return this.bs.reload(file);
   }

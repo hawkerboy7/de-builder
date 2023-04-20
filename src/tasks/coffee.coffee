@@ -2,10 +2,9 @@
 path = require "path"
 
 # NPM
-fs       = require "fs-extra"
-log      = require "de-logger"
-coffee   = require "coffeescript"
-notifier = require "node-notifier"
+fs     = require "fs-extra"
+log    = require "de-logger"
+coffee = require "coffeescript"
 
 
 
@@ -13,64 +12,38 @@ class Coffee
 
 	constructor: (@server) ->
 
-		@listeners()
+		@server.coffee = process: @process
 
 
-	listeners: ->
+	process: (file) =>
 
-		@server.vent.on "coffee:file", @coffee
+		new Promise (resolve) =>
 
+			destination = @server.toDestination(file).replace ".coffee", ".js"
 
-	coffee: (file, init) =>
+			try
+				data = await fs.readFile @server.root + path.sep + file, encoding: "utf-8"
+				await fs.mkdirp path.dirname destination
+			catch e
+				log.error "#{@server.config.title} - Coffee", "read+mkdirp", e.stack
+				return resolve()
 
-		# Create destination path for compiled file
-		build = @server.toBuild(file).replace ".coffee", ".js"
+			try
+				coffeeScript = coffee.compile data, bare: true
+			catch e
+				coffeeScript = ""
+				log.error "#{@server.config.title} - Coffee", file, "Line: #{e.location.first_line}", e.message, e.code
+				return resolve()
 
-		# Read coffee file
-		fs.readFile @server.root+path.sep+file, encoding: "utf-8" , (err, data) =>
+			try
+				await fs.writeFile name = @server.root + path.sep + destination, coffeeScript
+			catch e
+				log.error "#{@server.config.title} - Coffee", "write", e.stack
+				return resolve()
 
-			if err
+			log.info "#{@server.config.title} - Coffee", destination
 
-				@notify err.message
-
-				return log.error err
-
-
-			# Make sure path to destination exists
-			fs.mkdirp(path.dirname(build)).then =>
-
-				try
-					coffeeScript = coffee.compile(data, bare: true)
-				catch e
-					coffeeScript = ""
-
-					@notify msg = "#{file}\nLine: #{e.location.first_line}\n#{e.message}"
-
-					log.error "#{@server.config.title} - Coffee", "\n#{msg}","\n",e.code
-
-				# Write compiled coffee file to its destination
-				fs.writeFile name = @server.root+path.sep+build, coffeeScript , (err) =>
-
-					if err
-
-						@notify err.message
-
-						return log.error err
-
-					@server.vent.emit "compiled:file",
-						file    : name
-						title   : "#{@server.config.title} - Coffee"
-						message : "#{build}"
-
-					# Notify the watch in case the init has not been triggered
-					@server.vent.emit "watch:increase" if not init
-
-
-	notify: (message) ->
-
-		notifier.notify
-			title   : "#{@server.config.title} - Coffee"
-			message : message
+			resolve()
 
 
 

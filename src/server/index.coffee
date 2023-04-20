@@ -1,6 +1,6 @@
 # Node
-path             = require "path"
-{ EventEmitter } = require "events"
+path           = require "path"
+{EventEmitter} = require "events"
 
 # NPM
 log    = require "de-logger"
@@ -29,11 +29,11 @@ class Server
 		# Set title of the process
 		process.title = @pkg.name
 
-		# Check all provided arguments
-		@argv()
-
 		# Set the value of debug messages logged
 		log.set debug: display: @config.debug
+
+		# Check all provided arguments
+		@argv()
 
 		# Notify start of project
 		log.info @config.title , "#{@config.fullTitle} (#{@config.title}) started in: #{@env}"
@@ -59,8 +59,8 @@ class Server
 		# Set an event emitter
 		@vent = new EventEmitter
 
-		# Turn src path to build path
-		@toBuild = (file) =>
+		# From src to temp or build foler
+		@toDestination = (file) =>
 
 			# Seperate path
 			seperated = file.split path.sep
@@ -69,7 +69,7 @@ class Server
 			seperated.shift()
 
 			# File to remove in the build folder
-			@config.build+path.sep+seperated.join path.sep
+			@config[if @initialized then "build" else "temp"] + path.sep + seperated.join path.sep
 
 
 	argv: ->
@@ -85,12 +85,28 @@ class Server
 			if arg is "-prod"
 				@env = "production"
 				@run = false
+				@uglify = true
+				continue
+
+			if arg is "-debug"
+				log.set debug: display: true
+				continue
+
+			if arg is "-uglify"
+				uglify = true
+				continue
+
+			if arg is "-no-uglify"
+				uglify = false
 				continue
 
 			run = true if arg is "-run"
 
 		# Ensure the order of -prod and -run does not matter
 		@run = true if run
+
+		# Allow for overwriting the uglify setting when running in any environment
+		@uglify = uglify if uglify?
 
 
 

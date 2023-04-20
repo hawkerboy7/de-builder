@@ -2,6 +2,7 @@ config =
 
 	# Source and build directory
 	src   : "src"
+	temp  : "temp"
 	build : "build"
 
 	# Client and server directory
@@ -26,7 +27,7 @@ config =
 		multi : "bundle.js"
 
 		# Show or hide source maps
-		debug : true
+		debug : false
 
 		# Folder containing all js/coffee files
 		folder : "js"
