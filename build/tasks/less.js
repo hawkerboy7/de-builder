@@ -1,5 +1,5 @@
 // Node
-var Less, fs, less, log, notifier, path;
+var Less, fs, less, log, path;
 
 path = require("path");
 
@@ -9,8 +9,6 @@ fs = require("fs-extra");
 log = require("de-logger");
 
 less = require("less");
-
-notifier = require("node-notifier");
 
 Less = class Less {
   constructor(server) {
@@ -24,6 +22,9 @@ Less = class Less {
 
   setup() {
     var e, stats;
+    if (this.server.config.type === 2) {
+      return;
+    }
     // Short refrence to less config
     this.config = this.server.config.less;
     // Create path to less entry file and folder
