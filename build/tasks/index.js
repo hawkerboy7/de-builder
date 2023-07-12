@@ -51,13 +51,15 @@ Tasks = class Tasks {
     if (!(await this.server.move.process())) {
       return;
     }
-    if (!(this.server.run && this.server.config.forever.enabled && this.server.config.type !== 3)) {
+    if (!(this.server.run && this.server.config.type !== 3)) {
       return (await this.server.watch.close());
     }
     this.server.initialized = true;
     this.server.phaseOneDone = true;
     log.info(`${this.server.config.title} - Tasks`, "Running phase");
-    return this.server.forever.run();
+    if (this.server.config.forever.enabled) {
+      return this.server.forever.run();
+    }
   }
 
 };

@@ -36,11 +36,22 @@ class Forever
 		# Create file path
 		entry = src + path.sep + @server.config.forever.entry
 
+		# --------------------------------------------------
+		# Due to issues with nodemon we run everything a bit slower to hopefully
+		# let the async parts complete
+		# - TypeError: Cannot read properties of undefined (reading 'script')
+		# - [not solved] MaxListenersExceededWarning: Possible EventEmitter memory leak detected
+		# --------------------------------------------------
+
 		# Ensure no previous instance is runnning
-		@terminate()
+		await @terminate()
 
 		# Ensure we work with a clean slate of nodemon
 		nodemon.reset()
+
+		# Wait a small time to ensure the reset is completed and possibly also
+		# for the the entry file being flushed to disk. 100ms seems to be enough after some testing
+		await new Promise (resolve) => setTimeout resolve, 100
 
 		# Start running the application
 		nodemon
@@ -54,6 +65,9 @@ class Forever
 		# Close the currently running app in case it is running
 		nodemon.emit "SIGINT"
 		nodemon.emit "quit"
+
+		# Allow a little time for the application run by nodemon to close
+		new Promise (resolve) => setTimeout resolve, 10
 
 
 

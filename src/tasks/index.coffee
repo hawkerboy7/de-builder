@@ -46,15 +46,14 @@ class Tasks
 
 		return if not await @server.move.process()
 
-		if not (@server.run and @server.config.forever.enabled and @server.config.type isnt 3)
-			return await @server.watch.close()
+		return await @server.watch.close() if not (@server.run and @server.config.type isnt 3)
 
 		@server.initialized = true
 		@server.phaseOneDone = true
 
 		log.info "#{@server.config.title} - Tasks", "Running phase"
 
-		@server.forever.run()
+		@server.forever.run() if  @server.config.forever.enabled
 
 
 

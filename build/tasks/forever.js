@@ -29,7 +29,7 @@ Forever = class Forever {
     return this.terminate();
   }
 
-  start() {
+  async start() {
     var entry, src;
     // Determin the src directory
     src = this.server.folders.build.server;
@@ -38,10 +38,22 @@ Forever = class Forever {
     }
     // Create file path
     entry = src + path.sep + this.server.config.forever.entry;
+    // --------------------------------------------------
+    // Due to issues with nodemon we run everything a bit slower to hopefully
+    // let the async parts complete
+    // - TypeError: Cannot read properties of undefined (reading 'script')
+    // - [not solved] MaxListenersExceededWarning: Possible EventEmitter memory leak detected
+    // --------------------------------------------------
+
     // Ensure no previous instance is runnning
-    this.terminate();
+    await this.terminate();
     // Ensure we work with a clean slate of nodemon
     nodemon.reset();
+    // Wait a small time to ensure the reset is completed and possibly also
+    // for the the entry file being flushed to disk. 100ms seems to be enough after some testing
+    await new Promise((resolve) => {
+      return setTimeout(resolve, 100);
+    });
     // Start running the application
     return nodemon({
       script: entry,
@@ -53,7 +65,11 @@ Forever = class Forever {
   terminate() {
     // Close the currently running app in case it is running
     nodemon.emit("SIGINT");
-    return nodemon.emit("quit");
+    nodemon.emit("quit");
+    // Allow a little time for the application run by nodemon to close
+    return new Promise((resolve) => {
+      return setTimeout(resolve, 10);
+    });
   }
 
 };

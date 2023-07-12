@@ -2,10 +2,9 @@
 path = require "path"
 
 # NPM
-fs       = require "fs-extra"
-log      = require "de-logger"
-less     = require "less"
-notifier = require "node-notifier"
+fs   = require "fs-extra"
+log  = require "de-logger"
+less = require "less"
 
 
 
@@ -19,6 +18,8 @@ class Less
 
 
 	setup: ->
+
+		return if @server.config.type is 2
 
 		# Short refrence to less config
 		@config = @server.config.less

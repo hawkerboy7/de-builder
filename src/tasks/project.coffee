@@ -48,10 +48,14 @@ class Project
 
 		new Promise (resolve) =>
 			try
-				await fs.remove @server.folders.temp.index
-				if not @server.initialized
+				if @server.initialized
+					await fs.remove @server.folders.build.index
+					await fs.mkdirp @server.folders.build.index
+					log.info "#{@server.config.title} - Clean build", @server.symbols.finished
+				else
+					await fs.remove @server.folders.temp.index
 					await fs.mkdirp @server.folders.temp.index
-				log.info "#{@server.config.title} - Clean", @server.symbols.finished
+					log.info "#{@server.config.title} - Clean temp", @server.symbols.finished
 				resolve()
 			catch e
 				log.error "#{@server.config.title} - Clean - Error", e.stack
