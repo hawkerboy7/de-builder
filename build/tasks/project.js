@@ -50,11 +50,15 @@ Project = class Project {
     return new Promise(async(resolve) => {
       var e;
       try {
-        await fs.remove(this.server.folders.temp.index);
-        if (!this.server.initialized) {
+        if (this.server.initialized) {
+          await fs.remove(this.server.folders.build.index);
+          await fs.mkdirp(this.server.folders.build.index);
+          log.info(`${this.server.config.title} - Clean build`, this.server.symbols.finished);
+        } else {
+          await fs.remove(this.server.folders.temp.index);
           await fs.mkdirp(this.server.folders.temp.index);
+          log.info(`${this.server.config.title} - Clean temp`, this.server.symbols.finished);
         }
-        log.info(`${this.server.config.title} - Clean`, this.server.symbols.finished);
         return resolve();
       } catch (error) {
         e = error;
