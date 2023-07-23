@@ -26,20 +26,20 @@ class Coffee
 				await fs.mkdirp path.dirname destination
 			catch e
 				log.error "#{@server.config.title} - Coffee", "read+mkdirp", e.stack
-				return resolve()
+				return resolve true
 
 			try
 				coffeeScript = coffee.compile data, bare: true
 			catch e
 				coffeeScript = ""
 				log.error "#{@server.config.title} - Coffee", file, "Line: #{e.location.first_line}", e.message, e.code
-				return resolve()
+				return resolve true
 
 			try
 				await fs.writeFile name = @server.root + path.sep + destination, coffeeScript
 			catch e
 				log.error "#{@server.config.title} - Coffee", "write", e.stack
-				return resolve()
+				return resolve true
 
 			log.info "#{@server.config.title} - Coffee", destination
 

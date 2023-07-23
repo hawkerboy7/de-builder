@@ -1,9 +1,9 @@
 # Node
-path = require "path"
+path   = require "path"
+{fork} = require "child_process"
 
 # NPM
-log     = require "de-logger"
-nodemon = require "nodemon"
+log = require "de-logger"
 
 
 
@@ -29,6 +29,9 @@ class Forever
 
 	start: =>
 
+		# Ensure no previous instance is runnning
+		await @terminate()
+
 		# Determin the src directory
 		src = @server.folders.build.server
 		src = @server.folders.build.index if @server.config.type is 2
@@ -36,38 +39,30 @@ class Forever
 		# Create file path
 		entry = src + path.sep + @server.config.forever.entry
 
-		# --------------------------------------------------
-		# Due to issues with nodemon we run everything a bit slower to hopefully
-		# let the async parts complete
-		# - TypeError: Cannot read properties of undefined (reading 'script')
-		# - [not solved] MaxListenersExceededWarning: Possible EventEmitter memory leak detected
-		# --------------------------------------------------
+		@child = fork entry, stdio: "pipe"
 
-		# Ensure no previous instance is runnning
-		await @terminate()
+		@child.stdout.pipe process.stdout
+		@child.stderr.pipe process.stderr
 
-		# Ensure we work with a clean slate of nodemon
-		nodemon.reset()
-
-		# Wait a small time to ensure the reset is completed and possibly also
-		# for the the entry file being flushed to disk. 100ms seems to be enough after some testing
-		await new Promise (resolve) => setTimeout resolve, 100
-
-		# Start running the application
-		nodemon
-			script: entry,
-			ext: "js"
-			ignore: ["*"]
+		@child.on "close", (code, signal) =>
+			return if code is null
+			log.info "#{@server.config.title} - Forever", "Process exit with code #{code}"
 
 
 	terminate: =>
 
-		# Close the currently running app in case it is running
-		nodemon.emit "SIGINT"
-		nodemon.emit "quit"
+		new Promise (resolve) =>
 
-		# Allow a little time for the application run by nodemon to close
-		new Promise (resolve) => setTimeout resolve, 10
+			# No child to terminate
+			return resolve() if not @child
+
+			# Child has already stopped running
+			return resolve() if @child.exitCode isnt null
+
+			# Request the child to terminate, but kill it if it does not
+			@child.kill "SIGKILL" if not @child.kill "SIGTERM"
+
+			resolve()
 
 
 

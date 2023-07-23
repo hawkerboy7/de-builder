@@ -1,12 +1,12 @@
 // Node
-var Forever, log, nodemon, path;
+var Forever, fork, log, path;
 
 path = require("path");
 
+({fork} = require("child_process"));
+
 // NPM
 log = require("de-logger");
-
-nodemon = require("nodemon");
 
 Forever = class Forever {
   constructor(server) {
@@ -31,6 +31,8 @@ Forever = class Forever {
 
   async start() {
     var entry, src;
+    // Ensure no previous instance is runnning
+    await this.terminate();
     // Determin the src directory
     src = this.server.folders.build.server;
     if (this.server.config.type === 2) {
@@ -38,37 +40,34 @@ Forever = class Forever {
     }
     // Create file path
     entry = src + path.sep + this.server.config.forever.entry;
-    // --------------------------------------------------
-    // Due to issues with nodemon we run everything a bit slower to hopefully
-    // let the async parts complete
-    // - TypeError: Cannot read properties of undefined (reading 'script')
-    // - [not solved] MaxListenersExceededWarning: Possible EventEmitter memory leak detected
-    // --------------------------------------------------
-
-    // Ensure no previous instance is runnning
-    await this.terminate();
-    // Ensure we work with a clean slate of nodemon
-    nodemon.reset();
-    // Wait a small time to ensure the reset is completed and possibly also
-    // for the the entry file being flushed to disk. 100ms seems to be enough after some testing
-    await new Promise((resolve) => {
-      return setTimeout(resolve, 100);
+    this.child = fork(entry, {
+      stdio: "pipe"
     });
-    // Start running the application
-    return nodemon({
-      script: entry,
-      ext: "js",
-      ignore: ["*"]
+    this.child.stdout.pipe(process.stdout);
+    this.child.stderr.pipe(process.stderr);
+    return this.child.on("close", (code, signal) => {
+      if (code === null) {
+        return;
+      }
+      return log.info(`${this.server.config.title} - Forever`, `Process exit with code ${code}`);
     });
   }
 
   terminate() {
-    // Close the currently running app in case it is running
-    nodemon.emit("SIGINT");
-    nodemon.emit("quit");
-    // Allow a little time for the application run by nodemon to close
     return new Promise((resolve) => {
-      return setTimeout(resolve, 10);
+      if (!this.child) {
+        // No child to terminate
+        return resolve();
+      }
+      if (this.child.exitCode !== null) {
+        // Child has already stopped running
+        return resolve();
+      }
+      if (!this.child.kill("SIGTERM")) {
+        // Request the child to terminate, but kill it if it does not
+        this.child.kill("SIGKILL");
+      }
+      return resolve();
     });
   }
 
