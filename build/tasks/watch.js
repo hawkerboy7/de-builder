@@ -88,13 +88,16 @@ Watch = class Watch {
     // To allow most of the changes in case of a branch switch to run first
     return setTimeout(() => {
       return this.nextTick(file);
-    }, 10);
+    }, 50);
   }
 
   async nextTick(file) {
-    var extention, server, serverFolder;
+    var error, extention, server, serverFolder;
     extention = path.extname(file);
-    await this.process(file, extention);
+    // When an error happens on processing we do not run the process so the error remains in the terminal
+    if (error = (await this.process(file, extention))) {
+      return;
+    }
     if (!(extention === ".coffee" || extention === ".pug" || extention === ".less")) {
       return;
     }
