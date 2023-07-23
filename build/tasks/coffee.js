@@ -31,7 +31,7 @@ Coffee = class Coffee {
       } catch (error) {
         e = error;
         log.error(`${this.server.config.title} - Coffee`, "read+mkdirp", e.stack);
-        return resolve();
+        return resolve(true);
       }
       try {
         coffeeScript = coffee.compile(data, {
@@ -41,14 +41,14 @@ Coffee = class Coffee {
         e = error;
         coffeeScript = "";
         log.error(`${this.server.config.title} - Coffee`, file, `Line: ${e.location.first_line}`, e.message, e.code);
-        return resolve();
+        return resolve(true);
       }
       try {
         await fs.writeFile(name = this.server.root + path.sep + destination, coffeeScript);
       } catch (error) {
         e = error;
         log.error(`${this.server.config.title} - Coffee`, "write", e.stack);
-        return resolve();
+        return resolve(true);
       }
       log.info(`${this.server.config.title} - Coffee`, destination);
       return resolve();

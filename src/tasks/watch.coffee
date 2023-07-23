@@ -82,14 +82,15 @@ class Watch
 		# To allow most of the changes in case of a branch switch to run first
 		setTimeout(=>
 			@nextTick file
-		, 10)
+		, 50)
 
 
 	nextTick: (file) ->
 
 		extention = path.extname file
 
-		await @process file, extention
+		# When an error happens on processing we do not run the process so the error remains in the terminal
+		return if error = await @process file, extention
 
 		return if not (extention is ".coffee" or extention is ".pug" or extention is ".less")
 
