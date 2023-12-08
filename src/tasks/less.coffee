@@ -148,7 +148,7 @@ class Less
 				log.error "#{@server.config.title} - Less", e.stack
 				return resolve()
 
-			less.render res, {paths: [@server.root + path.sep + sFolder], compress: @server.env is "production"}, (e, output) =>
+				less.render res, {paths: [@server.root + path.sep + sFolder], compress: @server.env is "production"}, (e, output) =>
 
 				if e
 					log.error "#{@server.config.title} - Less", "\n", "#{e.filename}\nLine: #{e.line}\nColumn: #{e.column}\n#{e.type} error\n#{e.message}\nExtract:", e.extract
