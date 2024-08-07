@@ -148,27 +148,32 @@ class Less
 				log.error "#{@server.config.title} - Less", e.stack
 				return resolve()
 
-				less.render res, {paths: [@server.root + path.sep + sFolder], compress: @server.env is "production"}, (e, output) =>
+			options =
+				paths: [@server.root + path.sep + sFolder]
+				compress: @server.env is "production"
+				# sourceMap: false
 
-				if e
-					log.error "#{@server.config.title} - Less", "\n", "#{e.filename}\nLine: #{e.line}\nColumn: #{e.column}\n#{e.type} error\n#{e.message}\nExtract:", e.extract
-					return resolve()
+			less.render res, options, (e, output) =>
 
-				if not (css = output?.css) and (css isnt "")
-					log.error "#{@server.config.title} - Less", "No css output: #{output}"
-					return resolve()
+			if e
+				log.error "#{@server.config.title} - Less", "\n", "#{e.filename}\nLine: #{e.line}\nColumn: #{e.column}\n#{e.type} error\n#{e.message}\nExtract:", e.extract
+				return resolve()
 
-				try
-					await fs.writeFile @server.root + path.sep + dFile, css
-				catch e
-					log.error "#{@server.config.title} - Less", e.stack
-					return resolve()
+			if not (css = output?.css) and (css isnt "")
+				log.error "#{@server.config.title} - Less", "No css output: #{output}"
+				return resolve()
 
-				prefix = if dFolder then "#{dFolder}: " else ""
+			try
+				await fs.writeFile @server.root + path.sep + dFile, css
+			catch e
+				log.error "#{@server.config.title} - Less", e.stack
+				return resolve()
 
-				log.info "#{@server.config.title} - Less", prefix + dFile
+			prefix = if dFolder then "#{dFolder}: " else ""
 
-				resolve dFile
+			log.info "#{@server.config.title} - Less", prefix + dFile
+
+			resolve dFile
 
 
 
